@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="sample_search_results">
+        <item name="a">com.jolira:guice</item>
+        <item name="b">com.google.inject:guice</item>
+        <item name="c">org.jvnet.hudson:guice</item>
+        <item name="d">com.mycila.com.google.inject:guice</item>
+        <item name="e">org.mod4j.com.google.inject:guice</item>
+        <item name="f">com.google.code.guice:guice</item>
+        <item name="g">com.google.code.jbpm-guice:jbpm3-guice-aggregator</item>
+        <item name="h">com.googlecode.guice-junit4:guice-junit4-parent</item>
+        <item name="i">com.jolira:guice-parent</item>
+        <item name="j">org.mockwire:mockwire-guice3-ws</item>
+        <item name="k">org.sonatype.sisu.inject:guice-extensions</item>
+        <item name="l">org.sonatype.sisu.inject:guice-paren</item>
+        <item name="m">net.peachjean.guice:peachguice-test</item>
+        <item name="n">net.peachjean.guice:peachguice-parent</item>
+        <item name="o">org.sonatype.sisu.inject:guice-plexus</item>
+        <item name="p">org.sonatype.sisu.inject:guice-bean</item>
+        <item name="q">com.google.inject:guice-parent</item>
+        <item name="r">org.sonatype.sisu.inject:guice-eclipse</item>
+        <item name="s">de.devsurf.injection.guice:integrations</item>
+        <item name="t">de.devsurf.injection.guice:scanner</item>
+    </string-array>
+
+</resources>
