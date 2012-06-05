@@ -47,6 +47,7 @@ public class Main extends Activity implements OnClickListener
       Intent intent = new Intent(Main.this, Searching.class);
       intent.putExtra("searchvalue", et.getText().toString());
       startActivity(intent);
+      //todo: replace with a progress dialog
     }
     else
     {
