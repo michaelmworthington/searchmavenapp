@@ -9,13 +9,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/groupId"
-        android:textSize="25sp" />
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/artifactIdTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/artifactId"
-        android:textSize="20sp" />
+        android:textSize="15sp" />
 
 </LinearLayout>

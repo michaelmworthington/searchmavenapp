@@ -24,10 +24,14 @@ public class MavenCentralRestAPI
   {
     initializeRestlet();
 
-    String url = "http://search.maven.org/solrsearch/select?rows=20&start=20&wt=json&q=" + pTerm;
+    String numResults = "20";
+    String startPosition = "0";
+    String url = "http://search.maven.org/solrsearch/select?rows=" + numResults + "&start=" + startPosition
+        + "&wt=json&q=" + pTerm;
+
     MCRResponse returnValue = null;
 
-    Log.d("net.worthington", "Making a REST Call to Maven Central Search...");
+    Log.d("net.worthington", "Making a REST Call to Maven Central Search for term: " + pTerm + "...");
 
     Client client = new Client(new Context(), Protocol.HTTP);
     ClientResource res = new ClientResource(url);

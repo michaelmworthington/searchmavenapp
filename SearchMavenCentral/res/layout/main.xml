@@ -33,6 +33,6 @@
         android:layout_alignBottom="@+id/searchEditText"
         android:layout_alignParentRight="true"
         android:layout_alignTop="@+id/searchEditText"
-        android:src="@drawable/ic_menu_search" />
+        android:src="@android:drawable/ic_menu_search" />
 
 </RelativeLayout>
