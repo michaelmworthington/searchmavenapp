@@ -20,6 +20,8 @@
         android:layout_below="@+id/imageView1"
         android:layout_toLeftOf="@+id/imageButton1"
         android:ems="10"
+        android:imeOptions="actionSearch"
+        android:inputType="text"
         android:text="@string/search"
         android:textColor="#d2d2d2" >
 

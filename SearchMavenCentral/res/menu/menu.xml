@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/helpMenuItem"
+        android:icon="@android:drawable/ic_menu_help"
+        android:title="Help">
+    </item>
+
+    <item
+        android:id="@+id/settingsMenuItem"
+        android:icon="@android:drawable/ic_menu_manage"
+        android:title="Settings">
+    </item>
+
+    <item
+        android:id="@+id/aboutMenuItem"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:title="About">
+    </item>
+
+</menu>

@@ -1,5 +1,6 @@
 package net.worthington.android.maven.search.restletapi;
 
+import net.worthington.android.maven.search.constants.Constants;
 import net.worthington.android.maven.search.restletapi.dao.MCRResponse;
 import net.worthington.android.maven.search.restletapi.dao.MavenCentralResponse;
 
@@ -31,7 +32,7 @@ public class MavenCentralRestAPI
 
     MCRResponse returnValue = null;
 
-    Log.d("net.worthington", "Making a REST Call to Maven Central Search for term: " + pTerm + "...");
+    Log.d(Constants.LOG_TAG, "Making a REST Call to Maven Central Search for term: " + pTerm + "...");
 
     Client client = new Client(new Context(), Protocol.HTTP);
     ClientResource res = new ClientResource(url);
@@ -44,17 +45,17 @@ public class MavenCentralRestAPI
 
       int code = res.getStatus().getCode();
       String description = res.getStatus().getDescription();
-      Log.d("net.worthington", String.format("GET %s: Response %s-%s: %s%n", url, code, description, rep.toString()));
+      Log.d(Constants.LOG_TAG, String.format("GET %s: Response %s-%s: %s%n", url, code, description, rep.toString()));
     }
     catch (ResourceException ex)
     {
       int code = ex.getStatus().getCode();
       String description = ex.getStatus().getDescription();
-      Log.d("net.worthington", String.format("GET %s: Response %s: %s%n", url, code, description));
+      Log.d(Constants.LOG_TAG, String.format("GET %s: Response %s: %s%n", url, code, description));
     }
     catch (Exception ex)
     {
-      Log.d("net.worthington", "REST Call Failed: " + ex.getMessage(), ex);
+      Log.d(Constants.LOG_TAG, "REST Call Failed: " + ex.getMessage(), ex);
     }
 
     return returnValue;

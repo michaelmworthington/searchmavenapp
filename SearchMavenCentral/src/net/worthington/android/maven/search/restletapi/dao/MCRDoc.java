@@ -14,7 +14,7 @@ public class MCRDoc implements Serializable
   private String iRepositoryId;
   private String iP;
   private String iTimestamp;
-  private String iVersionCount;
+  private int iVersionCount;
   private List<String> iText;
   private List<String> iEc;
 
@@ -74,11 +74,11 @@ public class MCRDoc implements Serializable
   {
     iTimestamp = pTimestamp;
   }
-  public String getVersionCount()
+  public int getVersionCount()
   {
     return iVersionCount;
   }
-  public void setVersionCount(String pVersionCount)
+  public void setVersionCount(int pVersionCount)
   {
     iVersionCount = pVersionCount;
   }
