@@ -1,6 +1,7 @@
 package net.worthington.android.maven.search;
 
 import net.worthington.android.maven.search.constants.Constants;
+import net.worthington.android.maven.search.constants.OptionsMenuDialogActions;
 import net.worthington.android.maven.search.restletapi.MavenCentralRestAPI;
 import net.worthington.android.maven.search.restletapi.dao.MCRResponse;
 import android.app.Activity;
@@ -167,18 +168,7 @@ public class Main extends Activity implements OnClickListener
   @Override
   public boolean onOptionsItemSelected(MenuItem pItem)
   {
-    if (pItem.getItemId() == R.id.aboutMenuItem)
-    {
-      Log.d(Constants.LOG_TAG, "About Menu Item was clicked");
-    }
-    else if (pItem.getItemId() == R.id.helpMenuItem)
-    {
-      Log.d(Constants.LOG_TAG, "Help Menu Item was clicked");
-    }
-    else if (pItem.getItemId() == R.id.settingsMenuItem)
-    {
-      Log.d(Constants.LOG_TAG, "Settings Menu Item was clicked");
-    }
+    OptionsMenuDialogActions.myOptionsMenuItemSelected(this, pItem);
     return super.onOptionsItemSelected(pItem);
   }
 }

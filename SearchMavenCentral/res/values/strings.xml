@@ -8,7 +8,7 @@
     <string name="groupId">groupId</string>
     <string name="artifactId">artifactId</string>
     <string name="latestVersion">latest version</string>
-    <string name="allVersions">all versions</string>
+    <string name="lastUpdate">last update</string>
     <string name="search">Search</string>
     
 </resources>

@@ -19,8 +19,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Searching"></activity>
-        <activity android:name=".SearchResults"></activity>
         <activity android:name=".RealSearchResults"></activity>
     </application>
 

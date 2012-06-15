@@ -15,6 +15,22 @@
       <version>2.3.3_r2</version>
       <scope>provided</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.restlet.jse</groupId>
+      <artifactId>org.restlet</artifactId>
+      <version>2.0.9</version>
+    </dependency>
+    <dependency>
+      <groupId>org.restlet.jse</groupId>
+      <artifactId>org.restlet.ext.jackson</artifactId>
+      <version>2.0.9</version>
+    </dependency>
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+      <version>2.1</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -91,15 +107,13 @@
                 project.modules.each {
                 try {
                 def manifestFile = new File("${it}/AndroidManifest.xml")
-                def ns = new groovy.xml.Namespace(
-                "http://schemas.android.com/apk/res/android", "ns")
+                def ns = new groovy.xml.Namespace("http://schemas.android.com/apk/res/android", "ns")
                 def parser = new groovy.util.XmlParser(false, true)
                 def rootNode = parser.parse(manifestFile)
                 def attributes = rootNode.attributes()
                 attributes[ns.versionName] = "${project.version}"
                 def writer = new groovy.io.GroovyPrintWriter(manifestFile)
-                writer.println('&lt;?xml version="1.0"
-                encoding="UTF-8"?&gt;')
+                writer.println('&lt;?xml version="1.0" encoding="UTF-8"?&gt;')
                 def xmlWriter = new groovy.util.XmlNodePrinter(writer)
                 xmlWriter.setPreserveWhitespace(false)
                 xmlWriter.setNamespaceAware(true)
@@ -107,8 +121,7 @@
                 } catch (FileNotFoundException e)
                 {
                 println('No AndroidManifest.xml file found. Skipping version update.')
-                println('Probably not an Android project, but a
-                library.')
+                println('Probably not an Android project, but a library.')
                 println('Skipping version update.')
                 }
                 }
