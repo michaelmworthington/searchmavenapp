@@ -25,52 +25,62 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-public class Main extends Activity implements OnClickListener
+public class MainAdvancedSearch extends Activity implements OnClickListener
 {
   static final int PROGRESS_DIALOG = 0;
   ProgressThread   progressThread;
   ProgressDialog   progressDialog;
+
+  EditText         groupIdSearchText;
+  EditText         artifactIdSearchText;
+  EditText         versionSearchText;
+  EditText         packagingSearchText;
+  EditText         classifierSearchText;
+  EditText         classNameSearchText;
 
   /** Called when the activity is first created. */
   @Override
   public void onCreate(Bundle savedInstanceState)
   {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.main);
+    setContentView(R.layout.main_advanced_search);
 
-    EditText et = (EditText) findViewById(R.id.searchEditText);
-    et.setOnClickListener(this);
-    
-    // http://stackoverflow.com/questions/3205339/android-how-to-make-keyboard-enter-button-say-search-and-handle-its-click
-    et.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-      @Override
-      public boolean onEditorAction(TextView pV, int pActionId, KeyEvent pEvent)
-      {
-        Log.d(Constants.LOG_TAG, "Text View editor action: " + pActionId);
-        if (pActionId == EditorInfo.IME_ACTION_SEARCH)
-        {
-          showDialog(PROGRESS_DIALOG);
-          return true;
-        }
-        return false;
-      }
-    });
+    groupIdSearchText = (EditText) findViewById(R.id.asGroupIdSearchText);
+    groupIdSearchText.setOnClickListener(this);
+
+    artifactIdSearchText = (EditText) findViewById(R.id.asArtifactIdSearchText);
+    artifactIdSearchText.setOnClickListener(this);
+
+    versionSearchText = (EditText) findViewById(R.id.asVersionSearchText);
+    versionSearchText.setOnClickListener(this);
+
+    packagingSearchText = (EditText) findViewById(R.id.asPackagingSearchText);
+    packagingSearchText.setOnClickListener(this);
+
+    classifierSearchText = (EditText) findViewById(R.id.asClassifierSearchText);
+    classifierSearchText.setOnClickListener(this);
+
+    classNameSearchText = (EditText) findViewById(R.id.asClassNameSearchText);
+    classNameSearchText.setOnClickListener(this);
 
     ImageButton ib = (ImageButton) findViewById(R.id.searchImageButton);
     ib.setOnClickListener(this);
 
-    Button asb = (Button) findViewById(R.id.mainAdvancedSearchButton);
-    asb.setOnClickListener(this);
+    Button qsb = (Button) findViewById(R.id.mainQuickSearchButton);
+    qsb.setOnClickListener(this);
 
   }
 
   @Override
   public void onClick(View v)
   {
-    if (v.getId() == R.id.searchEditText)
+    if (v.getId() == R.id.asGroupIdSearchText || v.getId() == R.id.asArtifactIdSearchText
+        || v.getId() == R.id.asVersionSearchText || v.getId() == R.id.asPackagingSearchText
+        || v.getId() == R.id.asClassifierSearchText || v.getId() == R.id.asClassNameSearchText)
     {
       Log.d(Constants.LOG_TAG, "Edit Text field was clicked");
-      EditText et = (EditText) findViewById(R.id.searchEditText);
+      EditText et = (EditText) v;
+
       if ("Search".equals(et.getText().toString()))
       {
         et.setText("");
@@ -84,13 +94,12 @@ public class Main extends Activity implements OnClickListener
       // Create a progress dialog so we can see it's searching
       showDialog(PROGRESS_DIALOG);
     }
-    else if (v.getId() == R.id.mainAdvancedSearchButton)
+    else if (v.getId() == R.id.mainQuickSearchButton)
     {
-      Log.d(Constants.LOG_TAG, "Advanced Search button was clicked. Go to to Advanced Search Activity");
-      
-      Intent intent = new Intent(Main.this, MainAdvancedSearch.class);
+      Log.d(Constants.LOG_TAG, "Quick Search button was clicked. Go to to Quick Search Activity");
+
+      Intent intent = new Intent(MainAdvancedSearch.this, Main.class);
       startActivity(intent);
-      
     }
     else
     {
@@ -125,7 +134,7 @@ public class Main extends Activity implements OnClickListener
     {
       case PROGRESS_DIALOG:
         progressThread = new ProgressThread(handler);
-        progressThread.start();
+        progressThread.start();//TODO: is it possible to handle a kill/cancel dialog and kill the thread
         break;
       default:
         return;
@@ -138,7 +147,7 @@ public class Main extends Activity implements OnClickListener
                           {
                             dismissDialog(PROGRESS_DIALOG);
 
-                            Intent intent = new Intent(Main.this, RealSearchResults.class);
+                            Intent intent = new Intent(MainAdvancedSearch.this, RealSearchResults.class);
                             intent.putExtra("searchResults", (MCRResponse) pMsg.obj);
 
                             startActivity(intent);
@@ -155,12 +164,29 @@ public class Main extends Activity implements OnClickListener
     }
 
     public void run()
-    {
-      EditText et = (EditText) findViewById(R.id.searchEditText);
-      Log.d(Constants.LOG_TAG, "Searching for " + et.getText().toString());
+    {//TODO: trim all inputs
+      String groupId = groupIdSearchText.getText().toString();
+      String artifactId = artifactIdSearchText.getText().toString();
+      String version = versionSearchText.getText().toString();
+      String packaging = packagingSearchText.getText().toString();
+      String classifier = classifierSearchText.getText().toString();
+      String className = classNameSearchText.getText().toString();
 
       MavenCentralRestAPI mcr = new MavenCentralRestAPI();
-      MCRResponse searchResults = mcr.searchBasic(et.getText().toString());//TODO: trim inputs
+      MCRResponse searchResults = null;
+      if ("Search".equals(className) || className.trim().length() == 0)
+      {
+        Log.d(Constants.LOG_TAG, "Searching for " + groupId + ":" + artifactId + ":" + version + ":" + packaging + ":"
+            + classifier);
+
+        searchResults = mcr.searchCoordinate(groupId, artifactId, version, packaging, classifier);
+      }
+      else
+      {
+        Log.d(Constants.LOG_TAG, "Searching for ClassName: " + className);
+
+        searchResults = mcr.searchClassName(className);
+      }
 
       Message msg = iHandler.obtainMessage();
       msg.obj = searchResults;

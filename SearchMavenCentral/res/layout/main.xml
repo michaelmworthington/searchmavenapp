@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/imageView1"
-        android:layout_toLeftOf="@+id/imageButton1"
+        android:layout_toLeftOf="@+id/searchImageButton"
         android:ems="10"
         android:imeOptions="actionSearch"
         android:inputType="text"
@@ -29,12 +29,52 @@
     </EditText>
 
     <ImageButton
-        android:id="@+id/imageButton1"
+        android:id="@+id/searchImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/searchEditText"
         android:layout_alignParentRight="true"
         android:layout_alignTop="@+id/searchEditText"
         android:src="@android:drawable/ic_menu_search" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:gravity="center_horizontal" >
+
+        <Button
+            android:id="@+id/mainQuickSearchButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="#FFFFFF"
+            android:text="Quick Search"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:text="|" />
+
+        <Button
+            android:id="@+id/mainAdvancedSearchButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="#FFFFFF"
+            android:text="Advanced Search"
+            android:textSize="15sp" />
+    </LinearLayout>
 
 </RelativeLayout>

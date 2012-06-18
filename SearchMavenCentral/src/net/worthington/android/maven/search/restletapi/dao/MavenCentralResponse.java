@@ -1,5 +1,10 @@
 package net.worthington.android.maven.search.restletapi.dao;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+//TODO: figure out how to parse highlighting
+//http://wiki.fasterxml.com/JacksonFAQ#Deserializing:_unknown_properties
+@JsonIgnoreProperties({ "highlighting" })
 public class MavenCentralResponse
 {
   private MCRResponseHeader iResponseHeader;

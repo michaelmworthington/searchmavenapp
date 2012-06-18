@@ -70,18 +70,26 @@ public class RealSearchResults extends ListActivity
 
       groupTV.setText(mavenCentralArtifactResult.getG());
       artifactTV.setText(mavenCentralArtifactResult.getA());
-      latestVersionTV.setText(mavenCentralArtifactResult.getLatestVersion());
+
+      String version = mavenCentralArtifactResult.getLatestVersion();
+      if (version == null || version.trim().length() == 0)
+      {
+        version = mavenCentralArtifactResult.getV();
+      }
+
+      latestVersionTV.setText(version);
       lastUpdateTV.setText(mavenCentralArtifactResult.getTimestamp().toString("dd-MMM-yyyy"));
 
       registerForContextMenu(row);
-      
+
       row.setOnClickListener(new OnClickListener() {
-        
+
         @Override
         public void onClick(View pV)
         {
+          // TODO: show artifact details
           OptionsMenuDialogActions.mySearchResultsItemSelected(RealSearchResults.this);
-          
+
         }
       });
 
@@ -97,11 +105,11 @@ public class RealSearchResults extends ListActivity
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.search_results_context_menu, pMenu);
 
-    /* TODO: Display the version count in the context menu
-     * int versionCount = mavenCentralArtifactResult.getVersionCount(); if (versionCount > 1) {
-     * lastUpdateTV.setText("all(" + versionCount + ")"); //todo: replace the version count with the last updated
-     * timestamp } else { lastUpdateTV.setText(""); }
-     */    
+    /*
+     * TODO: Display the version count in the context menu int versionCount =
+     * mavenCentralArtifactResult.getVersionCount(); if (versionCount > 1) { lastUpdateTV.setText("all(" + versionCount
+     * + ")"); //TODO: replace the version count with the last updated timestamp } else { lastUpdateTV.setText(""); }
+     */
   }
 
   /**
@@ -110,7 +118,8 @@ public class RealSearchResults extends ListActivity
   @Override
   public boolean onContextItemSelected(MenuItem pItem)
   {
-    OptionsMenuDialogActions.myContextMenuItemSelected(this,pItem);
+    // TODO: perform additional searches based on context selection
+    OptionsMenuDialogActions.myContextMenuItemSelected(this, pItem);
     return super.onContextItemSelected(pItem);
   }
 

@@ -19,7 +19,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".MainAdvancedSearch"></activity>
         <activity android:name=".RealSearchResults"></activity>
-    </application>
+        </application>
 
 </manifest>

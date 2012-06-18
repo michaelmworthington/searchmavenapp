@@ -12,12 +12,14 @@ public class MCRDoc implements Serializable
   private String            iId;
   private String            iG;
   private String            iA;
+  private String            iV;
   private String            iLatestVersion;
   private String            iRepositoryId;
   private String            iP;
   private DateTime          iTimestamp;
   private int               iVersionCount;
   private List<String>      iText;
+  private List<String>      iTags;
   private List<String>      iEc;
 
   public String getId()
@@ -48,6 +50,16 @@ public class MCRDoc implements Serializable
   public void setA(String pA)
   {
     iA = pA;
+  }
+
+  public String getV()
+  {
+    return iV;
+  }
+
+  public void setV(String pV)
+  {
+    iV = pV;
   }
 
   public String getLatestVersion()
@@ -108,6 +120,16 @@ public class MCRDoc implements Serializable
   public void setText(List<String> pText)
   {
     iText = pText;
+  }
+
+  public List<String> getTags()
+  {
+    return iTags;
+  }
+
+  public void setTags(List<String> pTags)
+  {
+    iTags = pTags;
   }
 
   public List<String> getEc()
