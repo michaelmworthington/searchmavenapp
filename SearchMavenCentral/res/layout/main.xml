@@ -44,37 +44,53 @@
         android:layout_alignParentLeft="true"
         android:gravity="center_horizontal" >
 
-        <Button
-            android:id="@+id/mainQuickSearchButton"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:background="#FFFFFF"
-            android:text="Quick Search"
-            android:textSize="15sp"
-            android:textStyle="bold" />
+            android:background="#d2d2d2" >
+
+            <Button
+                android:id="@+id/mainQuickSearchButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:background="#d2d2d2"
+                android:text="Quick Search"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/textView1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:text="|" />
+            android:text="|"
+            android:textColor="#d2d2d2"
+            android:textSize="30sp" />
 
-        <Button
-            android:id="@+id/mainAdvancedSearchButton"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:background="#FFFFFF"
-            android:text="Advanced Search"
-            android:textSize="15sp" />
+            android:background="#FFFFFF" >
+
+            <Button
+                android:id="@+id/mainAdvancedSearchButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:background="#FFFFFF"
+                android:text="Advanced Search"
+                android:textSize="15sp" />
+        </LinearLayout>
     </LinearLayout>
 
 </RelativeLayout>

@@ -1,9 +1,15 @@
 package net.worthington.android.maven.search.restletapi;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import net.worthington.android.maven.search.constants.Constants;
+import net.worthington.android.maven.search.restletapi.dao.MCRDoc;
 import net.worthington.android.maven.search.restletapi.dao.MCRResponse;
 import net.worthington.android.maven.search.restletapi.dao.MavenCentralResponse;
 
+import org.joda.time.DateTime;
 import org.restlet.Client;
 import org.restlet.Context;
 import org.restlet.data.Protocol;
@@ -12,10 +18,21 @@ import org.restlet.ext.jackson.JacksonConverter;
 import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class MavenCentralRestAPI
 {
+  private boolean iDemoMode = false;
+  private int iNumResults = 20;
+  
+  public MavenCentralRestAPI(android.content.Context pContext)
+  {
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(pContext);
+    iDemoMode = settings.getBoolean("demoMode", false);
+    iNumResults = Integer.valueOf(settings.getString("numResults", null));
+  }
 
   /**
    * Perform a basic term search
@@ -157,13 +174,36 @@ public class MavenCentralRestAPI
   {
     MCRResponse returnValue = null;
 
-    if (pSearchQueryString != null && pSearchQueryString.startsWith("q="))
+    if (iDemoMode)
+    {
+      MCRDoc doc = new MCRDoc();
+      doc.setId("log4j:log4j");
+      doc.setG("log4j");
+      doc.setA("log4j");
+      doc.setLatestVersion("1.2.17");
+      doc.setRepositoryId("central");
+      doc.setP("bundle");
+      doc.setTimestamp(new DateTime(1338025419000L));
+      doc.setVersionCount(14);
+      doc.setText(Arrays.asList("log4j", "log4j", "-sources.jar", "-javadoc.jar", ".jar", ".zip", ".tar.gz", "pom"));
+      doc.setEc(Arrays.asList("-sources.jar", "-javadoc.jar", ".jar", ".zip", ".tar.gz", "pom"));
+      
+      List<MCRDoc> docs = new ArrayList<MCRDoc>();
+      docs.add(doc);
+      
+      returnValue = new MCRResponse();
+      returnValue.setNumFound(1);
+      returnValue.setStart(0);
+      returnValue.setDocs(docs);
+    }
+    
+    if (returnValue == null && pSearchQueryString != null && pSearchQueryString.startsWith("q="))
     {
 
       initializeRestlet();
 
       String baseUrl = "http://search.maven.org/solrsearch/select?";
-      String numResults = "rows=20";
+      String numResults = "rows=" + iNumResults;
       String startPosition = "start=0";
       String resultsFormat = "wt=json";
 

@@ -21,6 +21,7 @@
         </activity>
         <activity android:name=".MainAdvancedSearch"></activity>
         <activity android:name=".RealSearchResults"></activity>
+        <activity android:name=".Preferences"></activity>
         </application>
 
 </manifest>

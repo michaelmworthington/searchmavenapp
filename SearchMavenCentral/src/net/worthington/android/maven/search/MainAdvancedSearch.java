@@ -172,7 +172,7 @@ public class MainAdvancedSearch extends Activity implements OnClickListener
       String classifier = classifierSearchText.getText().toString();
       String className = classNameSearchText.getText().toString();
 
-      MavenCentralRestAPI mcr = new MavenCentralRestAPI();
+      MavenCentralRestAPI mcr = new MavenCentralRestAPI(MainAdvancedSearch.this);
       MCRResponse searchResults = null;
       if ("Search".equals(className) || className.trim().length() == 0)
       {

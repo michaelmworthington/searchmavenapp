@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -37,6 +38,10 @@ public class Main extends Activity implements OnClickListener
   {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.main);
+    
+    //http://www.android-dev.ro/2011/06/12/preferenceactivity-basics/
+    //Make sure the defaults are set from XML
+    PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
     EditText et = (EditText) findViewById(R.id.searchEditText);
     et.setOnClickListener(this);
@@ -159,7 +164,7 @@ public class Main extends Activity implements OnClickListener
       EditText et = (EditText) findViewById(R.id.searchEditText);
       Log.d(Constants.LOG_TAG, "Searching for " + et.getText().toString());
 
-      MavenCentralRestAPI mcr = new MavenCentralRestAPI();
+      MavenCentralRestAPI mcr = new MavenCentralRestAPI(Main.this);
       MCRResponse searchResults = mcr.searchBasic(et.getText().toString());//TODO: trim inputs
 
       Message msg = iHandler.obtainMessage();
