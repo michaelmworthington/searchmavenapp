@@ -24,9 +24,9 @@ import android.util.Log;
 
 public class MavenCentralRestAPI
 {
-  private boolean iDemoMode = false;
-  private int iNumResults = 20;
-  
+  private boolean iDemoMode   = false;
+  private int     iNumResults = 20;
+
   public MavenCentralRestAPI(android.content.Context pContext)
   {
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(pContext);
@@ -187,57 +187,60 @@ public class MavenCentralRestAPI
       doc.setVersionCount(14);
       doc.setText(Arrays.asList("log4j", "log4j", "-sources.jar", "-javadoc.jar", ".jar", ".zip", ".tar.gz", "pom"));
       doc.setEc(Arrays.asList("-sources.jar", "-javadoc.jar", ".jar", ".zip", ".tar.gz", "pom"));
-      
+
       List<MCRDoc> docs = new ArrayList<MCRDoc>();
       docs.add(doc);
-      
+
       returnValue = new MCRResponse();
       returnValue.setNumFound(1);
       returnValue.setStart(0);
       returnValue.setDocs(docs);
     }
-    
-    if (returnValue == null && pSearchQueryString != null && pSearchQueryString.startsWith("q="))
-    {
-
-      initializeRestlet();
-
-      String baseUrl = "http://search.maven.org/solrsearch/select?";
-      String numResults = "rows=" + iNumResults;
-      String startPosition = "start=0";
-      String resultsFormat = "wt=json";
-
-      String url = baseUrl + numResults + "&" + startPosition + "&" + resultsFormat + "&" + pSearchQueryString;
-
-      Client client = new Client(new Context(), Protocol.HTTP);
-      ClientResource res = new ClientResource(url);
-      res.setNext(client);
-
-      try
-      {
-        MavenCentralResponse rep = res.get(MavenCentralResponse.class);
-        returnValue = rep.getResponse();
-
-        int code = res.getStatus().getCode();
-        String description = res.getStatus().getDescription();
-        Log.d(Constants.LOG_TAG, String.format("GET %s: Response %s-%s: %s%n", url, code, description, rep.toString()));
-      }
-      catch (ResourceException ex)
-      {
-        int code = ex.getStatus().getCode();
-        String description = ex.getStatus().getDescription();
-        // TODO: display error message to user
-        Log.d(Constants.LOG_TAG, String.format("GET %s: Response %s: %s%n", url, code, description));
-      }
-      catch (Exception ex)
-      {
-        // TODO: display error message to user
-        Log.d(Constants.LOG_TAG, "REST Call Failed: " + ex.getMessage(), ex);
-      }
-    }
     else
     {
-      throw new IllegalArgumentException("Maven Central Search Query String is missing or does not start with \"q=\"");
+      if (pSearchQueryString != null && pSearchQueryString.startsWith("q="))
+      {
+
+        initializeRestlet();
+
+        String baseUrl = "http://search.maven.org/solrsearch/select?";
+        String numResults = "rows=" + iNumResults;
+        String startPosition = "start=0";
+        String resultsFormat = "wt=json";
+
+        String url = baseUrl + numResults + "&" + startPosition + "&" + resultsFormat + "&" + pSearchQueryString;
+
+        Client client = new Client(new Context(), Protocol.HTTP);
+        ClientResource res = new ClientResource(url);
+        res.setNext(client);
+
+        try
+        {
+          MavenCentralResponse rep = res.get(MavenCentralResponse.class);
+          returnValue = rep.getResponse();
+
+          int code = res.getStatus().getCode();
+          String description = res.getStatus().getDescription();
+          Log.d(Constants.LOG_TAG,
+                String.format("GET %s: Response %s-%s: %s%n", url, code, description, rep.toString()));
+        }
+        catch (ResourceException ex)
+        {
+          int code = ex.getStatus().getCode();
+          String description = ex.getStatus().getDescription();
+          // TODO: display error message to user
+          Log.d(Constants.LOG_TAG, String.format("GET %s: Response %s: %s%n", url, code, description));
+        }
+        catch (Exception ex)
+        {
+          // TODO: display error message to user
+          Log.d(Constants.LOG_TAG, "REST Call Failed: " + ex.getMessage(), ex);
+        }
+      }
+      else
+      {
+        throw new IllegalArgumentException("Maven Central Search Query String is missing or does not start with \"q=\"");
+      }
     }
 
     return returnValue;
