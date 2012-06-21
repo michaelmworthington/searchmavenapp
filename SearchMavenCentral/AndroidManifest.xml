@@ -12,16 +12,18 @@
         android:label="@string/app_name" android:description="@string/app_description" android:theme="@android:style/Theme.Light.NoTitleBar">
         <activity
             android:name=".Main"
-            android:label="@string/app_name" >
+            android:label="@string/app_name" android:windowSoftInputMode="adjustResize" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainAdvancedSearch"></activity>
-        <activity android:name=".RealSearchResults"></activity>
-        <activity android:name=".Preferences"></activity>
+        
+        <!-- Screen resizing on keyboard: http://developer.android.com/resources/articles/on-screen-inputs.html -->
+        <activity android:name=".MainAdvancedSearch" />
+        <activity android:name=".RealSearchResults"/>
+        <activity android:name=".Preferences"/>
         </application>
 
 </manifest>

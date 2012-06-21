@@ -33,6 +33,7 @@ public class RealSearchResults extends ListActivity
     if (searchResults != null)
     {
       TextView tv = (TextView) findViewById(R.id.SearchResultsTextView);
+      //TODO: add in where the search came from so we can display and also adjust the long tap menu list - i.e. no sense searching by group id on a group id search result list
       tv.setText(searchResults.getNumFound() + " Search Results:");
 
       setListAdapter(new MyAdapter(this, android.R.layout.simple_list_item_1, R.id.groupIdTextView,
