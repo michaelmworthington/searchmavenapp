@@ -10,5 +10,29 @@
     <string name="latestVersion">latest version</string>
     <string name="lastUpdate">last update</string>
     <string name="search">Search</string>
+
+    <string-array name="dependency_formats">
+        <item>Apache Maven</item>
+        <item>Apache Buildr</item>
+        <item>Apache Ivy</item>
+        <item>Groovy Grape</item>
+        <item>Grails</item>
+        <item>Scala SBT</item>
+    </string-array>
     
+    <string-array name="sample_log4j_file_list">
+        <item>log4j.pom</item>
+        <item>log4j.pom.asc</item>
+        <item>log4j.tar.gz</item>
+        <item>log4j.zip</item>
+        <item>log4j.jar</item>
+        <item>log4j.zip.asc</item>
+        <item>log4j.jar.asc</item>
+        <item>log4j.tar.gz.asc</item>
+        <item>log4j-javadoc.jar</item>
+        <item>log4j-javadoc.jar.asc</item>
+        <item>log4j-sources.jar</item>
+        <item>log4j-sources.jar.asc</item>
+    </string-array>
+
 </resources>

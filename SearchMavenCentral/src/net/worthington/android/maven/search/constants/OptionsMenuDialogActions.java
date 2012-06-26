@@ -1,7 +1,7 @@
 package net.worthington.android.maven.search.constants;
 
-import net.worthington.android.maven.search.Preferences;
 import net.worthington.android.maven.search.R;
+import net.worthington.android.maven.search.activities.Preferences;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -29,35 +29,6 @@ public class OptionsMenuDialogActions
       Intent intent = new Intent(pContext, Preferences.class);
       pContext.startActivity(intent);
     }
-  }
-
-  public static void myContextMenuItemSelected(Context pContext, MenuItem pItem)
-  {
-    if (pItem.getItemId() == R.id.contextMenuSearchGroupId)
-    {
-      Log.d(Constants.LOG_TAG, "Search Group ID was clicked");
-      showDialog(pContext, "Group Id", R.layout.dummy_search_dialog, android.R.drawable.ic_menu_search);
-      // TODO: do a search
-    }
-    else if (pItem.getItemId() == R.id.contextMenuSearchArtifactId)
-    {
-      Log.d(Constants.LOG_TAG, "Search Artifact Id was clicked");
-      showDialog(pContext, "Artifact Id", R.layout.dummy_search_dialog, android.R.drawable.ic_menu_search);
-      // TODO: do a search
-    }
-    else if (pItem.getItemId() == R.id.contextMenuSearchAllVersions)
-    {
-      Log.d(Constants.LOG_TAG, "Search All Versions was clicked");
-      showDialog(pContext, "All Versions", R.layout.dummy_search_dialog, android.R.drawable.ic_menu_search);
-      // TODO: do a search
-    }
-  }
-
-  public static void mySearchResultsItemSelected(Context pContext)
-  {
-    Log.d(Constants.LOG_TAG, "Search Item was clicked");
-    showDialog(pContext, "Artifact Details", R.layout.dummy_search_dialog, android.R.drawable.ic_menu_search);
-    // TODO: get item details
   }
 
   private static void showDialog(Context pContext, String pTitle, int pLayoutId, int pIconDrawableId)
