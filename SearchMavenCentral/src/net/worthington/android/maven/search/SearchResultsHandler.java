@@ -31,17 +31,15 @@ public class SearchResultsHandler extends Handler
     switch (pMsg.arg1)
     {
       case Constants.PROGRESS_DIALOG_QUICK_SEARCH:
-      {
-        iActivity.dismissDialog(Constants.PROGRESS_DIALOG_QUICK_SEARCH);
-        intent = new Intent(iActivity, RealSearchResults.class);
-        intent.putExtra("searchResults", (MCRResponse) pMsg.obj);
-        break;
-      }
       case Constants.PROGRESS_DIALOG_ADVANCED_SEARCH:
+      case Constants.PROGRESS_DIALOG_GROUPID_SEARCH:
+      case Constants.PROGRESS_DIALOG_ARTIFACTID_SEARCH:
+      case Constants.PROGRESS_DIALOG_VERSION_SEARCH:
       {
-        iActivity.dismissDialog(Constants.PROGRESS_DIALOG_ADVANCED_SEARCH);
+        iActivity.dismissDialog(pMsg.arg1);
         intent = new Intent(iActivity, RealSearchResults.class);
-        intent.putExtra("searchResults", (MCRResponse) pMsg.obj);
+        intent.putExtra(Constants.SEARCH_RESULTS, (MCRResponse) pMsg.obj);
+        intent.putExtra(Constants.SEARCH_TYPE, pMsg.arg1);
         break;
       }
       case Constants.PROGRESS_DIALOG_ARTIFACT_DETAILS:
@@ -52,6 +50,7 @@ public class SearchResultsHandler extends Handler
       }
       default:
       {
+        // TODO: bad search type, throw runtime exception, i think?
         break;
       }
     }

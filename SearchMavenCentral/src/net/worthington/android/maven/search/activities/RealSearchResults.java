@@ -33,6 +33,11 @@ public class RealSearchResults extends ListActivity
   private ProgressThread progressThread;
   private ProgressDialog progressDialog;
   private Handler        iHandler;
+  
+  private int iSearchType;
+  private String iSelectedGroup;
+  private String iSelectedArtifact;
+  private Integer iSelectedVersionCount;
 
   @Override
   protected void onCreate(Bundle pSavedInstanceState)
@@ -40,17 +45,16 @@ public class RealSearchResults extends ListActivity
     super.onCreate(pSavedInstanceState);
     setContentView(R.layout.real_search_results);
 
-    MCRResponse searchResults = (MCRResponse) getIntent().getExtras().getSerializable("searchResults");
+    MCRResponse searchResults = (MCRResponse) getIntent().getExtras().getSerializable(Constants.SEARCH_RESULTS);
+    iSearchType = (Integer) getIntent().getExtras().getSerializable(Constants.SEARCH_TYPE);
 
     if (searchResults != null)
     {
       TextView tv = (TextView) findViewById(R.id.SearchResultsTextView);
-      // TODO: add in where the search came from so we can display and also adjust the long tap menu list - i.e. no
-      // sense searching by group id on a group id search result list
-      tv.setText(searchResults.getNumFound() + " Search Results:");
+      tv.setText(searchResults.getNumFound() + " " + getSearchTypeString(iSearchType) + " Search Results:");
 
       setListAdapter(new MyAdapter(this, R.layout.search_results_item, searchResults.getDocs()));
-      // TODO: getListView().setTextFilterEnabled(true);
+      getListView().setTextFilterEnabled(true);
     }
     else
     {
@@ -60,6 +64,30 @@ public class RealSearchResults extends ListActivity
 
     // Define the Handler that receives messages from the thread and update the progress
     iHandler = new SearchResultsHandler(this);
+  }
+
+  private String getSearchTypeString(int pSearchType)
+  {
+    String returnValue = "";
+    switch (pSearchType)
+    {
+      case Constants.PROGRESS_DIALOG_QUICK_SEARCH:
+        returnValue = "Quick";
+        break;
+      case Constants.PROGRESS_DIALOG_ADVANCED_SEARCH:
+        returnValue = "Advanced";
+        break;
+      case Constants.PROGRESS_DIALOG_GROUPID_SEARCH:
+        returnValue = "GroupId";
+        break;
+      case Constants.PROGRESS_DIALOG_ARTIFACTID_SEARCH:
+        returnValue = "ArtifactId";
+        break;
+      case Constants.PROGRESS_DIALOG_VERSION_SEARCH:
+        returnValue = "All Versions";
+        break;
+    }
+    return returnValue;
   }
 
   private class MyAdapter extends ArrayAdapter<MCRDoc>
@@ -79,8 +107,9 @@ public class RealSearchResults extends ListActivity
       TextView artifactTV = (TextView) row.findViewById(R.id.artifactIdTextView);
       TextView latestVersionTV = (TextView) row.findViewById(R.id.latestVersionTextView);
       TextView lastUpdateTV = (TextView) row.findViewById(R.id.lastUpdateTextView);
+      TextView versionCount = (TextView) row.findViewById(R.id.versionCountTextView);
 
-      MCRResponse searchResults = (MCRResponse) getIntent().getExtras().getSerializable("searchResults");
+      MCRResponse searchResults = (MCRResponse) getIntent().getExtras().getSerializable(Constants.SEARCH_RESULTS);
       List<MCRDoc> sampleResults = searchResults.getDocs();
 
       MCRDoc mavenCentralArtifactResult = sampleResults.get(pPosition);
@@ -96,6 +125,7 @@ public class RealSearchResults extends ListActivity
 
       latestVersionTV.setText(version);
       lastUpdateTV.setText(mavenCentralArtifactResult.getTimestamp().toString("dd-MMM-yyyy"));
+      versionCount.setText(Integer.toString(mavenCentralArtifactResult.getVersionCount()));
 
       registerForContextMenu(row);
 
@@ -106,7 +136,7 @@ public class RealSearchResults extends ListActivity
         {
           Log.d(Constants.LOG_TAG, "Search Item was clicked");
           // Create a progress dialog so we can see it's searching
-          showDialog(Constants.PROGRESS_DIALOG_ARTIFACT_DETAILS);// TODO: pass info on the artifact that was selected
+          showDialog(Constants.PROGRESS_DIALOG_ARTIFACT_DETAILS);
         }
       });
 
@@ -121,6 +151,9 @@ public class RealSearchResults extends ListActivity
     switch (pId)
     {
       case Constants.PROGRESS_DIALOG_ARTIFACT_DETAILS:
+      case Constants.PROGRESS_DIALOG_GROUPID_SEARCH:
+      case Constants.PROGRESS_DIALOG_ARTIFACTID_SEARCH:
+      case Constants.PROGRESS_DIALOG_VERSION_SEARCH:
         progressDialog = new ProgressDialog(this);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setMessage("Searching...");
@@ -140,7 +173,10 @@ public class RealSearchResults extends ListActivity
     switch (pId)
     {
       case Constants.PROGRESS_DIALOG_ARTIFACT_DETAILS:
-        progressThread = new ProgressThread(iHandler, this, Constants.PROGRESS_DIALOG_ARTIFACT_DETAILS);
+      case Constants.PROGRESS_DIALOG_GROUPID_SEARCH:
+      case Constants.PROGRESS_DIALOG_ARTIFACTID_SEARCH:
+      case Constants.PROGRESS_DIALOG_VERSION_SEARCH:
+        progressThread = new ProgressThread(iHandler, this, pId);
         progressThread.start();
         break;
       default:
@@ -151,48 +187,44 @@ public class RealSearchResults extends ListActivity
   @Override
   public void onCreateContextMenu(ContextMenu pMenu, View pV, ContextMenuInfo pMenuInfo)
   {
+    setSelectedGroup(((TextView) pV.findViewById(R.id.groupIdTextView)).getText().toString());
+    setSelectedArtifact(((TextView) pV.findViewById(R.id.artifactIdTextView)).getText().toString());
+    setSelectedVersionCount(Integer.valueOf(((TextView) pV.findViewById(R.id.versionCountTextView)).getText().toString()));
 
     super.onCreateContextMenu(pMenu, pV, pMenuInfo);
-    MenuInflater inflater = getMenuInflater();
-    inflater.inflate(R.menu.search_results_context_menu, pMenu);
-// TODO: save the item that was selected
-    /*
-     * TODO: Display the version count in the context menu int versionCount =
-     * mavenCentralArtifactResult.getVersionCount(); if (versionCount > 1) { lastUpdateTV.setText("all(" + versionCount
-     * + ")"); //TODO: replace the version count with the last updated timestamp } else { lastUpdateTV.setText(""); }
-     */
+    pMenu.setHeaderTitle("Search By:");
+    
+    if ( iSearchType != Constants.PROGRESS_DIALOG_GROUPID_SEARCH )
+    {
+      pMenu.add(Menu.NONE, R.id.contextMenuSearchGroupId, 1, "Group Id");
+    }
+    if ( iSearchType != Constants.PROGRESS_DIALOG_ARTIFACTID_SEARCH )
+    {
+      pMenu.add(Menu.NONE, R.id.contextMenuSearchArtifactId, 2, "Artifact Id");
+    }
+    if ( iSearchType != Constants.PROGRESS_DIALOG_VERSION_SEARCH)
+    {
+      pMenu.add(Menu.NONE, R.id.contextMenuSearchAllVersions, 3, "All " + getSelectedVersionCount() + " Versions");
+    }
   }
 
-  /**
-   * TODO: Implement searches based on the selection
-   */
   @Override
   public boolean onContextItemSelected(MenuItem pItem)
   {
-
-    Log.d(Constants.LOG_TAG, "Search Results Item: " + pItem.toString() + " menuInfo: " + pItem.getMenuInfo());
-
-    // ExpandableListContextMenuInfo info = (ExpandableListContextMenuInfo) item.getMenuInfo();
-
-    // String title = ((TextView) info.targetView).getText().toString();
-
     if (pItem.getItemId() == R.id.contextMenuSearchGroupId)
     {
-      Log.d(Constants.LOG_TAG, "Search Group ID was clicked");
-      // showDialog(pContext, "Group Id", R.layout.dummy_search_dialog, android.R.drawable.ic_menu_search);
-      // TODO: do a search
+      Log.d(Constants.LOG_TAG, "Search Group ID was clicked: " + getSelectedGroup());
+      showDialog(Constants.PROGRESS_DIALOG_GROUPID_SEARCH);
     }
     else if (pItem.getItemId() == R.id.contextMenuSearchArtifactId)
     {
-      Log.d(Constants.LOG_TAG, "Search Artifact Id was clicked");
-      // showDialog(pContext, "Artifact Id", R.layout.dummy_search_dialog, android.R.drawable.ic_menu_search);
-      // TODO: do a search
+      Log.d(Constants.LOG_TAG, "Search Artifact Id was clicked: " + getSelectedArtifact());
+      showDialog(Constants.PROGRESS_DIALOG_ARTIFACTID_SEARCH);
     }
     else if (pItem.getItemId() == R.id.contextMenuSearchAllVersions)
     {
       Log.d(Constants.LOG_TAG, "Search All Versions was clicked");
-      // showDialog(pContext, "All Versions", R.layout.dummy_search_dialog, android.R.drawable.ic_menu_search);
-      // TODO: do a search
+      showDialog(Constants.PROGRESS_DIALOG_VERSION_SEARCH);
     }
 
     return super.onContextItemSelected(pItem);
@@ -211,5 +243,35 @@ public class RealSearchResults extends ListActivity
   {
     OptionsMenuDialogActions.myOptionsMenuItemSelected(this, pItem);
     return super.onOptionsItemSelected(pItem);
+  }
+
+  public Integer getSelectedVersionCount()
+  {
+    return iSelectedVersionCount;
+  }
+
+  private void setSelectedVersionCount(Integer selectedVersionCount)
+  {
+    iSelectedVersionCount = selectedVersionCount;
+  }
+
+  public String getSelectedGroup()
+  {
+    return iSelectedGroup;
+  }
+
+  private void setSelectedGroup(String selectedGroup)
+  {
+    iSelectedGroup = selectedGroup;
+  }
+
+  public String getSelectedArtifact()
+  {
+    return iSelectedArtifact;
+  }
+
+  private void setSelectedArtifact(String selectedArtifact)
+  {
+    iSelectedArtifact = selectedArtifact;
   }
 }

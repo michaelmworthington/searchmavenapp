@@ -26,7 +26,7 @@ public class PomViewActivity extends Activity
     tv.setText("<project>...</project>");
     // TODO: make it scroll
     // TODO: syntax highlighting??
-
+    // TODO: set @+id/pomHeaderTextView title with artifact information
   }
 
   @Override

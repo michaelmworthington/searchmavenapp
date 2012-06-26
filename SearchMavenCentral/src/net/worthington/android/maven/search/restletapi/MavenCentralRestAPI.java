@@ -42,24 +42,28 @@ public class MavenCentralRestAPI
   public MCRResponse searchBasic(String pTerm)
   {
     String quickSearch = "q=" + pTerm;
-
-    Log.d(Constants.LOG_TAG, "Making a REST Call to Maven Central Search for term: " + pTerm + "...");
     return search(quickSearch);
+  }
+
+  public MCRResponse searchForGroupId(String pGroupId)
+  {
+    return searchCoordinate(pGroupId, null, null, null, null);
+  }
+
+  public MCRResponse searchForArtifactId(String pArtifactId)
+  {
+    return searchCoordinate(null, pArtifactId, null, null, null);
   }
 
   public MCRResponse searchForAllVersions(String pGroupId, String pArtifactId)
   {
     String allVersionsSearch = "q=g:\"" + pGroupId + "\"+AND+a:\"" + pArtifactId + "\"&core=gav";
-
-    Log.d(Constants.LOG_TAG, "Making a REST Call to Maven Central Search for term: " + allVersionsSearch + "...");
     return search(allVersionsSearch);
   }
 
   public MCRResponse searchChecksum(String pChecksum)
   {
     String checksumSearch = "q=1:\"" + pChecksum + "\"";
-
-    Log.d(Constants.LOG_TAG, "Making a REST Call to Maven Central Search for checksum: " + pChecksum + "...");
     return search(checksumSearch);
   }
 
@@ -86,43 +90,47 @@ public class MavenCentralRestAPI
     String classifierTerm;
     String packagingTerm;
 
-    if ("Search".equals(pGroupId) == false)
+    if (isSearchOrEmpty(pGroupId) == false)
     {
       groupIdTerm = "g:\"" + pGroupId + "\"";
       advancedANDSearch = appendTerm(advancedANDSearch, groupIdTerm, firstTermComplete);
       firstTermComplete = true;
     }
 
-    if ("Search".equals(pArtifactId) == false)
+    if (isSearchOrEmpty(pArtifactId) == false)
     {
       artifactIdTerm = "a:\"" + pArtifactId + "\"";
       advancedANDSearch = appendTerm(advancedANDSearch, artifactIdTerm, firstTermComplete);
       firstTermComplete = true;
     }
 
-    if ("Search".equals(pVersion) == false)
+    if (isSearchOrEmpty(pVersion) == false)
     {
       versionTerm = "v:\"" + pVersion + "\"";
       advancedANDSearch = appendTerm(advancedANDSearch, versionTerm, firstTermComplete);
       firstTermComplete = true;
     }
 
-    if ("Search".equals(pClassifier) == false)
+    if (isSearchOrEmpty(pClassifier) == false)
     {
       classifierTerm = "l:\"" + pClassifier + "\"";
       advancedANDSearch = appendTerm(advancedANDSearch, classifierTerm, firstTermComplete);
       firstTermComplete = true;
     }
 
-    if ("Search".equals(pPackaging) == false)
+    if (isSearchOrEmpty(pPackaging) == false)
     {
       packagingTerm = "p:\"" + pPackaging + "\"";
       advancedANDSearch = appendTerm(advancedANDSearch, packagingTerm, firstTermComplete);
       firstTermComplete = true;
     }
 
-    Log.d(Constants.LOG_TAG, "Making a REST Call to Maven Central Search for term: " + advancedANDSearch + "...");
     return search(advancedANDSearch);
+  }
+
+  private boolean isSearchOrEmpty(String pTerm)
+  {
+    return pTerm == null || "Search".equals(pTerm) || "".equals(pTerm);
   }
 
   /**
@@ -136,7 +144,6 @@ public class MavenCentralRestAPI
   public MCRResponse searchClassName(String pClassName)
   {
     String classNameQueryString = "q=";
-    // TODO: debug - is this actually a dot or any character
     if (pClassName.contains("."))
     {
       classNameQueryString += "f";
@@ -144,7 +151,6 @@ public class MavenCentralRestAPI
 
     classNameQueryString += "c:\"" + pClassName + "\"";
 
-    Log.d(Constants.LOG_TAG, "Making a REST Call to Maven Central Search for classname: " + pClassName + "...");
     return search(classNameQueryString);
   }
 
@@ -176,6 +182,8 @@ public class MavenCentralRestAPI
 
     if (iDemoMode)
     {
+      Log.d(Constants.LOG_TAG, "Simulating Maven Central Search for query: " + pSearchQueryString);
+
       MCRDoc doc = new MCRDoc();
       doc.setId("log4j:log4j");
       doc.setG("log4j");
@@ -200,6 +208,7 @@ public class MavenCentralRestAPI
     {
       if (pSearchQueryString != null && pSearchQueryString.startsWith("q="))
       {
+        Log.d(Constants.LOG_TAG, "Making a REST Call to Maven Central Search for query: " + pSearchQueryString);
 
         initializeRestlet();
 
