@@ -8,7 +8,14 @@
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="This application provides a native interface to search the Maven Central repository at http://search.maven.org. Apache and Apache Maven are trademarks of the Apache Software Foundation. The Central Repository is a service mark of Sonatype, Inc. The Central Repository is intended to complement Apache Maven and should not be confused with Apache Maven."
+        android:text="This application provides a native interface to search the Maven Central repository at http://search.maven.org."
         android:textSize="20sp" android:padding="10dp"/>
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Apache and Apache Maven are trademarks of the Apache Software Foundation. The Central Repository is a service mark of Sonatype, Inc. The Central Repository is intended to complement Apache Maven and should not be confused with Apache Maven."
+        android:textSize="10sp" android:padding="10dp"/>
 
 </LinearLayout>

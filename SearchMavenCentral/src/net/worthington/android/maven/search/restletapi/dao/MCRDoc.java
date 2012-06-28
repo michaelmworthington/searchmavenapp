@@ -142,4 +142,8 @@ public class MCRDoc implements Serializable
     iEc = pEc;
   }
 
+  public String getGAV()
+  {
+    return iG + ":" + iA + ":" + iV;
+  }
 }

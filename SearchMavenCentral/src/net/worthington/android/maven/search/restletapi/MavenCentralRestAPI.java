@@ -169,6 +169,25 @@ public class MavenCentralRestAPI
     return returnValue;
   }
 
+  public String downloadFile(String pGroupId, String pArtifactId, String pVersion)
+  {
+    String returnValue = "";
+
+    if (iDemoMode)
+    {
+      returnValue = "<project>...</project>";
+    }
+    else
+    {
+      String replacedGroupId = pGroupId.replace(".", "/");
+      String pomRepositoryPath = String.format("%s/%s/%s/%2$s-%3$s.pom", replacedGroupId, pArtifactId, pVersion);
+      String url = "http://search.maven.org/remotecontent?filepath=" + pomRepositoryPath;
+
+      returnValue = (String) makeRestCall(String.class, url);
+    }
+    return returnValue;
+  }
+
   /**
    * Builds up the REST URL and makes a call with the RESTLET API and returns the MCRResponse POJO
    * 
@@ -219,32 +238,8 @@ public class MavenCentralRestAPI
 
         String url = baseUrl + numResults + "&" + startPosition + "&" + resultsFormat + "&" + pSearchQueryString;
 
-        Client client = new Client(new Context(), Protocol.HTTP);
-        ClientResource res = new ClientResource(url);
-        res.setNext(client);
-
-        try
-        {
-          MavenCentralResponse rep = res.get(MavenCentralResponse.class);
-          returnValue = rep.getResponse();
-
-          int code = res.getStatus().getCode();
-          String description = res.getStatus().getDescription();
-          Log.d(Constants.LOG_TAG,
-                String.format("GET %s: Response %s-%s: %s%n", url, code, description, rep.toString()));
-        }
-        catch (ResourceException ex)
-        {
-          int code = ex.getStatus().getCode();
-          String description = ex.getStatus().getDescription();
-          // TODO: display error message to user
-          Log.d(Constants.LOG_TAG, String.format("GET %s: Response %s: %s%n", url, code, description));
-        }
-        catch (Exception ex)
-        {
-          // TODO: display error message to user
-          Log.d(Constants.LOG_TAG, "REST Call Failed: " + ex.getMessage(), ex);
-        }
+        MavenCentralResponse rep = (MavenCentralResponse) makeRestCall(MavenCentralResponse.class, url);
+        returnValue = rep.getResponse();
       }
       else
       {
@@ -252,6 +247,37 @@ public class MavenCentralRestAPI
       }
     }
 
+    return returnValue;
+  }
+
+  private <T> Object makeRestCall(Class<T> pClass, String url)
+  {
+    Object returnValue = null;
+    Client client = new Client(new Context(), Protocol.HTTP);
+    ClientResource res = new ClientResource(url);
+    res.setNext(client);
+
+    try
+    {
+      returnValue = res.get(pClass);
+
+      int code = res.getStatus().getCode();
+      String description = res.getStatus().getDescription();
+      Log.d(Constants.LOG_TAG,
+            String.format("GET %s: Response %s-%s: %s%n", url, code, description, returnValue.toString()));
+    }
+    catch (ResourceException ex)
+    {
+      int code = ex.getStatus().getCode();
+      String description = ex.getStatus().getDescription();
+      // TODO: display error message to user
+      Log.d(Constants.LOG_TAG, String.format("GET %s: Response %s: %s%n", url, code, description));
+    }
+    catch (Exception ex)
+    {
+      // TODO: display error message to user
+      Log.d(Constants.LOG_TAG, "REST Call Failed: " + ex.getMessage(), ex);
+    }
     return returnValue;
   }
 

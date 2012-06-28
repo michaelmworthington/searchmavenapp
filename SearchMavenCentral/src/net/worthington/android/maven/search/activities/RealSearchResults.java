@@ -2,19 +2,15 @@ package net.worthington.android.maven.search.activities;
 
 import java.util.List;
 
-import net.worthington.android.maven.search.ProgressThread;
 import net.worthington.android.maven.search.R;
-import net.worthington.android.maven.search.SearchResultsHandler;
 import net.worthington.android.maven.search.constants.Constants;
 import net.worthington.android.maven.search.constants.OptionsMenuDialogActions;
 import net.worthington.android.maven.search.restletapi.dao.MCRDoc;
 import net.worthington.android.maven.search.restletapi.dao.MCRResponse;
 import android.app.Dialog;
 import android.app.ListActivity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -30,13 +26,10 @@ import android.widget.TextView;
 
 public class RealSearchResults extends ListActivity
 {
-  private ProgressThread progressThread;
-  private ProgressDialog progressDialog;
-  private Handler        iHandler;
-  
   private int iSearchType;
   private String iSelectedGroup;
   private String iSelectedArtifact;
+  private String iSelectedVersion;
   private Integer iSelectedVersionCount;
 
   @Override
@@ -53,6 +46,7 @@ public class RealSearchResults extends ListActivity
       TextView tv = (TextView) findViewById(R.id.SearchResultsTextView);
       tv.setText(searchResults.getNumFound() + " " + getSearchTypeString(iSearchType) + " Search Results:");
 
+      //TODO: adaptive list that loads 20 more results at the bottom 
       setListAdapter(new MyAdapter(this, R.layout.search_results_item, searchResults.getDocs()));
       getListView().setTextFilterEnabled(true);
     }
@@ -61,9 +55,6 @@ public class RealSearchResults extends ListActivity
       TextView tv = (TextView) findViewById(R.id.SearchResultsTextView);
       tv.setText("Search Results were null - check log");
     }
-
-    // Define the Handler that receives messages from the thread and update the progress
-    iHandler = new SearchResultsHandler(this);
   }
 
   private String getSearchTypeString(int pSearchType)
@@ -135,6 +126,10 @@ public class RealSearchResults extends ListActivity
         public void onClick(View pV)
         {
           Log.d(Constants.LOG_TAG, "Search Item was clicked");
+          setSelectedGroup(((TextView) pV.findViewById(R.id.groupIdTextView)).getText().toString());
+          setSelectedArtifact(((TextView) pV.findViewById(R.id.artifactIdTextView)).getText().toString());
+          setSelectedVersion(((TextView) pV.findViewById(R.id.latestVersionTextView)).getText().toString());
+          setSelectedVersionCount(Integer.valueOf(((TextView) pV.findViewById(R.id.versionCountTextView)).getText().toString()));
           // Create a progress dialog so we can see it's searching
           showDialog(Constants.PROGRESS_DIALOG_ARTIFACT_DETAILS);
         }
@@ -147,41 +142,13 @@ public class RealSearchResults extends ListActivity
   @Override
   protected Dialog onCreateDialog(int pId)
   {
-    Dialog returnValue = null;
-    switch (pId)
-    {
-      case Constants.PROGRESS_DIALOG_ARTIFACT_DETAILS:
-      case Constants.PROGRESS_DIALOG_GROUPID_SEARCH:
-      case Constants.PROGRESS_DIALOG_ARTIFACTID_SEARCH:
-      case Constants.PROGRESS_DIALOG_VERSION_SEARCH:
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.setMessage("Searching...");
-        progressDialog.setIndeterminate(true);
-        progressDialog.setCancelable(true);
-        returnValue = progressDialog;
-        break;
-      default:
-        returnValue = null;
-    }
-    return returnValue;
+    return OptionsMenuDialogActions.createProcessDialogHelper(pId, this);
   }
 
   @Override
   protected void onPrepareDialog(int pId, Dialog pDialog)
   {
-    switch (pId)
-    {
-      case Constants.PROGRESS_DIALOG_ARTIFACT_DETAILS:
-      case Constants.PROGRESS_DIALOG_GROUPID_SEARCH:
-      case Constants.PROGRESS_DIALOG_ARTIFACTID_SEARCH:
-      case Constants.PROGRESS_DIALOG_VERSION_SEARCH:
-        progressThread = new ProgressThread(iHandler, this, pId);
-        progressThread.start();
-        break;
-      default:
-        return;
-    }
+    OptionsMenuDialogActions.prepareProgressDialogHelper(pId, this);
   }
 
   @Override
@@ -189,6 +156,7 @@ public class RealSearchResults extends ListActivity
   {
     setSelectedGroup(((TextView) pV.findViewById(R.id.groupIdTextView)).getText().toString());
     setSelectedArtifact(((TextView) pV.findViewById(R.id.artifactIdTextView)).getText().toString());
+    setSelectedVersion(((TextView) pV.findViewById(R.id.latestVersionTextView)).getText().toString());
     setSelectedVersionCount(Integer.valueOf(((TextView) pV.findViewById(R.id.versionCountTextView)).getText().toString()));
 
     super.onCreateContextMenu(pMenu, pV, pMenuInfo);
@@ -273,5 +241,15 @@ public class RealSearchResults extends ListActivity
   private void setSelectedArtifact(String selectedArtifact)
   {
     iSelectedArtifact = selectedArtifact;
+  }
+
+  public String getSelectedVersion()
+  {
+    return iSelectedVersion;
+  }
+
+  private void setSelectedVersion(String selectedVersion)
+  {
+    iSelectedVersion = selectedVersion;
   }
 }

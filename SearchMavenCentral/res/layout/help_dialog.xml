@@ -8,7 +8,14 @@
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tap search results to view artifact information. Long press to search by group id, artifact id, or show all versions"
+        android:text="* Tap search results to view artifact information"
+        android:textSize="20sp" android:padding="10dp"/>
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="* Long press to search by group id, artifact id, or show all versions"
         android:textSize="20sp" android:padding="10dp"/>
 
 </LinearLayout>

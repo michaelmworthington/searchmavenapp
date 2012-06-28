@@ -4,8 +4,10 @@
 package net.worthington.android.maven.search;
 
 import net.worthington.android.maven.search.activities.ArtifactDetails;
+import net.worthington.android.maven.search.activities.PomViewActivity;
 import net.worthington.android.maven.search.activities.RealSearchResults;
 import net.worthington.android.maven.search.constants.Constants;
+import net.worthington.android.maven.search.restletapi.dao.MCRDoc;
 import net.worthington.android.maven.search.restletapi.dao.MCRResponse;
 import android.app.Activity;
 import android.content.Intent;
@@ -28,31 +30,24 @@ public class SearchResultsHandler extends Handler
   public void handleMessage(Message pMsg)
   {
     Intent intent = null;
-    switch (pMsg.arg1)
+    iActivity.dismissDialog(pMsg.arg1);
+
+    if (pMsg.arg2 == Constants.PROGRESS_DIALOG_ARTIFACT_DETAILS)
     {
-      case Constants.PROGRESS_DIALOG_QUICK_SEARCH:
-      case Constants.PROGRESS_DIALOG_ADVANCED_SEARCH:
-      case Constants.PROGRESS_DIALOG_GROUPID_SEARCH:
-      case Constants.PROGRESS_DIALOG_ARTIFACTID_SEARCH:
-      case Constants.PROGRESS_DIALOG_VERSION_SEARCH:
-      {
-        iActivity.dismissDialog(pMsg.arg1);
-        intent = new Intent(iActivity, RealSearchResults.class);
-        intent.putExtra(Constants.SEARCH_RESULTS, (MCRResponse) pMsg.obj);
-        intent.putExtra(Constants.SEARCH_TYPE, pMsg.arg1);
-        break;
-      }
-      case Constants.PROGRESS_DIALOG_ARTIFACT_DETAILS:
-      {
-        iActivity.dismissDialog(Constants.PROGRESS_DIALOG_ARTIFACT_DETAILS);
-        intent = new Intent(iActivity, ArtifactDetails.class);
-        break;
-      }
-      default:
-      {
-        // TODO: bad search type, throw runtime exception, i think?
-        break;
-      }
+      intent = new Intent(iActivity, ArtifactDetails.class);
+      intent.putExtra(Constants.ARTIFACT, (MCRDoc) pMsg.obj);
+    }
+    else if (pMsg.arg2 == Constants.PROGRESS_DIALOG_POM_VIEW)
+    {
+      intent = new Intent(iActivity, PomViewActivity.class);
+      intent.putExtra(Constants.ARTIFACT, ((ArtifactDetails)iActivity).getSelectedArtifact());
+      intent.putExtra(Constants.POM, (String) pMsg.obj);
+    }
+    else
+    {
+      intent = new Intent(iActivity, RealSearchResults.class);
+      intent.putExtra(Constants.SEARCH_RESULTS, (MCRResponse) pMsg.obj);
+      intent.putExtra(Constants.SEARCH_TYPE, pMsg.arg1);
     }
 
     iActivity.startActivity(intent);

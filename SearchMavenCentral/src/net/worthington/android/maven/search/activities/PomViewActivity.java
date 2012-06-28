@@ -3,6 +3,7 @@ package net.worthington.android.maven.search.activities;
 import net.worthington.android.maven.search.R;
 import net.worthington.android.maven.search.constants.Constants;
 import net.worthington.android.maven.search.constants.OptionsMenuDialogActions;
+import net.worthington.android.maven.search.restletapi.dao.MCRDoc;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,13 +21,17 @@ public class PomViewActivity extends Activity
     setContentView(R.layout.pom_view);
 
     Log.d(Constants.LOG_TAG, "Showing POM Details");
-    // TODO: fill in the real values
+    String pomText = (String) getIntent().getExtras().getSerializable(Constants.POM);
+    MCRDoc selectedArtifact = (MCRDoc) getIntent().getExtras().getSerializable(Constants.ARTIFACT);
 
-    TextView tv = (TextView) findViewById(R.id.pomTextView);
-    tv.setText("<project>...</project>");
+    TextView contentsTV = (TextView) findViewById(R.id.pomTextView);
+    TextView headerTV = (TextView) findViewById(R.id.pomHeaderTextView);
+
     // TODO: make it scroll
     // TODO: syntax highlighting??
-    // TODO: set @+id/pomHeaderTextView title with artifact information
+    contentsTV.setText(pomText);
+    headerTV.setText(selectedArtifact.getGAV());
+    
   }
 
   @Override

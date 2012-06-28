@@ -3,11 +3,13 @@
  */
 package net.worthington.android.maven.search;
 
+import net.worthington.android.maven.search.activities.ArtifactDetails;
 import net.worthington.android.maven.search.activities.Main;
 import net.worthington.android.maven.search.activities.MainAdvancedSearch;
 import net.worthington.android.maven.search.activities.RealSearchResults;
 import net.worthington.android.maven.search.constants.Constants;
 import net.worthington.android.maven.search.restletapi.MavenCentralRestAPI;
+import net.worthington.android.maven.search.restletapi.dao.MCRDoc;
 import net.worthington.android.maven.search.restletapi.dao.MCRResponse;
 import android.app.Activity;
 import android.os.Handler;
@@ -24,10 +26,10 @@ public class ProgressThread extends Thread
   private Activity iActivity;
   private int      iSearchType;
 
-  // todo: convert pSearchType to an ENUM
-  public ProgressThread(Handler pHandler, Activity pActivity, int pSearchType)
+  // TODO: convert pSearchType to an ENUM
+  public ProgressThread(Activity pActivity, int pSearchType)
   {
-    iHandler = pHandler;
+    iHandler = new SearchResultsHandler(pActivity);
     iActivity = pActivity;
     iSearchType = pSearchType;
   }
@@ -35,80 +37,77 @@ public class ProgressThread extends Thread
   public void run()
   {
     Message msg = iHandler.obtainMessage();
+    Object searchResults = null;
     MavenCentralRestAPI mcr = new MavenCentralRestAPI(iActivity);
 
     switch (iSearchType)
     {
       case Constants.PROGRESS_DIALOG_QUICK_SEARCH:
       {
-        MCRResponse searchResults = handleQuickSearch(mcr);
-
-        msg.arg1 = Constants.PROGRESS_DIALOG_QUICK_SEARCH;
-        msg.obj = searchResults;
+        searchResults = handleQuickSearch(mcr);
         break;
       }
       case Constants.PROGRESS_DIALOG_ADVANCED_SEARCH:
       {
-        MCRResponse searchResults = handleAdvancedSearch(mcr);
-
-        msg.arg1 = Constants.PROGRESS_DIALOG_ADVANCED_SEARCH;
-        msg.obj = searchResults;
+        searchResults = handleAdvancedSearch(mcr);
         break;
       }
       case Constants.PROGRESS_DIALOG_ARTIFACT_DETAILS:
       {
-        /*
-         * TextView groupTV = (TextView) iActivity.findViewById(R.id.groupIdTextView); TextView artifactTV = (TextView)
-         * iActivity.findViewById(R.id.artifactIdTextView); TextView latestVersionTV = (TextView)
-         * iActivity.findViewById(R.id.latestVersionTextView); TextView lastUpdateTV = (TextView)
-         * iActivity.findViewById(R.id.lastUpdateTextView);
-         */
+        RealSearchResults rsr = (RealSearchResults) iActivity;
 
-        // TODO: pass along the actual artifact details
-
-        msg.arg1 = Constants.PROGRESS_DIALOG_ARTIFACT_DETAILS;
+        msg.arg2 = Constants.PROGRESS_DIALOG_ARTIFACT_DETAILS;
+        searchResults = new MCRDoc();
+        ((MCRDoc)searchResults).setG(rsr.getSelectedGroup());
+        ((MCRDoc)searchResults).setA(rsr.getSelectedArtifact());
+        ((MCRDoc)searchResults).setV(rsr.getSelectedVersion());
         break;
       }
       case Constants.PROGRESS_DIALOG_GROUPID_SEARCH:
       {
-        MCRResponse searchResults = handleGroupIdSearch(mcr);
-
-        msg.arg1 = Constants.PROGRESS_DIALOG_GROUPID_SEARCH;
-        msg.obj = searchResults;
+        searchResults = handleGroupIdSearch(mcr);
         break;
       }
       case Constants.PROGRESS_DIALOG_ARTIFACTID_SEARCH:
       {
-        MCRResponse searchResults = handleArtifactIdSearch(mcr);
-
-        msg.arg1 = Constants.PROGRESS_DIALOG_ARTIFACTID_SEARCH;
-        msg.obj = searchResults;
+        searchResults = handleArtifactIdSearch(mcr);
         break;
       }
       case Constants.PROGRESS_DIALOG_VERSION_SEARCH:
       {
         RealSearchResults rsr = (RealSearchResults) iActivity;
+
         Integer selectedVersionCount = rsr.getSelectedVersionCount();
 
         if (selectedVersionCount > 1)
         {
-          MCRResponse searchResults = handleVersionSearch(mcr, rsr);
-
-          msg.arg1 = Constants.PROGRESS_DIALOG_VERSION_SEARCH;
-          msg.obj = searchResults;
+          searchResults = handleVersionSearch(mcr, rsr);
         }
         else
         {
-          // TODO: pass along the actual artifact details
-
-          msg.arg1 = Constants.PROGRESS_DIALOG_ARTIFACT_DETAILS;
+          msg.arg2 = Constants.PROGRESS_DIALOG_ARTIFACT_DETAILS;
+          searchResults = new MCRDoc();
+          ((MCRDoc)searchResults).setG(rsr.getSelectedGroup());
+          ((MCRDoc)searchResults).setA(rsr.getSelectedArtifact());
+          ((MCRDoc)searchResults).setV(rsr.getSelectedVersion());
         }
+        break;
+      }
+      case Constants.PROGRESS_DIALOG_POM_VIEW:
+      {
+        ArtifactDetails rsr = (ArtifactDetails) iActivity;
+
+        msg.arg2 = Constants.PROGRESS_DIALOG_POM_VIEW;
+        searchResults = mcr.downloadFile(rsr.getGTVText(), rsr.getATVText(), rsr.getVTVText());
         break;
       }
       default:
         // TODO: bad search type, throw runtime exception, i think?
         break;
     }
+
+    msg.arg1 = iSearchType;
+    msg.obj = searchResults;
 
     iHandler.sendMessage(msg);
   }

@@ -109,14 +109,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
-                <EditText
-                    android:id="@+id/asClassNameSearchText"
+                <TextView
+                    android:id="@+id/adDependencyText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:maxLines="6"
                     android:text="&lt;dependency>&#10;    &lt;groupId>log4j&lt;/groupId>&#10;    &lt;artifactId>log4j&lt;/artifactId>&#10;    &lt;version>1.2.27&lt;/version>&#10;&lt;/dependency>" >
-                </EditText>
+                </TextView>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -134,7 +134,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Show POM" />
-
+<!-- TODO: Commenting out until I can find out how to get the file list
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -151,7 +151,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Show Artifact File List" />
-
+ -->
                 </TableLayout>
         </RelativeLayout>
     </ScrollView>

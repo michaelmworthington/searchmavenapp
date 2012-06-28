@@ -1,8 +1,11 @@
 package net.worthington.android.maven.search.constants;
 
+import net.worthington.android.maven.search.ProgressThread;
 import net.worthington.android.maven.search.R;
 import net.worthington.android.maven.search.activities.Preferences;
+import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -42,4 +45,49 @@ public class OptionsMenuDialogActions
     
     d.show();
   }
+
+  public static ProgressDialog createProcessDialogHelper(int pId, Context pContext)
+  {
+    ProgressDialog returnValue = null;
+    switch (pId)
+    {
+      case Constants.PROGRESS_DIALOG_QUICK_SEARCH:
+      case Constants.PROGRESS_DIALOG_ADVANCED_SEARCH:
+      case Constants.PROGRESS_DIALOG_ARTIFACT_DETAILS:
+      case Constants.PROGRESS_DIALOG_GROUPID_SEARCH:
+      case Constants.PROGRESS_DIALOG_ARTIFACTID_SEARCH:
+      case Constants.PROGRESS_DIALOG_VERSION_SEARCH:
+      case Constants.PROGRESS_DIALOG_POM_VIEW:
+        returnValue = new ProgressDialog(pContext);
+        returnValue.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        returnValue.setMessage("Searching...");
+        returnValue.setIndeterminate(true);
+        returnValue.setCancelable(true);
+        break;
+      default:
+        returnValue = null;
+    }
+    return returnValue;
+  }
+
+  public static void prepareProgressDialogHelper(int pId, Activity pActivity)
+  {
+    switch (pId)
+    {
+      case Constants.PROGRESS_DIALOG_QUICK_SEARCH:
+      case Constants.PROGRESS_DIALOG_ADVANCED_SEARCH:
+      case Constants.PROGRESS_DIALOG_ARTIFACT_DETAILS:
+      case Constants.PROGRESS_DIALOG_GROUPID_SEARCH:
+      case Constants.PROGRESS_DIALOG_ARTIFACTID_SEARCH:
+      case Constants.PROGRESS_DIALOG_VERSION_SEARCH:
+      case Constants.PROGRESS_DIALOG_POM_VIEW:
+        ProgressThread progressThread = new ProgressThread(pActivity, pId);
+        progressThread.start();
+        // TODO: is it possible to handle a kill/cancel dialog and kill the thread
+        break;
+      default:
+        return;
+    }
+  }
+
 }

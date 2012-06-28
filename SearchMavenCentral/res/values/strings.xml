@@ -11,15 +11,6 @@
     <string name="lastUpdate">last update</string>
     <string name="search">Search</string>
 
-    <string-array name="dependency_formats">
-        <item>Apache Maven</item>
-        <item>Apache Buildr</item>
-        <item>Apache Ivy</item>
-        <item>Groovy Grape</item>
-        <item>Grails</item>
-        <item>Scala SBT</item>
-    </string-array>
-    
     <string-array name="sample_log4j_file_list">
         <item>log4j.pom</item>
         <item>log4j.pom.asc</item>

@@ -1,17 +1,13 @@
 package net.worthington.android.maven.search.activities;
 
-import net.worthington.android.maven.search.ProgressThread;
 import net.worthington.android.maven.search.R;
-import net.worthington.android.maven.search.SearchResultsHandler;
 import net.worthington.android.maven.search.constants.Constants;
 import net.worthington.android.maven.search.constants.OptionsMenuDialogActions;
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,10 +20,6 @@ import android.widget.ImageButton;
 
 public class MainAdvancedSearch extends Activity implements OnClickListener
 {
-  private ProgressThread progressThread;
-  private ProgressDialog progressDialog;
-  private Handler        iHandler;
-
   private EditText       groupIdSearchText;
   private EditText       artifactIdSearchText;
   private EditText       versionSearchText;
@@ -65,10 +57,6 @@ public class MainAdvancedSearch extends Activity implements OnClickListener
 
     Button qsb = (Button) findViewById(R.id.mainQuickSearchButton);
     qsb.setOnClickListener(this);
-
-    // Define the Handler that receives messages from the thread and update the progress
-    iHandler = new SearchResultsHandler(this);
-
   }
 
   @Override
@@ -110,35 +98,13 @@ public class MainAdvancedSearch extends Activity implements OnClickListener
   @Override
   protected Dialog onCreateDialog(int pId)
   {
-    Dialog returnValue = null;
-    switch (pId)
-    {
-      case Constants.PROGRESS_DIALOG_ADVANCED_SEARCH:
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.setMessage("Searching...");
-        progressDialog.setIndeterminate(true);
-        progressDialog.setCancelable(true);
-        returnValue = progressDialog;
-        break;
-      default:
-        returnValue = null;
-    }
-    return returnValue;
+    return OptionsMenuDialogActions.createProcessDialogHelper(pId, this);
   }
 
   @Override
   protected void onPrepareDialog(int pId, Dialog pDialog)
   {
-    switch (pId)
-    {
-      case Constants.PROGRESS_DIALOG_ADVANCED_SEARCH:
-        progressThread = new ProgressThread(iHandler, this, Constants.PROGRESS_DIALOG_ADVANCED_SEARCH);
-        progressThread.start();// TODO: is it possible to handle a kill/cancel dialog and kill the thread
-        break;
-      default:
-        return;
-    }
+    OptionsMenuDialogActions.prepareProgressDialogHelper(pId, this);
   }
 
   @Override
