@@ -6,6 +6,7 @@ import net.worthington.android.maven.search.constants.OptionsMenuDialogActions;
 import net.worthington.android.maven.search.restletapi.dao.MCRDoc;
 import android.app.Activity;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,9 +28,10 @@ public class PomViewActivity extends Activity
     TextView contentsTV = (TextView) findViewById(R.id.pomTextView);
     TextView headerTV = (TextView) findViewById(R.id.pomHeaderTextView);
 
-    // TODO: make it scroll
     // TODO: syntax highlighting??
     contentsTV.setText(pomText);
+    contentsTV.setMovementMethod(new ScrollingMovementMethod());
+    contentsTV.setHorizontallyScrolling(true);
     headerTV.setText(selectedArtifact.getGAV());
     
   }

@@ -22,14 +22,16 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class RealSearchResults extends ListActivity
 {
-  private int iSearchType;
-  private String iSelectedGroup;
-  private String iSelectedArtifact;
-  private String iSelectedVersion;
+  private int     iSearchType;
+  private String  iSelectedGroup;
+  private String  iSelectedArtifact;
+  private String  iSelectedVersion;
   private Integer iSelectedVersionCount;
 
   @Override
@@ -46,9 +48,15 @@ public class RealSearchResults extends ListActivity
       TextView tv = (TextView) findViewById(R.id.SearchResultsTextView);
       tv.setText(searchResults.getNumFound() + " " + getSearchTypeString(iSearchType) + " Search Results:");
 
-      //TODO: adaptive list that loads 20 more results at the bottom 
       setListAdapter(new MyAdapter(this, R.layout.search_results_item, searchResults.getDocs()));
       getListView().setTextFilterEnabled(true);
+
+      // Creating a button - Load More
+      Button btnLoadMore = new Button(this);
+      btnLoadMore.setText("Load More");
+
+      // Adding button to listview at footer
+      getListView().addFooterView(btnLoadMore);
     }
     else
     {
@@ -129,7 +137,8 @@ public class RealSearchResults extends ListActivity
           setSelectedGroup(((TextView) pV.findViewById(R.id.groupIdTextView)).getText().toString());
           setSelectedArtifact(((TextView) pV.findViewById(R.id.artifactIdTextView)).getText().toString());
           setSelectedVersion(((TextView) pV.findViewById(R.id.latestVersionTextView)).getText().toString());
-          setSelectedVersionCount(Integer.valueOf(((TextView) pV.findViewById(R.id.versionCountTextView)).getText().toString()));
+          setSelectedVersionCount(Integer.valueOf(((TextView) pV.findViewById(R.id.versionCountTextView)).getText()
+                                                                                                         .toString()));
           // Create a progress dialog so we can see it's searching
           showDialog(Constants.PROGRESS_DIALOG_ARTIFACT_DETAILS);
         }
@@ -157,20 +166,21 @@ public class RealSearchResults extends ListActivity
     setSelectedGroup(((TextView) pV.findViewById(R.id.groupIdTextView)).getText().toString());
     setSelectedArtifact(((TextView) pV.findViewById(R.id.artifactIdTextView)).getText().toString());
     setSelectedVersion(((TextView) pV.findViewById(R.id.latestVersionTextView)).getText().toString());
-    setSelectedVersionCount(Integer.valueOf(((TextView) pV.findViewById(R.id.versionCountTextView)).getText().toString()));
+    setSelectedVersionCount(Integer.valueOf(((TextView) pV.findViewById(R.id.versionCountTextView)).getText()
+                                                                                                   .toString()));
 
     super.onCreateContextMenu(pMenu, pV, pMenuInfo);
     pMenu.setHeaderTitle("Search By:");
-    
-    if ( iSearchType != Constants.PROGRESS_DIALOG_GROUPID_SEARCH )
+
+    if (iSearchType != Constants.PROGRESS_DIALOG_GROUPID_SEARCH)
     {
       pMenu.add(Menu.NONE, R.id.contextMenuSearchGroupId, 1, "Group Id");
     }
-    if ( iSearchType != Constants.PROGRESS_DIALOG_ARTIFACTID_SEARCH )
+    if (iSearchType != Constants.PROGRESS_DIALOG_ARTIFACTID_SEARCH)
     {
       pMenu.add(Menu.NONE, R.id.contextMenuSearchArtifactId, 2, "Artifact Id");
     }
-    if ( iSearchType != Constants.PROGRESS_DIALOG_VERSION_SEARCH)
+    if (iSearchType != Constants.PROGRESS_DIALOG_VERSION_SEARCH)
     {
       pMenu.add(Menu.NONE, R.id.contextMenuSearchAllVersions, 3, "All " + getSelectedVersionCount() + " Versions");
     }

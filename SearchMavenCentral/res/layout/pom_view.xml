@@ -23,21 +23,13 @@
         android:textSize="20sp"
         android:textStyle="bold" />
 
-    <ScrollView
-        android:id="@+id/scrollView1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-
             <TextView
                 android:id="@+id/pomTextView"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:text="pom.xml" />
-        </LinearLayout>
-    </ScrollView>
+                android:text="pom.xml" 
+                android:typeface="monospace"
+                android:fadeScrollbars="true"
+                android:scrollbars="horizontal|vertical"/>
 
 </LinearLayout>

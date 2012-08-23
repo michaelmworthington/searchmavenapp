@@ -3,10 +3,10 @@ package net.worthington.android.maven.search.activities;
 import net.worthington.android.maven.search.R;
 import net.worthington.android.maven.search.constants.Constants;
 import net.worthington.android.maven.search.constants.OptionsMenuDialogActions;
+import net.worthington.android.maven.search.constants.TextViewHelper;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -16,13 +16,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
+import android.view.View.OnKeyListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
-public class Main extends Activity implements OnClickListener
+public class Main extends Activity implements OnClickListener, OnKeyListener
 {
   private EditText searchEditText;
 
@@ -37,51 +36,44 @@ public class Main extends Activity implements OnClickListener
     // Make sure the defaults are set from XML
     PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
-    setSearchEditText((EditText) findViewById(R.id.searchEditText));
-    getSearchEditText().setOnClickListener(this);
-
-    // http://stackoverflow.com/questions/3205339/android-how-to-make-keyboard-enter-button-say-search-and-handle-its-click
-    getSearchEditText().setOnEditorActionListener(new TextView.OnEditorActionListener() {
-      @Override
-      public boolean onEditorAction(TextView pV, int pActionId, KeyEvent pEvent)
-      {
-        Log.d(Constants.LOG_TAG, "Text View editor action: " + pActionId);
-        if (pActionId == EditorInfo.IME_ACTION_SEARCH)
-        {
-          showDialog(Constants.PROGRESS_DIALOG_QUICK_SEARCH);
-          return true;
-        }
-        return false;
-      }
-    });
+    setSearchEditText(TextViewHelper.lookupEditTextAndSetListeners(this, R.id.searchEditText, Constants.PROGRESS_DIALOG_QUICK_SEARCH));
 
     ImageButton ib = (ImageButton) findViewById(R.id.searchImageButton);
     ib.setOnClickListener(this);
 
+    Button tsr = (Button) findViewById(R.id.mainTestSearchResultsButton);
+    tsr.setOnClickListener(this);
+
     Button asb = (Button) findViewById(R.id.mainAdvancedSearchButton);
     asb.setOnClickListener(this);
-  }
+}
 
   @Override
-  public void onClick(View v)
+  public void onClick(View pV)
   {
-    if (v.getId() == R.id.searchEditText)
+    if (pV.getId() == R.id.searchEditText)
     {
       Log.d(Constants.LOG_TAG, "Edit Text field was clicked");
-      if ("Search".equals(getSearchEditText().getText().toString()))
-      {
-        getSearchEditText().setText("");
-        getSearchEditText().setTextColor(Color.BLACK);
-      }
+      EditText et = (EditText) pV;
+
+      TextViewHelper.clearTextView(et);
     }
-    else if (v.getId() == R.id.searchImageButton)
+    else if (pV.getId() == R.id.searchImageButton)
     {
       Log.d(Constants.LOG_TAG, "Search button was clicked. Go to Searching");
 
       // Create a progress dialog so we can see it's searching
       showDialog(Constants.PROGRESS_DIALOG_QUICK_SEARCH);
     }
-    else if (v.getId() == R.id.mainAdvancedSearchButton)
+    else if (pV.getId() == R.id.mainTestSearchResultsButton)
+    {
+      Log.d(Constants.LOG_TAG, "Test Search Results button was clicked. Go to to Test Search Results Activity");
+
+      Intent intent = new Intent(Main.this, TestSearchResults.class);
+      startActivity(intent);
+
+    }
+    else if (pV.getId() == R.id.mainAdvancedSearchButton)
     {
       Log.d(Constants.LOG_TAG, "Advanced Search button was clicked. Go to to Advanced Search Activity");
 
@@ -93,6 +85,19 @@ public class Main extends Activity implements OnClickListener
     {
       Log.d(Constants.LOG_TAG, "Another field was clicked");
     }
+  }
+
+  @Override
+  public boolean onKey(View pV, int pKeyCode, KeyEvent pEvent)
+  {
+    if (pV.getId() == R.id.searchEditText)
+    {
+      //Log.d(Constants.LOG_TAG, "Keys were pressed in Edit Text field");
+      EditText et = (EditText) pV;
+
+      TextViewHelper.clearTextView(et);
+    }
+    return false;
   }
 
   @Override

@@ -11,7 +11,15 @@
         android:defaultValue="20"
         android:key="numResults"
         android:numeric="integer"
-        android:summary="The number of search results to retrieve from Maven Central."
+        android:summary="The number of search results to retrieve upon each request from Maven Central. A lower number will result in the search results fetching additional records more often, but results will come back quicker."
         android:title="Num Results" />
+
+    <!-- This is disabled for now until I implement searching against the Nexus API versus the Search.Maven.Org REST API -->
+    <EditTextPreference
+        android:defaultValue=""
+        android:enabled="false"  
+        android:key="nexusUrl"
+        android:summary="Search this Nexus URL instead of Maven Central. (Disabled-Future Enhancement)"
+        android:title="Nexus URL" />
 
 </PreferenceScreen>

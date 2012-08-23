@@ -1,31 +1,34 @@
 package net.worthington.android.maven.search.activities;
 
+import net.worthington.android.maven.search.KeyboardSearchEditorActionListener;
 import net.worthington.android.maven.search.R;
 import net.worthington.android.maven.search.constants.Constants;
 import net.worthington.android.maven.search.constants.OptionsMenuDialogActions;
+import net.worthington.android.maven.search.constants.TextViewHelper;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnKeyListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
-public class MainAdvancedSearch extends Activity implements OnClickListener
+public class MainAdvancedSearch extends Activity implements OnClickListener, OnKeyListener
 {
-  private EditText       groupIdSearchText;
-  private EditText       artifactIdSearchText;
-  private EditText       versionSearchText;
-  private EditText       packagingSearchText;
-  private EditText       classifierSearchText;
-  private EditText       classNameSearchText;
+  private EditText groupIdSearchText;
+  private EditText artifactIdSearchText;
+  private EditText versionSearchText;
+  private EditText packagingSearchText;
+  private EditText classifierSearchText;
+  private EditText classNameSearchText;
 
   /** Called when the activity is first created. */
   @Override
@@ -34,23 +37,12 @@ public class MainAdvancedSearch extends Activity implements OnClickListener
     super.onCreate(savedInstanceState);
     setContentView(R.layout.main_advanced_search);
 
-    setGroupIdSearchText((EditText) findViewById(R.id.asGroupIdSearchText));
-    getGroupIdSearchText().setOnClickListener(this);
-
-    setArtifactIdSearchText((EditText) findViewById(R.id.asArtifactIdSearchText));
-    getArtifactIdSearchText().setOnClickListener(this);
-
-    setVersionSearchText((EditText) findViewById(R.id.asVersionSearchText));
-    getVersionSearchText().setOnClickListener(this);
-
-    setPackagingSearchText((EditText) findViewById(R.id.asPackagingSearchText));
-    getPackagingSearchText().setOnClickListener(this);
-
-    setClassifierSearchText((EditText) findViewById(R.id.asClassifierSearchText));
-    getClassifierSearchText().setOnClickListener(this);
-
-    setClassNameSearchText((EditText) findViewById(R.id.asClassNameSearchText));
-    getClassNameSearchText().setOnClickListener(this);
+    setGroupIdSearchText(TextViewHelper.lookupEditTextAndSetListeners(this, R.id.asGroupIdSearchText, Constants.PROGRESS_DIALOG_ADVANCED_SEARCH));
+    setArtifactIdSearchText(TextViewHelper.lookupEditTextAndSetListeners(this, R.id.asArtifactIdSearchText, Constants.PROGRESS_DIALOG_ADVANCED_SEARCH));
+    setVersionSearchText(TextViewHelper.lookupEditTextAndSetListeners(this, R.id.asVersionSearchText, Constants.PROGRESS_DIALOG_ADVANCED_SEARCH));
+    setPackagingSearchText(TextViewHelper.lookupEditTextAndSetListeners(this, R.id.asPackagingSearchText, Constants.PROGRESS_DIALOG_ADVANCED_SEARCH));
+    setClassifierSearchText(TextViewHelper.lookupEditTextAndSetListeners(this, R.id.asClassifierSearchText, Constants.PROGRESS_DIALOG_ADVANCED_SEARCH));
+    setClassNameSearchText(TextViewHelper.lookupEditTextAndSetListeners(this, R.id.asClassNameSearchText, Constants.PROGRESS_DIALOG_ADVANCED_SEARCH));
 
     ImageButton ib = (ImageButton) findViewById(R.id.searchImageButton);
     ib.setOnClickListener(this);
@@ -60,29 +52,25 @@ public class MainAdvancedSearch extends Activity implements OnClickListener
   }
 
   @Override
-  public void onClick(View v)
+  public void onClick(View pV)
   {
-    if (v.getId() == R.id.asGroupIdSearchText || v.getId() == R.id.asArtifactIdSearchText
-        || v.getId() == R.id.asVersionSearchText || v.getId() == R.id.asPackagingSearchText
-        || v.getId() == R.id.asClassifierSearchText || v.getId() == R.id.asClassNameSearchText)
+    if (pV.getId() == R.id.asGroupIdSearchText || pV.getId() == R.id.asArtifactIdSearchText
+        || pV.getId() == R.id.asVersionSearchText || pV.getId() == R.id.asPackagingSearchText
+        || pV.getId() == R.id.asClassifierSearchText || pV.getId() == R.id.asClassNameSearchText)
     {
       Log.d(Constants.LOG_TAG, "Edit Text field was clicked");
-      EditText et = (EditText) v;
+      EditText et = (EditText) pV;
 
-      if ("Search".equals(et.getText().toString()))
-      {
-        et.setText("");
-        et.setTextColor(Color.BLACK);
-      }
+      TextViewHelper.clearTextView(et);
     }
-    else if (v.getId() == R.id.searchImageButton)
+    else if (pV.getId() == R.id.searchImageButton)
     {
       Log.d(Constants.LOG_TAG, "Search button was clicked. Go to Searching");
 
       // Create a progress dialog so we can see it's searching
       showDialog(Constants.PROGRESS_DIALOG_ADVANCED_SEARCH);
     }
-    else if (v.getId() == R.id.mainQuickSearchButton)
+    else if (pV.getId() == R.id.mainQuickSearchButton)
     {
       Log.d(Constants.LOG_TAG, "Quick Search button was clicked. Go to to Quick Search Activity");
 
@@ -93,6 +81,21 @@ public class MainAdvancedSearch extends Activity implements OnClickListener
     {
       Log.d(Constants.LOG_TAG, "Another field was clicked");
     }
+  }
+
+  @Override
+  public boolean onKey(View pV, int pKeyCode, KeyEvent pEvent)
+  {
+    if (pV.getId() == R.id.asGroupIdSearchText || pV.getId() == R.id.asArtifactIdSearchText
+        || pV.getId() == R.id.asVersionSearchText || pV.getId() == R.id.asPackagingSearchText
+        || pV.getId() == R.id.asClassifierSearchText || pV.getId() == R.id.asClassNameSearchText)
+    {
+      //Log.d(Constants.LOG_TAG, "Keys were pressed in Edit Text field");
+      EditText et = (EditText) pV;
+
+      TextViewHelper.clearTextView(et);
+    }
+    return false;
   }
 
   @Override
