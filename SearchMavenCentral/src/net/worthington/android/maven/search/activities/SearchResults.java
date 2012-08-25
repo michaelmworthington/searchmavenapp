@@ -1,5 +1,6 @@
 package net.worthington.android.maven.search.activities;
 
+import java.util.Arrays;
 import java.util.List;
 
 import net.worthington.android.maven.search.R;
@@ -7,9 +8,14 @@ import net.worthington.android.maven.search.constants.Constants;
 import net.worthington.android.maven.search.constants.OptionsMenuDialogActions;
 import net.worthington.android.maven.search.restletapi.dao.MCRDoc;
 import net.worthington.android.maven.search.restletapi.dao.MCRResponse;
+
+import org.joda.time.DateTime;
+
+import android.app.Activity;
 import android.app.Dialog;
-import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -19,25 +25,30 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
-public class RealSearchResults extends ListActivity
+public class SearchResults extends Activity
 {
-  private int     iSearchType;
-  private String  iSelectedGroup;
-  private String  iSelectedArtifact;
-  private String  iSelectedVersion;
-  private Integer iSelectedVersionCount;
+  private int          iSearchType;
+  private String       iSelectedGroup;
+  private String       iSelectedArtifact;
+  private String       iSelectedVersion;
+  private Integer      iSelectedVersionCount;
+  private MyAdapter    iAdapter;
+  private List<MCRDoc> iSearchResults;
+  private ListView     iLv;
 
   @Override
-  protected void onCreate(Bundle pSavedInstanceState)
+  public void onCreate(Bundle pSavedInstanceState)
   {
     super.onCreate(pSavedInstanceState);
-    setContentView(R.layout.real_search_results);
+    setContentView(R.layout.search_results);
 
     MCRResponse searchResults = (MCRResponse) getIntent().getExtras().getSerializable(Constants.SEARCH_RESULTS);
     iSearchType = (Integer) getIntent().getExtras().getSerializable(Constants.SEARCH_TYPE);
@@ -47,15 +58,47 @@ public class RealSearchResults extends ListActivity
       TextView tv = (TextView) findViewById(R.id.SearchResultsTextView);
       tv.setText(searchResults.getNumFound() + " " + getSearchTypeString(iSearchType) + " Search Results:");
 
-      setListAdapter(new MyAdapter(this, R.layout.real_search_results_item, searchResults.getDocs()));
-      getListView().setTextFilterEnabled(true);
+      iLv = (ListView) findViewById(R.id.list);
 
       // Creating a button - Load More
       Button btnLoadMore = new Button(this);
       btnLoadMore.setText("Load More");
 
       // Adding button to listview at footer
-      getListView().addFooterView(btnLoadMore);
+      iLv.addFooterView(btnLoadMore);
+
+      iSearchResults = searchResults.getDocs();
+      iAdapter = new MyAdapter(this, iSearchResults);
+      iLv.setAdapter(iAdapter);
+      
+      registerForContextMenu(iLv);
+      
+      iLv.setOnItemClickListener(new OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> pArg0, View pV, int pArg2, long pArg3)
+        {
+          Log.d(Constants.LOG_TAG, "Search Result was clicked");
+          setSelectedGroup(((TextView) pV.findViewById(R.id.groupIdTextView)).getText().toString());
+          setSelectedArtifact(((TextView) pV.findViewById(R.id.artifactIdTextView)).getText().toString());
+          setSelectedVersion(((TextView) pV.findViewById(R.id.latestVersionTextView)).getText().toString());
+          setSelectedVersionCount(Integer.valueOf(((TextView) pV.findViewById(R.id.versionCountTextView)).getText()
+                                                                                                         .toString()));
+          // Create a progress dialog so we can see it's searching
+          showDialog(Constants.PROGRESS_DIALOG_ARTIFACT_DETAILS);
+        }
+      });
+
+
+      btnLoadMore.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View arg0)
+        {
+          // Starting a new async task
+          Log.d(Constants.LOG_TAG, "Loading more results");
+          new LoadMoreListViewThread().execute();
+        }
+      });
     }
     else
     {
@@ -88,29 +131,53 @@ public class RealSearchResults extends ListActivity
     return returnValue;
   }
 
-  private class MyAdapter extends ArrayAdapter<MCRDoc>
+  private class MyAdapter extends BaseAdapter
   {
 
-    public MyAdapter(Context pContext, int pTextViewResourceId, List<MCRDoc> pObjects)
+    private Activity     iActivity;
+    private List<MCRDoc> iData;
+
+    public MyAdapter(Activity pActivity, List<MCRDoc> pData)
     {
-      super(pContext, pTextViewResourceId, pObjects);
+      iActivity = pActivity;
+      iData = pData;
+    }
+
+    @Override
+    public int getCount()
+    {
+      return iData.size();
+    }
+
+    @Override
+    public Object getItem(int pPosition)
+    {
+      return pPosition;
+    }
+
+    @Override
+    public long getItemId(int pPosition)
+    {
+      return pPosition;
     }
 
     @Override
     public View getView(int pPosition, View pConvertView, ViewGroup pParent)
     {
-      LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-      View row = inflater.inflate(R.layout.real_search_results_item, pParent, false);
+      View row = pConvertView;
+      if (pConvertView == null)
+      {
+        LayoutInflater inflater = (LayoutInflater) iActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        row = inflater.inflate(R.layout.search_results_item, null);
+      }
+
       TextView groupTV = (TextView) row.findViewById(R.id.groupIdTextView);
       TextView artifactTV = (TextView) row.findViewById(R.id.artifactIdTextView);
       TextView latestVersionTV = (TextView) row.findViewById(R.id.latestVersionTextView);
       TextView lastUpdateTV = (TextView) row.findViewById(R.id.lastUpdateTextView);
       TextView versionCount = (TextView) row.findViewById(R.id.versionCountTextView);
 
-      MCRResponse searchResults = (MCRResponse) getIntent().getExtras().getSerializable(Constants.SEARCH_RESULTS);
-      List<MCRDoc> sampleResults = searchResults.getDocs();
-
-      MCRDoc mavenCentralArtifactResult = sampleResults.get(pPosition);
+      MCRDoc mavenCentralArtifactResult = iData.get(pPosition);
 
       groupTV.setText(mavenCentralArtifactResult.getG());
       artifactTV.setText(mavenCentralArtifactResult.getA());
@@ -124,24 +191,6 @@ public class RealSearchResults extends ListActivity
       latestVersionTV.setText(version);
       lastUpdateTV.setText(mavenCentralArtifactResult.getTimestamp().toString("dd-MMM-yyyy"));
       versionCount.setText(Integer.toString(mavenCentralArtifactResult.getVersionCount()));
-
-      registerForContextMenu(row);
-
-      row.setOnClickListener(new OnClickListener() {
-
-        @Override
-        public void onClick(View pV)
-        {
-          Log.d(Constants.LOG_TAG, "Search Item was clicked");
-          setSelectedGroup(((TextView) pV.findViewById(R.id.groupIdTextView)).getText().toString());
-          setSelectedArtifact(((TextView) pV.findViewById(R.id.artifactIdTextView)).getText().toString());
-          setSelectedVersion(((TextView) pV.findViewById(R.id.latestVersionTextView)).getText().toString());
-          setSelectedVersionCount(Integer.valueOf(((TextView) pV.findViewById(R.id.versionCountTextView)).getText()
-                                                                                                         .toString()));
-          // Create a progress dialog so we can see it's searching
-          showDialog(Constants.PROGRESS_DIALOG_ARTIFACT_DETAILS);
-        }
-      });
 
       return row;
     }
@@ -162,10 +211,12 @@ public class RealSearchResults extends ListActivity
   @Override
   public void onCreateContextMenu(ContextMenu pMenu, View pV, ContextMenuInfo pMenuInfo)
   {
-    setSelectedGroup(((TextView) pV.findViewById(R.id.groupIdTextView)).getText().toString());
-    setSelectedArtifact(((TextView) pV.findViewById(R.id.artifactIdTextView)).getText().toString());
-    setSelectedVersion(((TextView) pV.findViewById(R.id.latestVersionTextView)).getText().toString());
-    setSelectedVersionCount(Integer.valueOf(((TextView) pV.findViewById(R.id.versionCountTextView)).getText()
+    AdapterView.AdapterContextMenuInfo menuItem = (AdapterView.AdapterContextMenuInfo) pMenuInfo;
+    View menuView = menuItem.targetView;
+    setSelectedGroup(((TextView) menuView.findViewById(R.id.groupIdTextView)).getText().toString());
+    setSelectedArtifact(((TextView) menuView.findViewById(R.id.artifactIdTextView)).getText().toString());
+    setSelectedVersion(((TextView) menuView.findViewById(R.id.latestVersionTextView)).getText().toString());
+    setSelectedVersionCount(Integer.valueOf(((TextView) menuView.findViewById(R.id.versionCountTextView)).getText()
                                                                                                    .toString()));
 
     super.onCreateContextMenu(pMenu, pV, pMenuInfo);
@@ -260,5 +311,58 @@ public class RealSearchResults extends ListActivity
   private void setSelectedVersion(String selectedVersion)
   {
     iSelectedVersion = selectedVersion;
+  }
+
+  private class LoadMoreListViewThread extends AsyncTask<Void, Void, Void>
+  {
+    private ProgressDialog pDialog;
+
+    @Override
+    protected void onPreExecute()
+    {
+      // Showing progress dialog before sending http request
+      pDialog = new ProgressDialog(SearchResults.this);
+      pDialog.setMessage("Please wait..");
+      pDialog.setIndeterminate(true);
+      pDialog.setCancelable(false);
+      pDialog.show();
+    }
+
+    protected Void doInBackground(Void... unused)
+    {
+      runOnUiThread(new Runnable() {
+
+        public void run()
+        {
+          MCRDoc doc = new MCRDoc();
+          doc.setG("com.searchmavenapp");
+          doc.setA("utils");
+          doc.setLatestVersion("1.0");
+          doc.setRepositoryId("central");
+          doc.setP("bundle");
+          doc.setTimestamp(new DateTime(1338025419000L));
+          doc.setVersionCount(2);
+          doc.setText(Arrays.asList("log4j", "log4j", "-sources.jar", "-javadoc.jar", ".jar", ".zip", ".tar.gz", "pom"));
+          doc.setEc(Arrays.asList("-sources.jar", "-javadoc.jar", ".jar", ".zip", ".tar.gz", "pom"));
+          iSearchResults.add(doc);
+
+          // get listview current position - used to maintain scroll position
+          int currentPosition = iLv.getFirstVisiblePosition();
+
+          // Appending new data to menuItems ArrayList
+          iAdapter = new MyAdapter(SearchResults.this, iSearchResults);
+
+          // Setting new scroll position
+          iLv.setSelectionFromTop(currentPosition + 1, 0);
+        }
+      });
+      return (null);
+    }
+
+    protected void onPostExecute(Void unused)
+    {
+      // closing progress dialog
+      pDialog.dismiss();
+    }
   }
 }

@@ -6,7 +6,7 @@ package net.worthington.android.maven.search;
 import net.worthington.android.maven.search.activities.ArtifactDetails;
 import net.worthington.android.maven.search.activities.Main;
 import net.worthington.android.maven.search.activities.MainAdvancedSearch;
-import net.worthington.android.maven.search.activities.RealSearchResults;
+import net.worthington.android.maven.search.activities.SearchResults;
 import net.worthington.android.maven.search.constants.Constants;
 import net.worthington.android.maven.search.restletapi.MavenCentralRestAPI;
 import net.worthington.android.maven.search.restletapi.dao.MCRDoc;
@@ -54,7 +54,7 @@ public class ProgressThread extends Thread
       }
       case Constants.PROGRESS_DIALOG_ARTIFACT_DETAILS:
       {
-        RealSearchResults rsr = (RealSearchResults) iActivity;
+        SearchResults rsr = (SearchResults) iActivity;
 
         msg.arg2 = Constants.PROGRESS_DIALOG_ARTIFACT_DETAILS;
         searchResults = new MCRDoc();
@@ -75,7 +75,7 @@ public class ProgressThread extends Thread
       }
       case Constants.PROGRESS_DIALOG_VERSION_SEARCH:
       {
-        RealSearchResults rsr = (RealSearchResults) iActivity;
+        SearchResults rsr = (SearchResults) iActivity;
 
         Integer selectedVersionCount = rsr.getSelectedVersionCount();
 
@@ -146,7 +146,7 @@ public class ProgressThread extends Thread
 
   private MCRResponse handleGroupIdSearch(MavenCentralRestAPI pMcr)
   {
-    RealSearchResults rsr = (RealSearchResults) iActivity;
+    SearchResults rsr = (SearchResults) iActivity;
     String selectedGroupId = rsr.getSelectedGroup();
 
     MCRResponse searchResults = pMcr.searchForGroupId(selectedGroupId);
@@ -155,14 +155,14 @@ public class ProgressThread extends Thread
 
   private MCRResponse handleArtifactIdSearch(MavenCentralRestAPI pMcr)
   {
-    RealSearchResults rsr = (RealSearchResults) iActivity;
+    SearchResults rsr = (SearchResults) iActivity;
     String selectedArtifactId = rsr.getSelectedArtifact();
 
     MCRResponse searchResults = pMcr.searchForArtifactId(selectedArtifactId);
     return searchResults;
   }
 
-  private MCRResponse handleVersionSearch(MavenCentralRestAPI pMcr, RealSearchResults pRsr)
+  private MCRResponse handleVersionSearch(MavenCentralRestAPI pMcr, SearchResults pRsr)
   {
     String selectedGroupId = pRsr.getSelectedGroup();
     String selectedArtifactId = pRsr.getSelectedArtifact();

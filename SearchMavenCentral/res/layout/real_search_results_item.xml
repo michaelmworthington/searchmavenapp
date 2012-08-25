@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/groupIdTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/latestVersionTextView"
+        android:ellipsize="end"
+        android:maxWidth="100sp"
+        android:text="@string/groupId"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/artifactIdTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignRight="@+id/groupIdTextView"
+        android:layout_below="@+id/groupIdTextView"
+        android:maxWidth="100sp"
+        android:text="@string/artifactId"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/latestVersionTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/latestVersion"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/lastUpdateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/latestVersionTextView"
+        android:text="@string/lastUpdate"
+        android:textSize="15sp" />
+    
+    <TextView
+        android:id="@+id/versionCountTextView"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    
+
+</RelativeLayout>

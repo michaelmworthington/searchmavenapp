@@ -5,7 +5,7 @@ package net.worthington.android.maven.search;
 
 import net.worthington.android.maven.search.activities.ArtifactDetails;
 import net.worthington.android.maven.search.activities.PomViewActivity;
-import net.worthington.android.maven.search.activities.RealSearchResults;
+import net.worthington.android.maven.search.activities.SearchResults;
 import net.worthington.android.maven.search.constants.Constants;
 import net.worthington.android.maven.search.restletapi.dao.MCRDoc;
 import net.worthington.android.maven.search.restletapi.dao.MCRResponse;
@@ -45,7 +45,7 @@ public class SearchResultsHandler extends Handler
     }
     else
     {
-      intent = new Intent(iActivity, RealSearchResults.class);
+      intent = new Intent(iActivity, SearchResults.class);
       intent.putExtra(Constants.SEARCH_RESULTS, (MCRResponse) pMsg.obj);
       intent.putExtra(Constants.SEARCH_TYPE, pMsg.arg1);
     }

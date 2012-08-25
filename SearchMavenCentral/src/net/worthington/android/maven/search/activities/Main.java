@@ -41,8 +41,9 @@ public class Main extends Activity implements OnClickListener, OnKeyListener
     ImageButton ib = (ImageButton) findViewById(R.id.searchImageButton);
     ib.setOnClickListener(this);
 
-    Button tsr = (Button) findViewById(R.id.mainTestSearchResultsButton);
-    tsr.setOnClickListener(this);
+    //Button tsr = (Button) findViewById(R.id.mainTestSearchResultsButton);
+    //tsr.setVisibility(Button.VISIBLE);
+    //tsr.setOnClickListener(this);
 
     Button asb = (Button) findViewById(R.id.mainAdvancedSearchButton);
     asb.setOnClickListener(this);
