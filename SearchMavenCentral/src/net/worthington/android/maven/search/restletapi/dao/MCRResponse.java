@@ -10,6 +10,7 @@ public class MCRResponse implements Serializable
   private int          iNumFound;
   private int          iStart;
   private List<MCRDoc> iDocs;
+  private String iSearchString;
 
   public int getNumFound()
   {
@@ -39,5 +40,15 @@ public class MCRResponse implements Serializable
   public void setDocs(List<MCRDoc> pDocs)
   {
     iDocs = pDocs;
+  }
+
+  public String getSearchString()
+  {
+    return iSearchString;
+  }
+
+  public void setSearchString(String pSearchQueryString)
+  {
+    iSearchString = pSearchQueryString;
   }
 }
