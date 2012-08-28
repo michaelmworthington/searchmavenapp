@@ -36,20 +36,25 @@ public class SearchResultsHandler extends Handler
     {
       intent = new Intent(iActivity, ArtifactDetails.class);
       intent.putExtra(Constants.ARTIFACT, (MCRDoc) pMsg.obj);
+      iActivity.startActivity(intent);
     }
     else if (pMsg.arg2 == Constants.PROGRESS_DIALOG_POM_VIEW)
     {
       intent = new Intent(iActivity, PomViewActivity.class);
       intent.putExtra(Constants.ARTIFACT, ((ArtifactDetails)iActivity).getSelectedArtifact());
       intent.putExtra(Constants.POM, (String) pMsg.obj);
+      iActivity.startActivity(intent);
+    }
+    else if (pMsg.arg2 == Constants.PROGRESS_DIALOG_LOAD_MORE_SEARCH_RESULTS)
+    {
+      ((SearchResults)iActivity).loadMoreResults((MCRResponse) pMsg.obj);
     }
     else
     {
       intent = new Intent(iActivity, SearchResults.class);
       intent.putExtra(Constants.SEARCH_RESULTS, (MCRResponse) pMsg.obj);
       intent.putExtra(Constants.SEARCH_TYPE, pMsg.arg1);
+      iActivity.startActivity(intent);
     }
-
-    iActivity.startActivity(intent);
   }
 }

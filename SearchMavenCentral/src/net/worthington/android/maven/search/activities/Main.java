@@ -41,13 +41,14 @@ public class Main extends Activity implements OnClickListener, OnKeyListener
     ImageButton ib = (ImageButton) findViewById(R.id.searchImageButton);
     ib.setOnClickListener(this);
 
+    //Test button to go to test search results list to test dynamic scrolling
     //Button tsr = (Button) findViewById(R.id.mainTestSearchResultsButton);
     //tsr.setVisibility(Button.VISIBLE);
     //tsr.setOnClickListener(this);
 
     Button asb = (Button) findViewById(R.id.mainAdvancedSearchButton);
     asb.setOnClickListener(this);
-}
+  }
 
   @Override
   public void onClick(View pV)

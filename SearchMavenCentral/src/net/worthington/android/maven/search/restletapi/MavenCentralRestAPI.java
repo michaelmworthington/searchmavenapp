@@ -24,6 +24,7 @@ import android.util.Log;
 
 public class MavenCentralRestAPI
 {
+  private static final int MAX_DEMO_RESULTS = 45;
   private boolean iDemoMode   = false;
   private int     iNumResults = 20;
 
@@ -42,7 +43,13 @@ public class MavenCentralRestAPI
   public MCRResponse searchBasic(String pTerm)
   {
     String quickSearch = "q=" + pTerm;
-    return search(quickSearch);
+    return search(quickSearch, 0);
+  }
+
+  public MCRResponse loadMoreResults(MCRResponse pMCRResponse)
+  {
+    String quickSearch = pMCRResponse.getSearchString();
+    return search(quickSearch, pMCRResponse.getStart() + iNumResults);
   }
 
   public MCRResponse searchForGroupId(String pGroupId)
@@ -58,13 +65,13 @@ public class MavenCentralRestAPI
   public MCRResponse searchForAllVersions(String pGroupId, String pArtifactId)
   {
     String allVersionsSearch = "q=g:\"" + pGroupId + "\"+AND+a:\"" + pArtifactId + "\"&core=gav";
-    return search(allVersionsSearch);
+    return search(allVersionsSearch, 0);
   }
 
   public MCRResponse searchChecksum(String pChecksum)
   {
     String checksumSearch = "q=1:\"" + pChecksum + "\"";
-    return search(checksumSearch);
+    return search(checksumSearch, 0);
   }
 
   /**
@@ -125,7 +132,7 @@ public class MavenCentralRestAPI
       firstTermComplete = true;
     }
 
-    return search(advancedANDSearch);
+    return search(advancedANDSearch, 0);
   }
 
   private boolean isSearchOrEmpty(String pTerm)
@@ -151,7 +158,7 @@ public class MavenCentralRestAPI
 
     classNameQueryString += "c:\"" + pClassName + "\"";
 
-    return search(classNameQueryString);
+    return search(classNameQueryString, 0);
   }
 
   private String appendTerm(String pAdvancedANDSearch, String pTerm, boolean pFirstTermComplete)
@@ -195,7 +202,7 @@ public class MavenCentralRestAPI
    *          the part of the query string according to the search.maven.org API. <b>must start with "q="</b>
    * @return
    */
-  private MCRResponse search(String pSearchQueryString)
+  private MCRResponse search(String pSearchQueryString, int pStart)
   {
     MCRResponse returnValue = null;
 
@@ -203,24 +210,28 @@ public class MavenCentralRestAPI
     {
       Log.d(Constants.LOG_TAG, "Simulating Maven Central Search for query: " + pSearchQueryString);
 
-      MCRDoc doc = new MCRDoc();
-      doc.setId("log4j:log4j");
-      doc.setG("log4j");
-      doc.setA("log4j");
-      doc.setLatestVersion("1.2.17");
-      doc.setRepositoryId("central");
-      doc.setP("bundle");
-      doc.setTimestamp(new DateTime(1338025419000L));
-      doc.setVersionCount(14);
-      doc.setText(Arrays.asList("log4j", "log4j", "-sources.jar", "-javadoc.jar", ".jar", ".zip", ".tar.gz", "pom"));
-      doc.setEc(Arrays.asList("-sources.jar", "-javadoc.jar", ".jar", ".zip", ".tar.gz", "pom"));
-
       List<MCRDoc> docs = new ArrayList<MCRDoc>();
-      docs.add(doc);
+
+      for(int i = 0; i < iNumResults && (i + pStart) < MAX_DEMO_RESULTS; i++)
+      {
+        MCRDoc doc = new MCRDoc();
+        doc.setId("log4j:log4j-" + (i + pStart));
+        doc.setG("log4j");
+        doc.setA("log4j-" + (i + pStart));
+        doc.setLatestVersion("1.0");
+        doc.setRepositoryId("central");
+        doc.setP("bundle");
+        doc.setTimestamp(new DateTime(1338025419000L));
+        doc.setVersionCount(14);
+        doc.setText(Arrays.asList("log4j", "log4j", "-sources.jar", "-javadoc.jar", ".jar", ".zip", ".tar.gz", "pom"));
+        doc.setEc(Arrays.asList("-sources.jar", "-javadoc.jar", ".jar", ".zip", ".tar.gz", "pom"));
+
+        docs.add(doc);
+      }
 
       returnValue = new MCRResponse();
-      returnValue.setNumFound(1);
-      returnValue.setStart(0);
+      returnValue.setNumFound(MAX_DEMO_RESULTS);
+      returnValue.setStart(pStart);
       returnValue.setDocs(docs);
     }
     else
@@ -233,7 +244,7 @@ public class MavenCentralRestAPI
 
         String baseUrl = "http://search.maven.org/solrsearch/select?";
         String numResults = "rows=" + iNumResults;
-        String startPosition = "start=0";
+        String startPosition = "start=" + pStart;
         String resultsFormat = "wt=json";
 
         String url = baseUrl + numResults + "&" + startPosition + "&" + resultsFormat + "&" + pSearchQueryString;
@@ -246,6 +257,8 @@ public class MavenCentralRestAPI
         throw new IllegalArgumentException("Maven Central Search Query String is missing or does not start with \"q=\"");
       }
     }
+    
+    returnValue.setSearchString(pSearchQueryString);
 
     return returnValue;
   }

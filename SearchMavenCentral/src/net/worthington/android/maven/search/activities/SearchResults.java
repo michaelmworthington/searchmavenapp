@@ -25,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -33,7 +34,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class SearchResults extends Activity
+public class SearchResults extends Activity implements OnClickListener
 {
   private int          iSearchType;
   private String       iSelectedGroup;
@@ -43,6 +44,8 @@ public class SearchResults extends Activity
   private MyAdapter    iAdapter;
   private List<MCRDoc> iSearchResults;
   private ListView     iLv;
+  private MCRResponse  iMCRResponse;
+  private Button       iBtnLoadMore;
 
   @Override
   public void onCreate(Bundle pSavedInstanceState)
@@ -50,29 +53,32 @@ public class SearchResults extends Activity
     super.onCreate(pSavedInstanceState);
     setContentView(R.layout.search_results);
 
-    MCRResponse searchResults = (MCRResponse) getIntent().getExtras().getSerializable(Constants.SEARCH_RESULTS);
+    setMCRResponse((MCRResponse) getIntent().getExtras().getSerializable(Constants.SEARCH_RESULTS));
     iSearchType = (Integer) getIntent().getExtras().getSerializable(Constants.SEARCH_TYPE);
 
-    if (searchResults != null)
+    if (getMCRResponse() != null)
     {
+      iSearchResults = getMCRResponse().getDocs();
+
       TextView tv = (TextView) findViewById(R.id.SearchResultsTextView);
-      tv.setText(searchResults.getNumFound() + " " + getSearchTypeString(iSearchType) + " Search Results:");
+      tv.setText(getMCRResponse().getNumFound() + " " + getSearchTypeString(iSearchType) + " Search Results:");
 
       iLv = (ListView) findViewById(R.id.list);
 
-      // Creating a button - Load More
-      Button btnLoadMore = new Button(this);
-      btnLoadMore.setText("Load More");
+      iBtnLoadMore = new Button(this);
+      iBtnLoadMore.setText("Load More");
 
-      // Adding button to listview at footer
-      iLv.addFooterView(btnLoadMore);
-
-      iSearchResults = searchResults.getDocs();
+      if (iSearchResults.size() != getMCRResponse().getNumFound())
+      {
+        // Adding button to listview at footer
+        iLv.addFooterView(iBtnLoadMore);
+      }
+      
       iAdapter = new MyAdapter(this, iSearchResults);
       iLv.setAdapter(iAdapter);
-      
+
       registerForContextMenu(iLv);
-      
+
       iLv.setOnItemClickListener(new OnItemClickListener() {
 
         @Override
@@ -89,16 +95,7 @@ public class SearchResults extends Activity
         }
       });
 
-
-      btnLoadMore.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View arg0)
-        {
-          // Starting a new async task
-          Log.d(Constants.LOG_TAG, "Loading more results");
-          new LoadMoreListViewThread().execute();
-        }
-      });
+      iBtnLoadMore.setOnClickListener(this);
     }
     else
     {
@@ -197,6 +194,18 @@ public class SearchResults extends Activity
   }
 
   @Override
+  public void onClick(View pV)
+  {
+    if (pV.getId() == iBtnLoadMore.getId())
+    {
+      // Starting a new async task
+      Log.d(Constants.LOG_TAG, "Loading more results");
+      //new LoadMoreListViewThread().execute();
+      showDialog(Constants.PROGRESS_DIALOG_LOAD_MORE_SEARCH_RESULTS);
+    }
+  }
+
+  @Override
   protected Dialog onCreateDialog(int pId)
   {
     return OptionsMenuDialogActions.createProcessDialogHelper(pId, this);
@@ -217,7 +226,7 @@ public class SearchResults extends Activity
     setSelectedArtifact(((TextView) menuView.findViewById(R.id.artifactIdTextView)).getText().toString());
     setSelectedVersion(((TextView) menuView.findViewById(R.id.latestVersionTextView)).getText().toString());
     setSelectedVersionCount(Integer.valueOf(((TextView) menuView.findViewById(R.id.versionCountTextView)).getText()
-                                                                                                   .toString()));
+                                                                                                         .toString()));
 
     super.onCreateContextMenu(pMenu, pV, pMenuInfo);
     pMenu.setHeaderTitle("Search By:");
@@ -273,6 +282,37 @@ public class SearchResults extends Activity
     return super.onOptionsItemSelected(pItem);
   }
 
+  /**
+   * Callback method for SearchResultsHandler to add the next set of results to the ListView
+   * @param pResponse
+   */
+  public void loadMoreResults(MCRResponse pResponse)
+  {
+    setMCRResponse(pResponse);
+    
+    if (pResponse != null)
+    {
+      List<MCRDoc> moreSearchResults = pResponse.getDocs();
+
+      iSearchResults.addAll(moreSearchResults);
+
+      // get listview current position - used to maintain scroll position
+      int currentPosition = iLv.getFirstVisiblePosition();
+
+      // Appending new data to menuItems ArrayList
+      iAdapter = new MyAdapter(SearchResults.this, iSearchResults);
+
+      // Setting new scroll position
+      iLv.setSelectionFromTop(currentPosition + 1, 0);
+      
+      //remove the load more button if we've reached the end of the results
+      if (iSearchResults.size() == pResponse.getNumFound())
+      {
+        iLv.removeFooterView(iBtnLoadMore);
+      }
+    }
+  }
+
   public Integer getSelectedVersionCount()
   {
     return iSelectedVersionCount;
@@ -313,56 +353,13 @@ public class SearchResults extends Activity
     iSelectedVersion = selectedVersion;
   }
 
-  private class LoadMoreListViewThread extends AsyncTask<Void, Void, Void>
+  public MCRResponse getMCRResponse()
   {
-    private ProgressDialog pDialog;
+    return iMCRResponse;
+  }
 
-    @Override
-    protected void onPreExecute()
-    {
-      // Showing progress dialog before sending http request
-      pDialog = new ProgressDialog(SearchResults.this);
-      pDialog.setMessage("Please wait..");
-      pDialog.setIndeterminate(true);
-      pDialog.setCancelable(false);
-      pDialog.show();
-    }
-
-    protected Void doInBackground(Void... unused)
-    {
-      runOnUiThread(new Runnable() {
-
-        public void run()
-        {
-          MCRDoc doc = new MCRDoc();
-          doc.setG("com.searchmavenapp");
-          doc.setA("utils");
-          doc.setLatestVersion("1.0");
-          doc.setRepositoryId("central");
-          doc.setP("bundle");
-          doc.setTimestamp(new DateTime(1338025419000L));
-          doc.setVersionCount(2);
-          doc.setText(Arrays.asList("log4j", "log4j", "-sources.jar", "-javadoc.jar", ".jar", ".zip", ".tar.gz", "pom"));
-          doc.setEc(Arrays.asList("-sources.jar", "-javadoc.jar", ".jar", ".zip", ".tar.gz", "pom"));
-          iSearchResults.add(doc);
-
-          // get listview current position - used to maintain scroll position
-          int currentPosition = iLv.getFirstVisiblePosition();
-
-          // Appending new data to menuItems ArrayList
-          iAdapter = new MyAdapter(SearchResults.this, iSearchResults);
-
-          // Setting new scroll position
-          iLv.setSelectionFromTop(currentPosition + 1, 0);
-        }
-      });
-      return (null);
-    }
-
-    protected void onPostExecute(Void unused)
-    {
-      // closing progress dialog
-      pDialog.dismiss();
-    }
+  private void setMCRResponse(MCRResponse mCRResponse)
+  {
+    iMCRResponse = mCRResponse;
   }
 }

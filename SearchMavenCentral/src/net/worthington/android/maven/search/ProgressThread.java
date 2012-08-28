@@ -101,6 +101,12 @@ public class ProgressThread extends Thread
         searchResults = mcr.downloadFile(rsr.getGTVText(), rsr.getATVText(), rsr.getVTVText());
         break;
       }
+      case Constants.PROGRESS_DIALOG_LOAD_MORE_SEARCH_RESULTS:
+      {
+        msg.arg2 = Constants.PROGRESS_DIALOG_LOAD_MORE_SEARCH_RESULTS;
+        searchResults = handleLoadMoreResults(mcr);
+        break;
+      }
       default:
         // TODO: bad search type, throw runtime exception, i think?
         break;
@@ -118,6 +124,14 @@ public class ProgressThread extends Thread
     EditText et = m.getSearchEditText();
 
     MCRResponse searchResults = pMcr.searchBasic(et.getText().toString().trim());
+    return searchResults;
+  }
+
+  private MCRResponse handleLoadMoreResults(MavenCentralRestAPI pMcr)
+  {
+    SearchResults m = (SearchResults) iActivity;
+    
+    MCRResponse searchResults = pMcr.loadMoreResults(m.getMCRResponse());
     return searchResults;
   }
 

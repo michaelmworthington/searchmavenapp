@@ -58,6 +58,7 @@ public class OptionsMenuDialogActions
       case Constants.PROGRESS_DIALOG_ARTIFACTID_SEARCH:
       case Constants.PROGRESS_DIALOG_VERSION_SEARCH:
       case Constants.PROGRESS_DIALOG_POM_VIEW:
+      case Constants.PROGRESS_DIALOG_LOAD_MORE_SEARCH_RESULTS:
         returnValue = new ProgressDialog(pContext);
         returnValue.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         returnValue.setMessage("Searching...");
@@ -81,6 +82,7 @@ public class OptionsMenuDialogActions
       case Constants.PROGRESS_DIALOG_ARTIFACTID_SEARCH:
       case Constants.PROGRESS_DIALOG_VERSION_SEARCH:
       case Constants.PROGRESS_DIALOG_POM_VIEW:
+      case Constants.PROGRESS_DIALOG_LOAD_MORE_SEARCH_RESULTS:
         ProgressThread progressThread = new ProgressThread(pActivity, pId);
         progressThread.start();
         // TODO: is it possible to handle a kill/cancel dialog and kill the thread
