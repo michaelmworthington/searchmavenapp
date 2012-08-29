@@ -1,8 +1,9 @@
-package net.worthington.android.maven.search.constants;
+package com.searchmavenapp.android.maven.search.constants;
 
-import net.worthington.android.maven.search.ProgressThread;
-import net.worthington.android.maven.search.R;
-import net.worthington.android.maven.search.activities.Preferences;
+import com.searchmavenapp.android.maven.search.R;
+import com.searchmavenapp.android.maven.search.ProgressThread;
+import com.searchmavenapp.android.maven.search.activities.Preferences;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;

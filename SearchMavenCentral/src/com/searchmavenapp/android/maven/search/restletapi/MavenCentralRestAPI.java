@@ -1,13 +1,9 @@
-package net.worthington.android.maven.search.restletapi;
+package com.searchmavenapp.android.maven.search.restletapi;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import net.worthington.android.maven.search.constants.Constants;
-import net.worthington.android.maven.search.restletapi.dao.MCRDoc;
-import net.worthington.android.maven.search.restletapi.dao.MCRResponse;
-import net.worthington.android.maven.search.restletapi.dao.MavenCentralResponse;
 
 import org.joda.time.DateTime;
 import org.restlet.Client;
@@ -17,6 +13,11 @@ import org.restlet.engine.Engine;
 import org.restlet.ext.jackson.JacksonConverter;
 import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
+
+import com.searchmavenapp.android.maven.search.constants.Constants;
+import com.searchmavenapp.android.maven.search.restletapi.dao.MCRDoc;
+import com.searchmavenapp.android.maven.search.restletapi.dao.MCRResponse;
+import com.searchmavenapp.android.maven.search.restletapi.dao.MavenCentralResponse;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;

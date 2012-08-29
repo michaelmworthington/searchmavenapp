@@ -1,6 +1,7 @@
-package net.worthington.android.maven.search;
+package com.searchmavenapp.android.maven.search;
 
-import net.worthington.android.maven.search.constants.Constants;
+import com.searchmavenapp.android.maven.search.constants.Constants;
+
 import android.app.Activity;
 import android.util.Log;
 import android.view.KeyEvent;

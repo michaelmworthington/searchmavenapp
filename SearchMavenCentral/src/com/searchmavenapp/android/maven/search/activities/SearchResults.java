@@ -1,15 +1,15 @@
-package net.worthington.android.maven.search.activities;
+package com.searchmavenapp.android.maven.search.activities;
 
 import java.util.Arrays;
 import java.util.List;
 
-import net.worthington.android.maven.search.R;
-import net.worthington.android.maven.search.constants.Constants;
-import net.worthington.android.maven.search.constants.OptionsMenuDialogActions;
-import net.worthington.android.maven.search.restletapi.dao.MCRDoc;
-import net.worthington.android.maven.search.restletapi.dao.MCRResponse;
-
 import org.joda.time.DateTime;
+
+import com.searchmavenapp.android.maven.search.R;
+import com.searchmavenapp.android.maven.search.constants.Constants;
+import com.searchmavenapp.android.maven.search.constants.OptionsMenuDialogActions;
+import com.searchmavenapp.android.maven.search.restletapi.dao.MCRDoc;
+import com.searchmavenapp.android.maven.search.restletapi.dao.MCRResponse;
 
 import android.app.Activity;
 import android.app.Dialog;

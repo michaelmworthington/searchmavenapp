@@ -1,4 +1,4 @@
-package net.worthington.android.maven.search.constants;
+package com.searchmavenapp.android.maven.search.constants;
 
 public interface Constants
 {

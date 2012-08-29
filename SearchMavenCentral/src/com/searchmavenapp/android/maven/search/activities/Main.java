@@ -1,9 +1,10 @@
-package net.worthington.android.maven.search.activities;
+package com.searchmavenapp.android.maven.search.activities;
 
-import net.worthington.android.maven.search.R;
-import net.worthington.android.maven.search.constants.Constants;
-import net.worthington.android.maven.search.constants.OptionsMenuDialogActions;
-import net.worthington.android.maven.search.constants.TextViewHelper;
+import com.searchmavenapp.android.maven.search.R;
+import com.searchmavenapp.android.maven.search.constants.Constants;
+import com.searchmavenapp.android.maven.search.constants.OptionsMenuDialogActions;
+import com.searchmavenapp.android.maven.search.constants.TextViewHelper;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;

@@ -1,4 +1,4 @@
-package net.worthington.android.maven.search.activities;
+package com.searchmavenapp.android.maven.search.activities;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -10,7 +10,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import net.worthington.android.maven.search.R;
+import com.searchmavenapp.android.maven.search.R;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;

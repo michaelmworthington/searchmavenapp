@@ -1,16 +1,17 @@
 /**
  * 
  */
-package net.worthington.android.maven.search;
+package com.searchmavenapp.android.maven.search;
 
-import net.worthington.android.maven.search.activities.ArtifactDetails;
-import net.worthington.android.maven.search.activities.Main;
-import net.worthington.android.maven.search.activities.MainAdvancedSearch;
-import net.worthington.android.maven.search.activities.SearchResults;
-import net.worthington.android.maven.search.constants.Constants;
-import net.worthington.android.maven.search.restletapi.MavenCentralRestAPI;
-import net.worthington.android.maven.search.restletapi.dao.MCRDoc;
-import net.worthington.android.maven.search.restletapi.dao.MCRResponse;
+import com.searchmavenapp.android.maven.search.activities.ArtifactDetails;
+import com.searchmavenapp.android.maven.search.activities.Main;
+import com.searchmavenapp.android.maven.search.activities.MainAdvancedSearch;
+import com.searchmavenapp.android.maven.search.activities.SearchResults;
+import com.searchmavenapp.android.maven.search.constants.Constants;
+import com.searchmavenapp.android.maven.search.restletapi.MavenCentralRestAPI;
+import com.searchmavenapp.android.maven.search.restletapi.dao.MCRDoc;
+import com.searchmavenapp.android.maven.search.restletapi.dao.MCRResponse;
+
 import android.app.Activity;
 import android.os.Handler;
 import android.os.Message;

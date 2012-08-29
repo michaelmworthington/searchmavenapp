@@ -2,7 +2,7 @@
 <resources>
 
     <string name="hello">Hello World, Main!</string>
-    <string name="app_name">Search Maven Central</string>
+    <string name="app_name">Search Maven</string>
     <string name="app_description">Search the Maven Central Repository for Maven Artifacts</string>
     <string name="search_results">Search Results:</string>
     <string name="groupId">groupId</string>

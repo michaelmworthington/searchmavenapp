@@ -1,4 +1,4 @@
-package net.worthington.android.maven.search.restletapi.dao;
+package com.searchmavenapp.android.maven.search.restletapi.dao;
 
 import java.util.Map;
 

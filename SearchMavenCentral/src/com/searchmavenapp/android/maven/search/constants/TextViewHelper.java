@@ -1,6 +1,7 @@
-package net.worthington.android.maven.search.constants;
+package com.searchmavenapp.android.maven.search.constants;
 
-import net.worthington.android.maven.search.KeyboardSearchEditorActionListener;
+import com.searchmavenapp.android.maven.search.KeyboardSearchEditorActionListener;
+
 import android.app.Activity;
 import android.graphics.Color;
 import android.view.View.OnClickListener;

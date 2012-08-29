@@ -1,6 +1,6 @@
-package net.worthington.android.maven.search.activities;
+package com.searchmavenapp.android.maven.search.activities;
 
-import net.worthington.android.maven.search.R;
+import com.searchmavenapp.android.maven.search.R;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 

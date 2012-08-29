@@ -2,8 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>net.worthington.android.maven.search</groupId>
-  <artifactId>SearchMavenCentral</artifactId>
+  <groupId>com.searchmavenapp.android.maven.search</groupId>
+  <artifactId>SearchMaven</artifactId>
   <packaging>apk</packaging>
   <version>0.0.1-SNAPSHOT</version>
   <name>Your Android project Maven Enabled</name>
