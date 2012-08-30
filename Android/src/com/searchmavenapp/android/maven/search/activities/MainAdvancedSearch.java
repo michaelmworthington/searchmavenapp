@@ -1,11 +1,5 @@
 package com.searchmavenapp.android.maven.search.activities;
 
-import com.searchmavenapp.android.maven.search.R;
-import com.searchmavenapp.android.maven.search.KeyboardSearchEditorActionListener;
-import com.searchmavenapp.android.maven.search.constants.Constants;
-import com.searchmavenapp.android.maven.search.constants.OptionsMenuDialogActions;
-import com.searchmavenapp.android.maven.search.constants.TextViewHelper;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -21,6 +15,11 @@ import android.view.View.OnKeyListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+
+import com.searchmavenapp.android.maven.search.R;
+import com.searchmavenapp.android.maven.search.constants.Constants;
+import com.searchmavenapp.android.maven.search.constants.OptionsMenuDialogActions;
+import com.searchmavenapp.android.maven.search.constants.TextViewHelper;
 
 public class MainAdvancedSearch extends Activity implements OnClickListener, OnKeyListener
 {

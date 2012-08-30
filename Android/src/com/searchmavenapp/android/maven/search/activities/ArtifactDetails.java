@@ -1,13 +1,7 @@
 package com.searchmavenapp.android.maven.search.activities;
 
-import com.searchmavenapp.android.maven.search.R;
-import com.searchmavenapp.android.maven.search.constants.Constants;
-import com.searchmavenapp.android.maven.search.constants.OptionsMenuDialogActions;
-import com.searchmavenapp.android.maven.search.restletapi.dao.MCRDoc;
-
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -21,6 +15,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.searchmavenapp.android.maven.search.R;
+import com.searchmavenapp.android.maven.search.constants.Constants;
+import com.searchmavenapp.android.maven.search.constants.OptionsMenuDialogActions;
+import com.searchmavenapp.android.maven.search.restletapi.dao.MCRDoc;
 
 public class ArtifactDetails extends Activity implements OnItemSelectedListener, OnClickListener
 {

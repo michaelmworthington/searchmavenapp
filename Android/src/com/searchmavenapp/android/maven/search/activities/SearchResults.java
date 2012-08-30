@@ -1,21 +1,10 @@
 package com.searchmavenapp.android.maven.search.activities;
 
-import java.util.Arrays;
 import java.util.List;
-
-import org.joda.time.DateTime;
-
-import com.searchmavenapp.android.maven.search.R;
-import com.searchmavenapp.android.maven.search.constants.Constants;
-import com.searchmavenapp.android.maven.search.constants.OptionsMenuDialogActions;
-import com.searchmavenapp.android.maven.search.restletapi.dao.MCRDoc;
-import com.searchmavenapp.android.maven.search.restletapi.dao.MCRResponse;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -33,6 +22,12 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.searchmavenapp.android.maven.search.R;
+import com.searchmavenapp.android.maven.search.constants.Constants;
+import com.searchmavenapp.android.maven.search.constants.OptionsMenuDialogActions;
+import com.searchmavenapp.android.maven.search.restletapi.dao.MCRDoc;
+import com.searchmavenapp.android.maven.search.restletapi.dao.MCRResponse;
 
 public class SearchResults extends Activity implements OnClickListener
 {

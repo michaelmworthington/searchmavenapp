@@ -43,7 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:visibility="gone"
+        android:visibility="visible"
         android:text="Test Search Results" />
 
     <LinearLayout
