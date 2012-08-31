@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ListActivity;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,33 +15,29 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.ListView;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.commonsware.cwac.endless.EndlessAdapter;
 import com.searchmavenapp.android.maven.search.R;
 import com.searchmavenapp.android.maven.search.constants.Constants;
 import com.searchmavenapp.android.maven.search.constants.OptionsMenuDialogActions;
+import com.searchmavenapp.android.maven.search.restletapi.MavenCentralRestAPI;
 import com.searchmavenapp.android.maven.search.restletapi.dao.MCRDoc;
 import com.searchmavenapp.android.maven.search.restletapi.dao.MCRResponse;
 
-public class SearchResults extends Activity implements OnClickListener
+public class SearchResults extends ListActivity
 {
   private int          iSearchType;
   private String       iSelectedGroup;
   private String       iSelectedArtifact;
   private String       iSelectedVersion;
   private Integer      iSelectedVersionCount;
-  private MyAdapter    iAdapter;
-  private List<MCRDoc> iSearchResults;
-  private ListView     iLv;
-  private MCRResponse  iMCRResponse;
-  private Button       iBtnLoadMore;
+  private ListAdapter  iAdapter;
 
   @Override
   public void onCreate(Bundle pSavedInstanceState)
@@ -48,33 +45,29 @@ public class SearchResults extends Activity implements OnClickListener
     super.onCreate(pSavedInstanceState);
     setContentView(R.layout.search_results);
 
-    setMCRResponse((MCRResponse) getIntent().getExtras().getSerializable(Constants.SEARCH_RESULTS));
+    MCRResponse  mcrResponse = (MCRResponse) getIntent().getExtras().getSerializable(Constants.SEARCH_RESULTS);
     iSearchType = (Integer) getIntent().getExtras().getSerializable(Constants.SEARCH_TYPE);
 
-    if (getMCRResponse() != null)
+    if (mcrResponse != null)
     {
-      iSearchResults = getMCRResponse().getDocs();
-
       TextView tv = (TextView) findViewById(R.id.SearchResultsTextView);
-      tv.setText(getMCRResponse().getNumFound() + " " + getSearchTypeString(iSearchType) + " Search Results:");
+      tv.setText(mcrResponse.getNumFound() + " " + getSearchTypeString(iSearchType) + " Search Results:");
 
-      iLv = (ListView) findViewById(R.id.list);
-
-      iBtnLoadMore = new Button(this);
-      iBtnLoadMore.setText("Load More");
-
-      if (iSearchResults.size() != getMCRResponse().getNumFound())
+      MyAdapter myAdapter = new MyAdapter(this, mcrResponse);
+      if (myAdapter.isHaveAllResults())
       {
-        // Adding button to listview at footer
-        iLv.addFooterView(iBtnLoadMore);
+        iAdapter = myAdapter;
+      }
+      else
+      {
+        iAdapter = new MyEndlessAdapter(this, myAdapter, R.layout.search_results_progress_item);
       }
       
-      iAdapter = new MyAdapter(this, iSearchResults);
-      iLv.setAdapter(iAdapter);
+      setListAdapter(iAdapter);
 
-      registerForContextMenu(iLv);
+      registerForContextMenu(getListView());
 
-      iLv.setOnItemClickListener(new OnItemClickListener() {
+      getListView().setOnItemClickListener(new OnItemClickListener() {
 
         @Override
         public void onItemClick(AdapterView<?> pArg0, View pV, int pArg2, long pArg3)
@@ -89,8 +82,6 @@ public class SearchResults extends Activity implements OnClickListener
           showDialog(Constants.PROGRESS_DIALOG_ARTIFACT_DETAILS);
         }
       });
-
-      iBtnLoadMore.setOnClickListener(this);
     }
     else
     {
@@ -123,16 +114,81 @@ public class SearchResults extends Activity implements OnClickListener
     return returnValue;
   }
 
+  private class MyEndlessAdapter extends EndlessAdapter
+  {
+    MyAdapter iMyAdapter;
+    
+    public MyEndlessAdapter(Context pContext, ListAdapter pWrapped, int pPendingResource)
+    {
+      super(pContext, pWrapped, pPendingResource);
+      iMyAdapter = (MyAdapter)getWrappedAdapter();
+    }
+
+    @Override
+    protected void appendCachedData()
+    {
+      if (iMyAdapter.isHaveAllResults() == false)
+      {
+        if (iMyAdapter.getResponse() != null)
+        {
+          iMyAdapter.addResults(iMyAdapter.getResponse().getDocs());
+        }
+      }
+    }
+
+    /**
+     * Retrieve the additional data in the background
+     * @return true if there is more data to be fetched, false if we got it all
+     */
+    @Override
+    protected boolean cacheInBackground() throws Exception
+    {
+      if (iMyAdapter.isHaveAllResults() == false)
+      {
+        MavenCentralRestAPI mcr = new MavenCentralRestAPI(SearchResults.this);
+        MCRResponse searchResults = mcr.loadMoreResults(iMyAdapter.getResponse());
+        iMyAdapter.setResponse(searchResults);
+
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
+  }
+  
   private class MyAdapter extends BaseAdapter
   {
 
     private Activity     iActivity;
+    private MCRResponse iResponse;
     private List<MCRDoc> iData;
 
-    public MyAdapter(Activity pActivity, List<MCRDoc> pData)
+    public MyAdapter(Activity pActivity, MCRResponse pResponse)
     {
       iActivity = pActivity;
-      iData = pData;
+      iResponse = pResponse;
+      iData = pResponse.getDocs();
+    }
+    
+    public boolean isHaveAllResults()
+    {
+      return iData.size() >= iResponse.getNumFound();
+    }
+    public void addResults(List<MCRDoc> pData)
+    {
+      iData.addAll(pData);
+    }
+    
+    public MCRResponse getResponse()
+    {
+      return iResponse;
+    }
+
+    private void setResponse(MCRResponse pResponse)
+    {
+      iResponse = pResponse;;
     }
 
     @Override
@@ -185,18 +241,6 @@ public class SearchResults extends Activity implements OnClickListener
       versionCount.setText(Integer.toString(mavenCentralArtifactResult.getVersionCount()));
 
       return row;
-    }
-  }
-
-  @Override
-  public void onClick(View pV)
-  {
-    if (pV.getId() == iBtnLoadMore.getId())
-    {
-      // Starting a new async task
-      Log.d(Constants.LOG_TAG, "Loading more results");
-      //new LoadMoreListViewThread().execute();
-      showDialog(Constants.PROGRESS_DIALOG_LOAD_MORE_SEARCH_RESULTS);
     }
   }
 
@@ -277,37 +321,6 @@ public class SearchResults extends Activity implements OnClickListener
     return super.onOptionsItemSelected(pItem);
   }
 
-  /**
-   * Callback method for SearchResultsHandler to add the next set of results to the ListView
-   * @param pResponse
-   */
-  public void loadMoreResults(MCRResponse pResponse)
-  {
-    setMCRResponse(pResponse);
-    
-    if (pResponse != null)
-    {
-      List<MCRDoc> moreSearchResults = pResponse.getDocs();
-
-      iSearchResults.addAll(moreSearchResults);
-
-      // get listview current position - used to maintain scroll position
-      int currentPosition = iLv.getFirstVisiblePosition();
-
-      // Appending new data to menuItems ArrayList
-      iAdapter = new MyAdapter(SearchResults.this, iSearchResults);
-
-      // Setting new scroll position
-      iLv.setSelectionFromTop(currentPosition + 1, 0);
-      
-      //remove the load more button if we've reached the end of the results
-      if (iSearchResults.size() == pResponse.getNumFound())
-      {
-        iLv.removeFooterView(iBtnLoadMore);
-      }
-    }
-  }
-
   public Integer getSelectedVersionCount()
   {
     return iSelectedVersionCount;
@@ -346,15 +359,5 @@ public class SearchResults extends Activity implements OnClickListener
   private void setSelectedVersion(String selectedVersion)
   {
     iSelectedVersion = selectedVersion;
-  }
-
-  public MCRResponse getMCRResponse()
-  {
-    return iMCRResponse;
-  }
-
-  private void setMCRResponse(MCRResponse mCRResponse)
-  {
-    iMCRResponse = mCRResponse;
   }
 }

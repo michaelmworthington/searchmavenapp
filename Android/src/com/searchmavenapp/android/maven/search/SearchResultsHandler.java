@@ -46,10 +46,6 @@ public class SearchResultsHandler extends Handler
       intent.putExtra(Constants.POM, (String) pMsg.obj);
       iActivity.startActivity(intent);
     }
-    else if (pMsg.arg2 == Constants.PROGRESS_DIALOG_LOAD_MORE_SEARCH_RESULTS)
-    {
-      ((SearchResults)iActivity).loadMoreResults((MCRResponse) pMsg.obj);
-    }
     else
     {
       intent = new Intent(iActivity, SearchResults.class);

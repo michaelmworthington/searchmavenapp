@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:src="@drawable/centralrepository_logo" />
-
+
     <TextView
         android:id="@+id/SearchResultsTextView"
         android:layout_width="match_parent"
@@ -24,7 +24,7 @@
         android:textStyle="bold" />
     
     <ListView
-        android:id="@+id/list"
+        android:id="@android:id/list"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
