@@ -22,7 +22,7 @@ public class PomViewActivity extends Activity
     super.onCreate(pSavedInstanceState);
     setContentView(R.layout.pom_view);
 
-    Log.d(Constants.LOG_TAG, "Showing POM Details");
+    if (Constants.LOG_ENABLED) { Log.d(Constants.LOG_TAG, "Showing POM Details"); }
     String pomText = (String) getIntent().getExtras().getSerializable(Constants.POM);
     MCRDoc selectedArtifact = (MCRDoc) getIntent().getExtras().getSerializable(Constants.ARTIFACT);
 

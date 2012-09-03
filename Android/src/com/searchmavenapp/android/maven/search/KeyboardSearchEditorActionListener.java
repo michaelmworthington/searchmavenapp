@@ -25,10 +25,10 @@ public class KeyboardSearchEditorActionListener implements OnEditorActionListene
   @Override
   public boolean onEditorAction(TextView pV, int pActionId, KeyEvent pEvent)
   {
-    Log.d(Constants.LOG_TAG, "Text View editor action: " + pActionId);
+    if (Constants.LOG_ENABLED) { Log.d(Constants.LOG_TAG, "Text View editor action: " + pActionId); }
     if (pActionId == EditorInfo.IME_ACTION_SEARCH)
     {
-      Log.d(Constants.LOG_TAG, "Call Show Dialog");
+      if (Constants.LOG_ENABLED) { Log.d(Constants.LOG_TAG, "Call Show Dialog"); }
       
       iActivity.showDialog(iTargetDialogId);
       return true;

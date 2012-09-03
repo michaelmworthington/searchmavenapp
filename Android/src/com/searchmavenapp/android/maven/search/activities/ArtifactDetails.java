@@ -35,7 +35,7 @@ public class ArtifactDetails extends Activity implements OnItemSelectedListener,
     super.onCreate(pSavedInstanceState);
     setContentView(R.layout.artifact_details);
 
-    Log.d(Constants.LOG_TAG, "Showing Artifact Details");
+    if (Constants.LOG_ENABLED) { Log.d(Constants.LOG_TAG, "Showing Artifact Details"); }
     setSelectedArtifact((MCRDoc) getIntent().getExtras().getSerializable(Constants.ARTIFACT));
     setGTV((TextView) findViewById(R.id.adGroupIdText));
     setATV((TextView) findViewById(R.id.adArtifactIdText));
@@ -72,7 +72,7 @@ public class ArtifactDetails extends Activity implements OnItemSelectedListener,
     TextView dtTV = (TextView) findViewById(R.id.adDependencyText);
     String dependencyText = "";
     String dependencySelection = (String) pParent.getItemAtPosition(pPos);
-    Log.d(Constants.LOG_TAG, "Spinner Item Selected: " + dependencySelection);
+    if (Constants.LOG_ENABLED) { Log.d(Constants.LOG_TAG, "Spinner Item Selected: " + dependencySelection); }
 
     if (Constants.DEP_APACHE_MAVEN.equals(dependencySelection))
     {
@@ -105,7 +105,7 @@ public class ArtifactDetails extends Activity implements OnItemSelectedListener,
   @Override
   public void onNothingSelected(AdapterView<?> pParent)
   {
-    Log.d(Constants.LOG_TAG, "Spinner No Item Selected");
+    if (Constants.LOG_ENABLED) { Log.d(Constants.LOG_TAG, "Spinner No Item Selected"); }
   }
 
   @Override

@@ -72,7 +72,7 @@ public class SearchResults extends ListActivity
         @Override
         public void onItemClick(AdapterView<?> pArg0, View pV, int pArg2, long pArg3)
         {
-          Log.d(Constants.LOG_TAG, "Search Result was clicked");
+          if (Constants.LOG_ENABLED) { Log.d(Constants.LOG_TAG, "Search Result was clicked"); }
           setSelectedGroup(((TextView) pV.findViewById(R.id.groupIdTextView)).getText().toString());
           setSelectedArtifact(((TextView) pV.findViewById(R.id.artifactIdTextView)).getText().toString());
           setSelectedVersion(((TextView) pV.findViewById(R.id.latestVersionTextView)).getText().toString());
@@ -289,17 +289,17 @@ public class SearchResults extends ListActivity
   {
     if (pItem.getItemId() == R.id.contextMenuSearchGroupId)
     {
-      Log.d(Constants.LOG_TAG, "Search Group ID was clicked: " + getSelectedGroup());
+      if (Constants.LOG_ENABLED) { Log.d(Constants.LOG_TAG, "Search Group ID was clicked: " + getSelectedGroup()); }
       showDialog(Constants.PROGRESS_DIALOG_GROUPID_SEARCH);
     }
     else if (pItem.getItemId() == R.id.contextMenuSearchArtifactId)
     {
-      Log.d(Constants.LOG_TAG, "Search Artifact Id was clicked: " + getSelectedArtifact());
+      if (Constants.LOG_ENABLED) { Log.d(Constants.LOG_TAG, "Search Artifact Id was clicked: " + getSelectedArtifact()); }
       showDialog(Constants.PROGRESS_DIALOG_ARTIFACTID_SEARCH);
     }
     else if (pItem.getItemId() == R.id.contextMenuSearchAllVersions)
     {
-      Log.d(Constants.LOG_TAG, "Search All Versions was clicked");
+      if (Constants.LOG_ENABLED) { Log.d(Constants.LOG_TAG, "Search All Versions was clicked"); }
       showDialog(Constants.PROGRESS_DIALOG_VERSION_SEARCH);
     }
 

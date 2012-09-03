@@ -10,14 +10,15 @@
 
         <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent" >
+            android:layout_height="wrap_content" >
 
             <ImageView
                 android:id="@+id/imageView1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:src="@drawable/centralrepository_logo" />
+                android:layout_gravity="center_horizontal"
+                android:contentDescription="@string/searchMavenAppHeaderDescription"
+                android:src="@drawable/searchmaven_header" />
 
             <TableLayout
                 android:id="@+id/tableLayout1"
@@ -32,7 +33,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:layout_marginTop="5dp"
-                    android:background="#069"
+                    android:background="#666666"
                     android:text="  By Coordinate"
                     android:textColor="#FFFFFF"
                     android:textSize="20sp"
@@ -131,7 +132,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Classifier:" />
+                        android:text="@string/classifier" />
 
                     <EditText
                         android:id="@+id/asClassifierSearchText"
@@ -151,8 +152,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:layout_marginTop="5dp"
-                    android:background="#069"
-                    android:text="  By Classname"
+                    android:background="#666666"
+                    android:text="@string/_by_classname"
                     android:textColor="#FFFFFF"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -164,7 +165,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Classname:" />
+                        android:text="@string/classname" />
 
                     <EditText
                         android:id="@+id/asClassNameSearchText"
@@ -185,7 +186,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tableLayout1"
                 android:layout_centerHorizontal="true"
-                android:src="@android:drawable/ic_menu_search" />
+                android:src="@android:drawable/ic_menu_search" 
+                android:contentDescription="@string/search"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -209,7 +211,7 @@
                         android:layout_marginRight="10dp"
                         android:layout_marginTop="10dp"
                         android:background="#FFFFFF"
-                        android:text="Quick Search"
+                        android:text="@string/quick_search"
                         android:textSize="15sp" />
                 </LinearLayout>
 
@@ -220,7 +222,7 @@
                     android:layout_marginBottom="10dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
-                    android:text="|"
+                    android:text="@string/pipe"
                     android:textColor="#d2d2d2"
                     android:textSize="30sp" />
 
@@ -238,7 +240,7 @@
                         android:layout_marginRight="10dp"
                         android:layout_marginTop="10dp"
                         android:background="#d2d2d2"
-                        android:text="Advanced Search"
+                        android:text="@string/advanced_search"
                         android:textSize="15sp"
                         android:textStyle="bold" />
                 </LinearLayout>

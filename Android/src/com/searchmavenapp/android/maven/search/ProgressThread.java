@@ -35,6 +35,11 @@ public class ProgressThread extends Thread
     iSearchType = pSearchType;
   }
 
+  /**
+   * Perform the search in a separate thread by calling the MavenCentralRestAPI Class to get back SearchResults
+   * Create a message to send back to the Handler. The message's arg1 is the search type code, arg2 is the code to indicate
+   * the destination screen (if other than the search results which is the default), and obj is the search results object
+   */
   public void run()
   {
     Message msg = iHandler.obtainMessage();

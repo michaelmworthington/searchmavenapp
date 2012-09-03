@@ -42,11 +42,6 @@ public class Main extends Activity implements OnClickListener, OnKeyListener
     ImageButton ib = (ImageButton) findViewById(R.id.searchImageButton);
     ib.setOnClickListener(this);
 
-    //Test button to go to test search results list to test dynamic scrolling
-    //Button tsr = (Button) findViewById(R.id.mainTestSearchResultsButton);
-    //tsr.setVisibility(Button.VISIBLE);
-    //tsr.setOnClickListener(this);
-
     Button asb = (Button) findViewById(R.id.mainAdvancedSearchButton);
     asb.setOnClickListener(this);
   }
@@ -56,29 +51,21 @@ public class Main extends Activity implements OnClickListener, OnKeyListener
   {
     if (pV.getId() == R.id.searchEditText)
     {
-      Log.d(Constants.LOG_TAG, "Edit Text field was clicked");
+      if (Constants.LOG_ENABLED) { Log.d(Constants.LOG_TAG, "Edit Text field was clicked"); }
       EditText et = (EditText) pV;
 
       TextViewHelper.clearTextView(et);
     }
     else if (pV.getId() == R.id.searchImageButton)
     {
-      Log.d(Constants.LOG_TAG, "Search button was clicked. Go to Searching");
+      if (Constants.LOG_ENABLED) { Log.d(Constants.LOG_TAG, "Search button was clicked. Go to Searching"); }
 
       // Create a progress dialog so we can see it's searching
       showDialog(Constants.PROGRESS_DIALOG_QUICK_SEARCH);
     }
-    else if (pV.getId() == R.id.mainTestSearchResultsButton)
-    {
-      Log.d(Constants.LOG_TAG, "Test Search Results button was clicked. Go to to Test Search Results Activity");
-
-      Intent intent = new Intent(Main.this, TestSearchResults.class);
-      startActivity(intent);
-
-    }
     else if (pV.getId() == R.id.mainAdvancedSearchButton)
     {
-      Log.d(Constants.LOG_TAG, "Advanced Search button was clicked. Go to to Advanced Search Activity");
+      if (Constants.LOG_ENABLED) { Log.d(Constants.LOG_TAG, "Advanced Search button was clicked. Go to to Advanced Search Activity"); }
 
       Intent intent = new Intent(Main.this, MainAdvancedSearch.class);
       startActivity(intent);
@@ -86,7 +73,7 @@ public class Main extends Activity implements OnClickListener, OnKeyListener
     }
     else
     {
-      Log.d(Constants.LOG_TAG, "Another field was clicked");
+      if (Constants.LOG_ENABLED) {  Log.d(Constants.LOG_TAG, "Another field was clicked"); }
     }
   }
 

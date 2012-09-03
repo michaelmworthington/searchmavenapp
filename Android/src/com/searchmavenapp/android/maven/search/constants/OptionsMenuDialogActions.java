@@ -19,17 +19,17 @@ public class OptionsMenuDialogActions
   {
     if (pItem.getItemId() == R.id.aboutMenuItem)
     {
-      Log.d(Constants.LOG_TAG, "About Menu Item was clicked");
+      if (Constants.LOG_ENABLED) { Log.d(Constants.LOG_TAG, "About Menu Item was clicked"); }
       showDialog(pContext, "About", R.layout.about_dialog, android.R.drawable.ic_menu_info_details);
     }
     else if (pItem.getItemId() == R.id.helpMenuItem)
     {
-      Log.d(Constants.LOG_TAG, "Help Menu Item was clicked");
+      if (Constants.LOG_ENABLED) {  Log.d(Constants.LOG_TAG, "Help Menu Item was clicked"); }
       showDialog(pContext, "Help", R.layout.help_dialog, android.R.drawable.ic_menu_help);
     }
     else if (pItem.getItemId() == R.id.settingsMenuItem)
     {
-      Log.d(Constants.LOG_TAG, "Settings Menu Item was clicked");
+      if (Constants.LOG_ENABLED) { Log.d(Constants.LOG_TAG, "Settings Menu Item was clicked"); }
       Intent intent = new Intent(pContext, Preferences.class);
       pContext.startActivity(intent);
     }

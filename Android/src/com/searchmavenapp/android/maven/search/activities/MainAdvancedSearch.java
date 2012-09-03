@@ -58,28 +58,28 @@ public class MainAdvancedSearch extends Activity implements OnClickListener, OnK
         || pV.getId() == R.id.asVersionSearchText || pV.getId() == R.id.asPackagingSearchText
         || pV.getId() == R.id.asClassifierSearchText || pV.getId() == R.id.asClassNameSearchText)
     {
-      Log.d(Constants.LOG_TAG, "Edit Text field was clicked");
+      if (Constants.LOG_ENABLED) { Log.d(Constants.LOG_TAG, "Edit Text field was clicked"); }
       EditText et = (EditText) pV;
 
       TextViewHelper.clearTextView(et);
     }
     else if (pV.getId() == R.id.searchImageButton)
     {
-      Log.d(Constants.LOG_TAG, "Search button was clicked. Go to Searching");
+      if (Constants.LOG_ENABLED) { Log.d(Constants.LOG_TAG, "Search button was clicked. Go to Searching"); }
 
       // Create a progress dialog so we can see it's searching
       showDialog(Constants.PROGRESS_DIALOG_ADVANCED_SEARCH);
     }
     else if (pV.getId() == R.id.mainQuickSearchButton)
     {
-      Log.d(Constants.LOG_TAG, "Quick Search button was clicked. Go to to Quick Search Activity");
+      if (Constants.LOG_ENABLED) { Log.d(Constants.LOG_TAG, "Quick Search button was clicked. Go to to Quick Search Activity"); }
 
       Intent intent = new Intent(MainAdvancedSearch.this, Main.class);
       startActivity(intent);
     }
     else
     {
-      Log.d(Constants.LOG_TAG, "Another field was clicked");
+      if (Constants.LOG_ENABLED) { Log.d(Constants.LOG_TAG, "Another field was clicked"); }
     }
   }
 

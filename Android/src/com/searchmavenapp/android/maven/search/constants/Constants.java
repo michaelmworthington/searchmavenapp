@@ -3,6 +3,7 @@ package com.searchmavenapp.android.maven.search.constants;
 public interface Constants
 {
   public static final String   LOG_TAG                           = "com.searchmavenapp";
+  public static final boolean  LOG_ENABLED                       = false;
 
   public static final int      PROGRESS_DIALOG_QUICK_SEARCH      = 0;
   public static final int      PROGRESS_DIALOG_ADVANCED_SEARCH   = 1;

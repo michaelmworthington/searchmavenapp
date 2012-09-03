@@ -209,7 +209,7 @@ public class MavenCentralRestAPI
 
     if (iDemoMode)
     {
-      Log.d(Constants.LOG_TAG, "Simulating Maven Central Search for query: " + pSearchQueryString);
+      if (Constants.LOG_ENABLED) { Log.d(Constants.LOG_TAG, "Simulating Maven Central Search for query: " + pSearchQueryString); }
 
       List<MCRDoc> docs = new ArrayList<MCRDoc>();
 
@@ -239,7 +239,7 @@ public class MavenCentralRestAPI
     {
       if (pSearchQueryString != null && pSearchQueryString.startsWith("q="))
       {
-        Log.d(Constants.LOG_TAG, "Making a REST Call to Maven Central Search for query: " + pSearchQueryString);
+        if (Constants.LOG_ENABLED) { Log.d(Constants.LOG_TAG, "Making a REST Call to Maven Central Search for query: " + pSearchQueryString); }
 
         initializeRestlet();
 
@@ -277,20 +277,20 @@ public class MavenCentralRestAPI
 
       int code = res.getStatus().getCode();
       String description = res.getStatus().getDescription();
-      Log.d(Constants.LOG_TAG,
-            String.format("GET %s: Response %s-%s: %s%n", url, code, description, returnValue.toString()));
+      if (Constants.LOG_ENABLED) { Log.d(Constants.LOG_TAG,
+            String.format("GET %s: Response %s-%s: %s%n", url, code, description, returnValue.toString())); }
     }
     catch (ResourceException ex)
     {
       int code = ex.getStatus().getCode();
       String description = ex.getStatus().getDescription();
       // TODO: display error message to user
-      Log.d(Constants.LOG_TAG, String.format("GET %s: Response %s: %s%n", url, code, description));
+      if (Constants.LOG_ENABLED) { Log.d(Constants.LOG_TAG, String.format("GET %s: Response %s: %s%n", url, code, description)); }
     }
     catch (Exception ex)
     {
       // TODO: display error message to user
-      Log.d(Constants.LOG_TAG, "REST Call Failed: " + ex.getMessage(), ex);
+      if (Constants.LOG_ENABLED) { Log.d(Constants.LOG_TAG, "REST Call Failed: " + ex.getMessage(), ex); }
     }
     return returnValue;
   }

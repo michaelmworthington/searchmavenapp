@@ -1,15 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="hello">Hello World, Main!</string>
     <string name="app_name">Search Maven</string>
-    <string name="app_description">Search the Maven Central Repository for Maven Artifacts</string>
+    <string name="app_description">Search Maven repositories including the Maven Central Repository</string>
     <string name="search_results">Search Results:</string>
     <string name="groupId">groupId</string>
     <string name="artifactId">artifactId</string>
     <string name="latestVersion">latest version</string>
     <string name="lastUpdate">last update</string>
     <string name="search">Search</string>
+    <string name="searchMavenAppHeaderDescription">the search maven app header</string>
+    <string name="loadingMessage">Loading…</string>
+    <string name="pom_xml">pom.xml</string>
+    <string name="advanced_search">Advanced Search</string>
+    <string name="pipe">|</string>
+    <string name="quick_search">Quick Search</string>
+    <string name="test_search_results">Test Search Results</string>
+    <string name="classname">Classname:</string>
+    <string name="_by_classname">"  By Classname"</string>
+    <string name="classifier">Classifier:</string>
+    <string name="aboutMainMessage">This application provides a native interface to search Maven repositories including the Maven Central repository. This is an open source application. To contribute, visit www.searchmavenapp.com</string>
+    <string name="aboutSubMessageTextView">Apache and Apache Maven are trademarks of the Apache Software Foundation. The Central Repository is a service mark of Sonatype, Inc. The Central Repository at search.maven.org is intended to complement Apache Maven and should not be confused with Apache Maven.</string>
 
     <string-array name="sample_log4j_file_list">
         <item>log4j.pom</item>

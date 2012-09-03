@@ -5,17 +5,20 @@
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/aboutMainMessageTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="This application provides a native interface to search the Maven Central repository at http://search.maven.org."
-        android:textSize="20sp" android:padding="10dp"/>
+        android:padding="10dp"
+        android:text="@string/aboutMainMessage"
+        android:textSize="20sp" 
+        android:autoLink="web" />
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/aboutSubMessageTextView"
+        style="@style/aboutSubMessageStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Apache and Apache Maven are trademarks of the Apache Software Foundation. The Central Repository is a service mark of Sonatype, Inc. The Central Repository is intended to complement Apache Maven and should not be confused with Apache Maven."
-        android:textSize="10sp" android:padding="10dp"/>
+        android:text="@string/aboutSubMessageTextView" 
+        android:autoLink="web" />
 
 </LinearLayout>

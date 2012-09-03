@@ -8,8 +8,9 @@
         android:id="@+id/imageView1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/centralrepository_logo" />
+        android:layout_gravity="center_horizontal"
+        android:contentDescription="@string/searchMavenAppHeaderDescription"
+        android:src="@drawable/searchmaven_header" />
 
     <TextView
         android:id="@+id/SearchResultsTextView"
@@ -17,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
-        android:background="#069"
+        android:background="#666666"
         android:text="@string/search_results"
         android:textColor="#FFFFFF"
         android:textSize="20sp"

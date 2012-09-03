@@ -8,8 +8,9 @@
         android:id="@+id/imageView1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/centralrepository_logo" />
+        android:layout_gravity="center_horizontal"
+        android:contentDescription="@string/searchMavenAppHeaderDescription"
+        android:src="@drawable/searchmaven_header" />
 
     <TextView
         android:id="@+id/pomHeaderTextView"
@@ -17,8 +18,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
-        android:background="#069"
-        android:text="pom.xml"
+        android:background="#666666"
+        android:text="@string/pom_xml"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
         android:textStyle="bold" />
@@ -27,7 +28,7 @@
                 android:id="@+id/pomTextView"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:text="pom.xml" 
+                android:text="@string/pom_xml" 
                 android:typeface="monospace"
                 android:fadeScrollbars="true"
                 android:scrollbars="horizontal|vertical"/>

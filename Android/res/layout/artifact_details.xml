@@ -10,14 +10,15 @@
 
         <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent" >
+            android:layout_height="wrap_content" >
 
             <ImageView
                 android:id="@+id/imageView1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:src="@drawable/centralrepository_logo" />
+                android:layout_gravity="center_horizontal"
+                android:contentDescription="@string/searchMavenAppHeaderDescription"
+                android:src="@drawable/searchmaven_header" />
 
             <TableLayout
                 android:id="@+id/tableLayout1"
@@ -32,7 +33,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:layout_marginTop="5dp"
-                    android:background="#069"
+                    android:background="#666666"
                     android:text="  Project Information"
                     android:textColor="#FFFFFF"
                     android:textSize="20sp"
@@ -45,7 +46,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="GroupId:" android:textStyle="bold" />
+                        android:text="GroupId:"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/adGroupIdText"
@@ -63,7 +65,9 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="ArtifactId:" android:textStyle="bold" android:layout_marginRight="15dp"/>
+                        android:layout_marginRight="15dp"
+                        android:text="ArtifactId:"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/adArtifactIdText"
@@ -81,7 +85,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Version:" android:textStyle="bold" />
+                        android:text="Version:"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/adVersionText"
@@ -98,7 +103,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:layout_marginTop="5dp"
-                    android:background="#069"
+                    android:background="#666666"
                     android:text="  Dependency Information"
                     android:textColor="#FFFFFF"
                     android:textSize="20sp"
@@ -115,7 +120,11 @@
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:maxLines="6"
-                    android:text="&lt;dependency>&#10;    &lt;groupId>log4j&lt;/groupId>&#10;    &lt;artifactId>log4j&lt;/artifactId>&#10;    &lt;version>1.2.27&lt;/version>&#10;&lt;/dependency>" >
+                    android:text="&lt;dependency>
+    &lt;groupId>log4j&lt;/groupId>
+    &lt;artifactId>log4j&lt;/artifactId>
+    &lt;version>1.2.27&lt;/version>
+&lt;/dependency>" >
                 </TextView>
 
                 <TextView
@@ -123,7 +132,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:layout_marginTop="5dp"
-                    android:background="#069"
+                    android:background="#666666"
                     android:text="  Project Object Model (POM)"
                     android:textColor="#FFFFFF"
                     android:textSize="20sp"
@@ -134,13 +143,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Show POM" />
-<!-- TODO: Commenting out until I can find out how to get the file list
+                <!--
+     TODO: Commenting out until I can find out how to get the file list
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:layout_marginTop="5dp"
-                    android:background="#069"
+                    android:background="#666666"
                     android:text="  Artifact File List"
                     android:textColor="#FFFFFF"
                     android:textSize="20sp"
@@ -151,8 +161,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Show Artifact File List" />
- -->
-                </TableLayout>
+                -->
+            </TableLayout>
         </RelativeLayout>
     </ScrollView>
 

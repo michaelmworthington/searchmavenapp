@@ -5,7 +5,7 @@
   <groupId>com.searchmavenapp.android.maven.search</groupId>
   <artifactId>SearchMaven</artifactId>
   <packaging>apk</packaging>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.0.1</version>
   <name>Your Android project Maven Enabled</name>
 
   <dependencies>
