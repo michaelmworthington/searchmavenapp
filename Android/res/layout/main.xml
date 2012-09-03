@@ -38,7 +38,7 @@
         android:layout_alignTop="@+id/searchEditText"
         android:src="@android:drawable/ic_menu_search" 
         android:contentDescription="@string/search"/>
-
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -11,7 +11,7 @@
         android:layout_gravity="center_horizontal"
         android:contentDescription="@string/searchMavenAppHeaderDescription"
         android:src="@drawable/searchmaven_header" />
-
+
     <TextView
         android:id="@+id/pomHeaderTextView"
         android:layout_width="match_parent"
