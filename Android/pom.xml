@@ -36,6 +36,13 @@
       <artifactId>compatibility-v4</artifactId>
       <version>r8</version>
     </dependency>
+
+    <dependency>
+        <groupId>com.github.cwac</groupId>
+        <artifactId>cwac-endless</artifactId>
+        <version>1.2.0</version>
+        <type>apklib</type>
+    </dependency>
   </dependencies>
 
   <build>
@@ -44,9 +51,9 @@
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+          <groupId>com.simpligility.maven.plugins</groupId>
           <artifactId>android-maven-plugin</artifactId>
-          <version>3.2.0</version>
+          <version>4.5.0</version>
           <extensions>true</extensions>
         </plugin>
         <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
@@ -86,13 +93,19 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+        <groupId>com.simpligility.maven.plugins</groupId>
         <artifactId>android-maven-plugin</artifactId>
         <configuration>
           <sdk>
             <path>${env.ANDROID_HOME}</path>
-            <platform>2.3.3</platform>
+            <!-- <platform>2.3.3</platform> -->
+            <platform>10</platform>
           </sdk>
+          <!-- <failOnNonStandardStructure>false</failOnNonStandardStructure> -->
+          <androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
+          <resourceDirectory>${project.basedir}/res</resourceDirectory>
+          <assetsDirectory>${project.basedir}/assets</assetsDirectory>
+          <nativeLibrariesDirectory>${project.basedir}/libs</nativeLibrariesDirectory>
         </configuration>
       </plugin>
       <plugin>
