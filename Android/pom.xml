@@ -36,12 +36,23 @@
       <artifactId>compatibility-v4</artifactId>
       <version>r8</version>
     </dependency>
-
+<!--
     <dependency>
         <groupId>com.github.cwac</groupId>
         <artifactId>cwac-endless</artifactId>
         <version>1.2.0</version>
         <type>apklib</type>
+    </dependency>
+-->
+    <dependency>
+        <groupId>com.github.cwac</groupId>
+        <artifactId>CWAC-AdapterWrapper</artifactId>
+        <version>0.1-mike</version>
+    </dependency>
+    <dependency>
+        <groupId>com.github.cwac</groupId>
+        <artifactId>CWAC-EndlessAdapter</artifactId>
+        <version>0.1-mike</version>
     </dependency>
   </dependencies>
 
