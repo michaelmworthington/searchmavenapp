@@ -15,18 +15,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Search Maven App',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.green,
+        primarySwatch: Colors.blueGrey,
       ),
       home: MyHomePage(title: 'Search Maven App', storage: CounterStorage()),
     );
@@ -52,6 +43,8 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
+//This class defines a build() method
+//which defines the layout for the Home Page
 class _MyHomePageState extends State<MyHomePage> {
   int _counter;
 
@@ -80,16 +73,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
         actions: <Widget>[
           IconButton(
@@ -107,17 +92,27 @@ class _MyHomePageState extends State<MyHomePage> {
                     MaterialPageRoute(builder: (context) => FourthPage()));
               })
         ]),
-      body: new ListView.builder(
-        itemCount: _counter,
-        itemBuilder: (context, index) {
-          return ListTile(
-              leading: const Icon(Icons.account_circle),
-              title: Text("Name of item: $index"),
-              onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => SecondPage()));
-              });
-        },
+      body: Center(child: 
+              Row(children: <Widget>[
+                Expanded(child:
+                  TextField(controller: TextEditingController(text: "what are you looking for?"))
+                ),
+                RaisedButton.icon(
+                    onPressed: (){
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => SecondPage(pCounter: _counter)));
+                    }, 
+                    icon: Icon(Icons.search), 
+                    label: Text("Search")
+                )
+              ])
+            ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.search), title: Text("Quick Search")),
+          BottomNavigationBarItem(icon: Icon(Icons.location_searching), title: Text("Advanced Search")),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), title: Text("Settings"))
+        ]
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
@@ -129,18 +124,71 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class SecondPage extends StatelessWidget {
+  SecondPage({int pCounter}){
+    print("counter was $pCounter");
+    _counter = pCounter;
+  }
+
+  static int _counter = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: Text("second screen")),
-        body: Center(
-            child: RaisedButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                label: Text("Go Back"),
-                icon: new Icon(
-                    font_awesome_flutter.FontAwesomeIcons.stepBackward))));
+        body: Center(child: 
+                Column(children: <Widget>[
+                  Expanded(child:
+                    ListView.builder(
+                      itemCount: _counter,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                            leading: const Icon(Icons.account_circle),
+                            title: Text("Name of item: $index"),
+                            onTap: () {
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) => SearchResultsPage()));
+                            });
+                      },
+                    )
+                  ),
+                  Divider(color: Colors.red),
+
+                  RaisedButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    label: Text("Go Back"),
+                    icon: new Icon(font_awesome_flutter.FontAwesomeIcons.stepBackward)
+                  )
+                ])
+        )
+    );
+  }
+}
+
+class SearchResultsPage extends StatelessWidget {
+  static final String _searchTerm = "log4j"; //TODO
+  static final String _quickSearch = "q=$_searchTerm";
+  static final int _start = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Search Results")),
+      body: FutureBuilder<MavenCentralResponse>(
+        future: CentralSearchAPI().search(pSearchQueryString: _quickSearch, pStart: _start),
+        builder: (context, AsyncSnapshot<MavenCentralResponse> snapshot) {
+          if (snapshot.hasData) {
+            return Text(snapshot.data.response.numFound.toString());
+          } else if (snapshot.hasError) {
+            return Text("${snapshot.error}");
+          }
+
+          // By default, show a loading spinner
+          return CircularProgressIndicator();
+        }
+      )
+    );
   }
 }
 
@@ -301,4 +349,68 @@ class PhotosList extends StatelessWidget {
       },
     );
   }
+}
+
+class CentralSearchAPI {
+
+  //See MavenCentralRestAPI.java
+  Future<MavenCentralResponse> search({String pSearchQueryString, int pStart}) async {
+    int _numResults = 20;
+
+    String baseUrl = "http://search.maven.org/solrsearch/select?";
+    String numResults = "rows=" + _numResults.toString();
+    String startPosition = "start=" + pStart.toString();
+    String resultsFormat = "wt=json";
+
+    String url = baseUrl + numResults + "&" + startPosition + "&" + resultsFormat + "&" + pSearchQueryString;
+
+
+    print("Searching Central: $url");
+    
+    final response =
+        await http.get(url);
+
+    if (response.statusCode == 200) {
+      // If server returns an OK response, parse the JSON
+      print(response.body);
+
+      return MavenCentralResponse.fromJson(json.decode(response.body));
+    } else {
+      // If that response was not OK, throw an error.
+      throw Exception('Failed to load MavenCentralResponse');
+    }
+  }
+}
+
+class MavenCentralResponse {
+  final Map responseHeader;
+  final MCRResponse response;
+  final Map spellcheck;
+
+  MavenCentralResponse({this.responseHeader, this.response, this.spellcheck});
+
+  factory MavenCentralResponse.fromJson(Map<String, dynamic> json) {
+    return MavenCentralResponse(
+      responseHeader: json['responseHeader'],
+      response: MCRResponse.fromJson(json['response']),
+      spellcheck: json['spellcheck'],
+    );
+  }
+}
+
+class MCRResponse {
+  final int numFound;
+  final int start;
+  final List docs;
+
+  MCRResponse({this.numFound, this.start, this.docs});
+
+  factory MCRResponse.fromJson(Map<String, dynamic> json) {
+    return MCRResponse(
+      numFound: json['numFound'],
+      start: json['start'],
+      docs: json['docs'],
+    );
+  }
+
 }
