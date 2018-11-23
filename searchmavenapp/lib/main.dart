@@ -7,8 +7,18 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:http/http.dart' as http;
+import 'colors.dart';
 
 void main() => runApp(MyApp());
+
+ThemeData _buildTheme() {
+  return ThemeData(
+    primarySwatch: Colors.blueGrey,
+    inputDecorationTheme: InputDecorationTheme(
+      border: OutlineInputBorder()
+    )
+  );
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -16,9 +26,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Search Maven App',
-      theme: ThemeData(
-        primarySwatch: Colors.blueGrey,
-      ),
+      theme: _buildTheme(),
       home: MyHomePage(title: 'Search Maven App', storage: CounterStorage()),
     );
   }
@@ -46,6 +54,8 @@ class MyHomePage extends StatefulWidget {
 //This class defines a build() method
 //which defines the layout for the Home Page
 class _MyHomePageState extends State<MyHomePage> {
+  final _searchTextController = TextEditingController();
+
   int _counter;
 
   @override
@@ -92,20 +102,41 @@ class _MyHomePageState extends State<MyHomePage> {
                     MaterialPageRoute(builder: (context) => FourthPage()));
               })
         ]),
-      body: Center(child: 
-              Row(children: <Widget>[
-                Expanded(child:
-                  TextField(controller: TextEditingController(text: "what are you looking for?"))
-                ),
-                RaisedButton.icon(
-                    onPressed: (){
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => SecondPage(pCounter: _counter)));
-                    }, 
-                    icon: Icon(Icons.search), 
-                    label: Text("Search")
-                )
-              ])
+      body: Center(child:
+              Column(mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Padding(padding: EdgeInsets.symmetric(horizontal: 24.0),
+                    child: TextField(
+                              controller: _searchTextController,
+                              decoration: InputDecoration(
+                                //filled: true,
+                                labelText: 'Quick Search'
+                              )
+                          )
+                  ),
+                  //don't need the spacer when using the button bar
+                  //SizedBox(height: 12.0),
+
+                  ButtonBar(alignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                        FlatButton(onPressed: (){
+                            _searchTextController.clear();
+                          },
+                          child: Text("CLEAR"),
+                          textColor: Theme.of(context).primaryColor
+                        ),
+                        RaisedButton(
+                            onPressed: (){
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) => SecondPage(pCounter: _counter)));
+                            }, 
+                            child: Icon(Icons.search, color:Theme.of(context).primaryColorLight),
+                            color: Theme.of(context).primaryColor,
+                        )
+                    ],
+                  )
+                ]
+              )
             ),
       bottomNavigationBar: BottomNavigationBar(
         items: [
@@ -337,16 +368,63 @@ class PhotosList extends StatelessWidget {
 
   PhotosList({Key key, this.photos}) : super(key: key);
 
+  Card _createPhotoCard(BuildContext context, Photo pPhoto){
+    final ThemeData theme = Theme.of(context);
+
+    return Card(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              AspectRatio(
+                aspectRatio: 18.0 / 11.0,
+                child: Image.network(
+                  pPhoto.thumbnailUrl, 
+                  fit: BoxFit.fitWidth,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      'Title: ' + pPhoto.title,
+                      style: theme.textTheme.title,
+                      maxLines: 3,
+                    ),
+                    SizedBox(height: 8.0),
+                    Text(
+                      'Id: ' + pPhoto.id.toString(),
+                      style: theme.textTheme.body2,
+                    ),
+                    SizedBox(height: 8.0),
+                    Text('Third Text'),
+                    SizedBox(height: 8.0),
+                    Text('Fourth Text'),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+  }
+
+  List<Card> _buildGridCards2(BuildContext context, List<Photo> pPhotos){
+    return pPhotos.map( (photo) {
+      return _createPhotoCard(context, photo);
+    }).toList();
+  }
+    
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-      ),
-      itemCount: photos.length,
-      itemBuilder: (context, index) {
-        return Image.network(photos[index].thumbnailUrl);
-      },
+    
+
+    return GridView.count(
+      crossAxisCount: 1,
+      padding: EdgeInsets.all(16.0),
+      // ield identifies the size of the items based on an aspect ratio (width over height).
+      childAspectRatio: 8.0 / 10.0,
+      children: _buildGridCards2(context, photos),
     );
   }
 }
@@ -374,6 +452,7 @@ class CentralSearchAPI {
       // If server returns an OK response, parse the JSON
       print(response.body);
 
+      //Supplemental parsing json w/ dart: https://medium.com/flutter-community/parsing-complex-json-in-flutter-747c46655f51
       return MavenCentralResponse.fromJson(json.decode(response.body));
     } else {
       // If that response was not OK, throw an error.
