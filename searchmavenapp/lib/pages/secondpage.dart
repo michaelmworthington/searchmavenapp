@@ -15,34 +15,37 @@ class SecondPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("second screen")),
-        body: Center(child: 
-                Column(children: <Widget>[
-                  Expanded(child:
-                    ListView.builder(
-                      itemCount: _counter,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                            leading: const Icon(Icons.account_circle),
-                            title: Text("Name of item: $index"),
-                            onTap: () {
-                              Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) => SearchResultsPage()));
-                            });
-                      },
-                    )
-                  ),
-                  Divider(color: Colors.red),
+      appBar: AppBar(title: Text("second screen")),
+      body: Center( 
+        child: Column(
+          children: <Widget>[
+            Expanded(child:
+              ListView.builder(
+                itemCount: _counter,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                      leading: const Icon(Icons.account_circle),
+                      title: Text("Name of item: $index"),
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => SearchResultsPage()));
+                      });
+                },
+              )
+            ),
+            Divider(color: Colors.red),
 
-                  RaisedButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    label: Text("Go Back"),
-                    icon: new Icon(font_awesome_flutter.FontAwesomeIcons.stepBackward)
-                  )
-                ])
+            RaisedButton.icon(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              label: Text("Go Back"),
+              icon: new Icon(font_awesome_flutter.FontAwesomeIcons.stepBackward)
+            ),
+            SizedBox(height: 16)
+          ]
         )
+      )
     );
   }
 }

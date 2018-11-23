@@ -17,8 +17,18 @@ class MyApp extends StatelessWidget {
 ThemeData _buildTheme() {
   return ThemeData(
     primarySwatch: Colors.blueGrey,
+    //canvasColor: Colors.blueGrey,
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder()
-    )
+    ),
+    buttonColor: Colors.blueGrey,
+    buttonTheme: ButtonThemeData(
+      textTheme: ButtonTextTheme.primary
+    ),
+    //iconTheme: IconThemeData(
+    //  color: Colors.red
+    //),
+    //bottomAppBarColor: Colors.red,
+    //cardColor: Colors.red
   );
 }

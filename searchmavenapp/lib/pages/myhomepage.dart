@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart' as path_provider;
+import 'package:searchmavenapp/pages/searchresultspage.dart';
 import 'package:searchmavenapp/pages/secondpage.dart';
 import 'package:searchmavenapp/pages/thirdpage.dart';
 import 'package:searchmavenapp/pages/fourthpage.dart';
@@ -29,6 +30,7 @@ class MyHomePage extends StatefulWidget {
 //which defines the layout for the Home Page
 class _MyHomePageState extends State<MyHomePage> {
   final _searchTextController = TextEditingController();
+  int _navBarSelectedIndex = 0;
 
   int _counter;
 
@@ -96,16 +98,14 @@ class _MyHomePageState extends State<MyHomePage> {
                         FlatButton(onPressed: (){
                             _searchTextController.clear();
                           },
-                          child: Text("CLEAR"),
-                          textColor: Theme.of(context).primaryColor
+                          child: Text("CLEAR")
                         ),
                         RaisedButton(
                             onPressed: (){
                               Navigator.push(context,
                                   MaterialPageRoute(builder: (context) => SecondPage(pCounter: _counter)));
                             }, 
-                            child: Icon(Icons.search, color:Theme.of(context).primaryColorLight),
-                            color: Theme.of(context).primaryColor,
+                            child: Icon(Icons.search)
                         )
                     ],
                   )
@@ -113,8 +113,12 @@ class _MyHomePageState extends State<MyHomePage> {
               )
             ),
       bottomNavigationBar: BottomNavigationBar(
+        //type: BottomNavigationBarType.shifting,
+        fixedColor: Colors.blue,
+        currentIndex: _navBarSelectedIndex,
+        onTap: _navBarTapped,
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.search), title: Text("Quick Search")),
+          BottomNavigationBarItem(icon: Icon(Icons.search), title: Text("Quick Search"), backgroundColor: Colors.blueGrey),
           BottomNavigationBarItem(icon: Icon(Icons.location_searching), title: Text("Advanced Search")),
           BottomNavigationBarItem(icon: Icon(Icons.settings), title: Text("Settings"))
         ]
@@ -125,6 +129,20 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  void _navBarTapped(int index){
+    //print("bottom nav bar tapped with $index");
+
+    //TODO: https://docs.flutter.io/flutter/material/BottomNavigationBar-class.html
+    //TODO: nav bar on all pages (scaffolds) ?
+    
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => SearchResultsPage()));
+
+    setState(() {
+          _navBarSelectedIndex = index;
+    });
   }
 }
 
