@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:searchmavenapp/api/centralsearchapi.dart';
+import 'package:searchmavenapp/api/jsonplaceholder.dart';
 
 class FourthPage extends StatelessWidget {
   @override
@@ -18,7 +18,16 @@ class FourthPage extends StatelessWidget {
           }
 
           // By default, show a loading spinner
-          return CircularProgressIndicator();
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                CircularProgressIndicator(),
+                SizedBox(height: 16),
+                Text("Searching Photos"),
+              ],
+            )
+          );
         }
       )
     );

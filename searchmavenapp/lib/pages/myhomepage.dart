@@ -28,20 +28,53 @@ class MyHomePage extends StatefulWidget {
 
 //This class defines a build() method
 //which defines the layout for the Home Page
-class _MyHomePageState extends State<MyHomePage> {
-  final _searchTextController = TextEditingController();
-  int _navBarSelectedIndex = 0;
+class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
 
+  //https://flutter.io/docs/cookbook/forms/retrieve-input
+  final _searchTextController = TextEditingController();
+  final _groupIdTextController = TextEditingController();
+  final _artifactIdTextController = TextEditingController();
+  final _versionTextController = TextEditingController();
+  final _packagingTextController = TextEditingController();
+  final _classifierTextController = TextEditingController();
+  final _classnameTextController = TextEditingController();
+
+  //https://stackoverflow.com/questions/52150677/how-to-shift-focus-to-next-textfield-in-flutter
+  final _artifactIdFocusNode = FocusNode();
+
+  
+  //https://flutter.io/docs/cookbook/design/tabs
+  //https://stackoverflow.com/questions/50123354/how-to-get-current-tab-index-in-flutter
+  TabController _tabController;
+
+  //lynda.com
   int _counter;
 
   @override
   void initState() {
     super.initState();
+    debugPrint("Debugging Home Page");
+
+    _tabController = TabController(length: 2, initialIndex: 0, vsync: this);
+
     widget.storage.readCounter().then((int value) {
       setState(() {
         _counter = value;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _searchTextController.dispose();
+    _groupIdTextController.dispose();
+    _artifactIdTextController.dispose();
+    _versionTextController.dispose();
+    _packagingTextController.dispose();
+    _classifierTextController.dispose();
+    _classnameTextController.dispose();
+    super.dispose();
   }
 
   Future<File> _incrementCounter() async {
@@ -59,69 +92,120 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    //https://flutter.io/docs/cookbook/design/drawer
     return Scaffold(
+      drawer: Drawer(
+        child: ListView( //TODO: how does it scroll?? maybe use a column
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              child: Text("Drawer Header"), //TODO: Info or picture
+              decoration: BoxDecoration(
+                color: Theme.of(context).primaryColor
+              ),
+            ),
+            ListTile(
+              title: Text("Quick Search"),
+              leading: Icon(Icons.search),
+              onTap: () {
+                //Close the drawer
+                Navigator.pop(context);
+                //Go to the page
+                _tabController.index = 0;
+              },
+            ),
+            ListTile(
+              title: Text("Advanced Search"),
+              leading: Icon(Icons.youtube_searched_for),
+              onTap: () {
+                //Close the drawer
+                Navigator.pop(context);
+                //Go to the page
+                _tabController.index = 1;
+              },
+            ),
+            ListTile(
+              title: Text("Help"),
+              leading: Icon(Icons.help),
+              onTap: () {
+                //Close the drawer
+                Navigator.pop(context);
+                //Go to the page
+              },
+            ),
+            ListTile(
+              title: Text("Settings"),
+              leading: Icon(Icons.settings),
+              onTap: () {
+                //Close the drawer
+                Navigator.pop(context);
+                //Go to the page
+              },
+            ),
+            ListTile(
+              title: Text("About"),
+              leading: Icon(Icons.info),
+              onTap: () {
+                //Close the drawer
+                Navigator.pop(context);
+                //Go to the page
+              },
+            ),
+            ListTile(
+              title: Text("Second"),
+              leading: Icon(Icons.book),
+              onTap: () {
+                //Close the drawer
+                Navigator.pop(context);
+                //Go to the page
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SecondPage(pCounter: _counter, pSearchTerm: "menu"))
+                );
+              },
+            ),
+            ListTile(
+              title: Text("Third"),
+              leading: Icon(Icons.play_arrow),
+              onTap: () {
+                //Close the drawer
+                Navigator.pop(context);
+                //Go to the page
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ThirdPage())
+                );
+              },
+            ),
+            ListTile(
+              title: Text("Fourth"),
+              leading: Icon(Icons.play_circle_outline),
+              onTap: () {
+                //Close the drawer
+                Navigator.pop(context);
+                //Go to the page
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => FourthPage())
+                );
+              },
+            ),
+          ],
+        )
+      ),
       appBar: AppBar(
         title: Text(widget.title),
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.play_arrow),
-              tooltip: 'http request',
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ThirdPage()));
-              }),
-          IconButton(
-              icon: Icon(Icons.play_circle_outline),
-              tooltip: 'big http request',
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => FourthPage()));
-              })
-        ]),
-      body: Center(child:
-              Column(mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Padding(padding: EdgeInsets.symmetric(horizontal: 24.0),
-                    child: TextField(
-                              controller: _searchTextController,
-                              decoration: InputDecoration(
-                                //filled: true,
-                                labelText: 'Quick Search'
-                              )
-                          )
-                  ),
-                  //don't need the spacer when using the button bar
-                  //SizedBox(height: 12.0),
-
-                  ButtonBar(alignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                        FlatButton(onPressed: (){
-                            _searchTextController.clear();
-                          },
-                          child: Text("CLEAR")
-                        ),
-                        RaisedButton(
-                            onPressed: (){
-                              Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) => SecondPage(pCounter: _counter)));
-                            }, 
-                            child: Icon(Icons.search)
-                        )
-                    ],
-                  )
-                ]
-              )
-            ),
-      bottomNavigationBar: BottomNavigationBar(
-        //type: BottomNavigationBarType.shifting,
-        fixedColor: Colors.blue,
-        currentIndex: _navBarSelectedIndex,
-        onTap: _navBarTapped,
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.search), title: Text("Quick Search"), backgroundColor: Colors.blueGrey),
-          BottomNavigationBarItem(icon: Icon(Icons.location_searching), title: Text("Advanced Search")),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), title: Text("Settings"))
-        ]
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: <Widget>[
+            Tab(text: "Quick Search"),
+            Tab(text: "Advanced Search"),
+          ],
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: <Widget>[
+          _buildQuickSearch(context),
+          _buildAdvancedSearch(context),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
@@ -131,21 +215,132 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _navBarTapped(int index){
-    //print("bottom nav bar tapped with $index");
+  Widget _buildAdvancedSearch(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text("By Coordinate", style: Theme.of(context).textTheme.headline.copyWith(color: Theme.of(context).primaryColor)),
+            SizedBox(height: 12.0),
+            TextField(
+              controller: _groupIdTextController,
+              decoration: InputDecoration(labelText: 'GroupId'),
+              onSubmitted: (value) {FocusScope.of(context).requestFocus(_artifactIdFocusNode);}, //TODO: do the rest
+              autofocus: true,
+            ),
+            SizedBox(height: 12.0),
+            TextField(
+              controller: _artifactIdTextController,
+              decoration: InputDecoration(labelText: 'ArtifactId'),
+              focusNode: _artifactIdFocusNode,
+            ),
+            SizedBox(height: 12.0),
+            TextField(
+              controller: _versionTextController,
+              decoration: InputDecoration(labelText: 'Version'),
+            ),
+            SizedBox(height: 12.0),
+            TextField(
+              controller: _packagingTextController,
+              decoration: InputDecoration(labelText: 'Packaging'),
+            ),
+            SizedBox(height: 12.0),
+            TextField(
+              controller: _classifierTextController,
+              decoration: InputDecoration(labelText: 'Classifier'),
+            ),
+            SizedBox(height: 12.0),
+            Text("By Classname", style: Theme.of(context).textTheme.headline.copyWith(color: Theme.of(context).primaryColor)),
+            SizedBox(height: 12.0),
+            TextField(
+              controller: _classnameTextController,
+              decoration: InputDecoration(labelText: 'Classname')
+            ),
+            //don't need the spacer when using the button bar
+            //SizedBox(height: 12.0),
 
-    //TODO: https://docs.flutter.io/flutter/material/BottomNavigationBar-class.html
-    //TODO: nav bar on all pages (scaffolds) ?
-    
+            ButtonBar(alignment: MainAxisAlignment.center,
+              children: <Widget>[
+                  FlatButton(onPressed: (){
+                      _groupIdTextController.clear();
+                      _artifactIdTextController.clear();
+                      _versionTextController.clear();
+                      _packagingTextController.clear();
+                      _classifierTextController.clear();
+                      _classnameTextController.clear();
+                    },
+                    child: Text("CLEAR")
+                  ),
+                  RaisedButton(
+                      onPressed: (){
+                        SearchTerms searchTerms = SearchTerms(searchType: "Advanced", 
+                        groupId: _groupIdTextController.text,
+                        artifactId: _artifactIdTextController.text,
+                        version: _versionTextController.text,
+                        packaging: _packagingTextController.text,
+                        classifier: _classifierTextController.text,
+                        classname: _classnameTextController.text,
+                        );
+
                         Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => SearchResultsPage()));
+                            MaterialPageRoute(builder: (context) => SearchResultsPage(searchTerms: searchTerms)));
+                      }, 
+                      child: Icon(Icons.search)
+                  )
+              ],
+            )
+          ]
+        ),
+      )
+    );
+  }
 
-    setState(() {
-          _navBarSelectedIndex = index;
-    });
+  Widget _buildQuickSearch(BuildContext context) {
+    return Center(child:
+      Column(mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Padding(padding: EdgeInsets.symmetric(horizontal: 24.0),
+            child: TextField(
+              controller: _searchTextController,
+              decoration: InputDecoration(
+                //filled: true,
+                labelText: 'Quick Search'
+              ),
+              onSubmitted: (value){_submitSearchTerms(pSearchType: "Quick");},
+            )
+          ),
+          //don't need the spacer when using the button bar
+          //SizedBox(height: 12.0),
+
+          ButtonBar(alignment: MainAxisAlignment.center,
+            children: <Widget>[
+                FlatButton(onPressed: (){
+                    _searchTextController.clear();
+                  },
+                  child: Text("CLEAR")
+                ),
+                RaisedButton(
+                    onPressed: (){_submitSearchTerms(pSearchType: "Quick");}, 
+                    child: Icon(Icons.search)
+                )
+            ],
+          )
+        ]
+      )
+    );
+  }
+
+  void _submitSearchTerms({@required String pSearchType}) {
+    SearchTerms searchTerms = SearchTerms(searchType: pSearchType, quickSearch: _searchTextController.text);
+
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => SearchResultsPage(searchTerms: searchTerms)));
+    _searchTextController.clear();
   }
 }
-
 
 class CounterStorage {
   Future<String> get _localPath async {

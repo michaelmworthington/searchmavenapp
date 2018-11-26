@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:searchmavenapp/api/centralsearchapi.dart';
+import 'package:searchmavenapp/api/jsonplaceholder.dart';
 
 
 class ThirdPage extends StatelessWidget {
