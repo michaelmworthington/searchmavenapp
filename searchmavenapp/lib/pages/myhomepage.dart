@@ -94,102 +94,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   Widget build(BuildContext context) {
     //https://flutter.io/docs/cookbook/design/drawer
     return Scaffold(
-      drawer: Drawer(
-        child: ListView( //TODO: how does it scroll?? maybe use a column
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text("Drawer Header"), //TODO: Info or picture
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor
-              ),
-            ),
-            ListTile(
-              title: Text("Quick Search"),
-              leading: Icon(Icons.search),
-              onTap: () {
-                //Close the drawer
-                Navigator.pop(context);
-                //Go to the page
-                _tabController.index = 0;
-              },
-            ),
-            ListTile(
-              title: Text("Advanced Search"),
-              leading: Icon(Icons.youtube_searched_for),
-              onTap: () {
-                //Close the drawer
-                Navigator.pop(context);
-                //Go to the page
-                _tabController.index = 1;
-              },
-            ),
-            ListTile(
-              title: Text("Help"),
-              leading: Icon(Icons.help),
-              onTap: () {
-                //Close the drawer
-                Navigator.pop(context);
-                //Go to the page
-              },
-            ),
-            ListTile(
-              title: Text("Settings"),
-              leading: Icon(Icons.settings),
-              onTap: () {
-                //Close the drawer
-                Navigator.pop(context);
-                //Go to the page
-              },
-            ),
-            ListTile(
-              title: Text("About"),
-              leading: Icon(Icons.info),
-              onTap: () {
-                //Close the drawer
-                Navigator.pop(context);
-                //Go to the page
-              },
-            ),
-            ListTile(
-              title: Text("Second"),
-              leading: Icon(Icons.book),
-              onTap: () {
-                //Close the drawer
-                Navigator.pop(context);
-                //Go to the page
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => SecondPage(pCounter: _counter, pSearchTerm: "menu"))
-                );
-              },
-            ),
-            ListTile(
-              title: Text("Third"),
-              leading: Icon(Icons.play_arrow),
-              onTap: () {
-                //Close the drawer
-                Navigator.pop(context);
-                //Go to the page
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ThirdPage())
-                );
-              },
-            ),
-            ListTile(
-              title: Text("Fourth"),
-              leading: Icon(Icons.play_circle_outline),
-              onTap: () {
-                //Close the drawer
-                Navigator.pop(context);
-                //Go to the page
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => FourthPage())
-                );
-              },
-            ),
-          ],
-        )
-      ),
+      drawer: _buildDrawer(context),
       appBar: AppBar(
         title: Text(widget.title),
         bottom: TabBar(
@@ -215,86 +120,179 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildAdvancedSearch(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text("By Coordinate", style: Theme.of(context).textTheme.headline.copyWith(color: Theme.of(context).primaryColor)),
-            SizedBox(height: 12.0),
-            TextField(
-              controller: _groupIdTextController,
-              decoration: InputDecoration(labelText: 'GroupId'),
-              onSubmitted: (value) {FocusScope.of(context).requestFocus(_artifactIdFocusNode);}, //TODO: do the rest
-              autofocus: true,
+  Drawer _buildDrawer(BuildContext context) {
+    return Drawer(
+      child: ListView( //TODO: how does it scroll?? maybe use a column
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          DrawerHeader(
+            child: Text("Drawer Header"), //TODO: Info or picture
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor
             ),
-            SizedBox(height: 12.0),
-            TextField(
-              controller: _artifactIdTextController,
-              decoration: InputDecoration(labelText: 'ArtifactId'),
-              focusNode: _artifactIdFocusNode,
-            ),
-            SizedBox(height: 12.0),
-            TextField(
-              controller: _versionTextController,
-              decoration: InputDecoration(labelText: 'Version'),
-            ),
-            SizedBox(height: 12.0),
-            TextField(
-              controller: _packagingTextController,
-              decoration: InputDecoration(labelText: 'Packaging'),
-            ),
-            SizedBox(height: 12.0),
-            TextField(
-              controller: _classifierTextController,
-              decoration: InputDecoration(labelText: 'Classifier'),
-            ),
-            SizedBox(height: 12.0),
-            Text("By Classname", style: Theme.of(context).textTheme.headline.copyWith(color: Theme.of(context).primaryColor)),
-            SizedBox(height: 12.0),
-            TextField(
-              controller: _classnameTextController,
-              decoration: InputDecoration(labelText: 'Classname')
-            ),
-            //don't need the spacer when using the button bar
-            //SizedBox(height: 12.0),
-
-            ButtonBar(alignment: MainAxisAlignment.center,
-              children: <Widget>[
-                  FlatButton(onPressed: (){
-                      _groupIdTextController.clear();
-                      _artifactIdTextController.clear();
-                      _versionTextController.clear();
-                      _packagingTextController.clear();
-                      _classifierTextController.clear();
-                      _classnameTextController.clear();
-                    },
-                    child: Text("CLEAR")
-                  ),
-                  RaisedButton(
-                      onPressed: (){
-                        SearchTerms searchTerms = SearchTerms(searchType: "Advanced", 
-                        groupId: _groupIdTextController.text,
-                        artifactId: _artifactIdTextController.text,
-                        version: _versionTextController.text,
-                        packaging: _packagingTextController.text,
-                        classifier: _classifierTextController.text,
-                        classname: _classnameTextController.text,
-                        );
-
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => SearchResultsPage(searchTerms: searchTerms)));
-                      }, 
-                      child: Icon(Icons.search)
-                  )
-              ],
-            )
-          ]
-        ),
+          ),
+          ListTile(
+            title: Text("Quick Search"),
+            leading: Icon(Icons.search),
+            onTap: () {
+              //Close the drawer
+              Navigator.pop(context);
+              //Go to the page
+              _tabController.index = 0;
+            },
+          ),
+          ListTile(
+            title: Text("Advanced Search"),
+            leading: Icon(Icons.youtube_searched_for),
+            onTap: () {
+              //Close the drawer
+              Navigator.pop(context);
+              //Go to the page
+              _tabController.index = 1;
+            },
+          ),
+          ListTile(
+            title: Text("Help"),
+            leading: Icon(Icons.help),
+            onTap: () {
+              //Close the drawer
+              Navigator.pop(context);
+              //Go to the page
+            },
+          ),
+          ListTile(
+            title: Text("Settings"),
+            leading: Icon(Icons.settings),
+            onTap: () {
+              //Close the drawer
+              Navigator.pop(context);
+              //Go to the page
+            },
+          ),
+          ListTile(
+            title: Text("About"),
+            leading: Icon(Icons.info),
+            onTap: () {
+              //Close the drawer
+              Navigator.pop(context);
+              //Go to the page
+            },
+          ),
+          ListTile(
+            title: Text("Second"),
+            leading: Icon(Icons.book),
+            onTap: () {
+              //Close the drawer
+              Navigator.pop(context);
+              //Go to the page
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => SecondPage(pCounter: _counter, pSearchTerm: "menu"))
+              );
+            },
+          ),
+          ListTile(
+            title: Text("Third"),
+            leading: Icon(Icons.play_arrow),
+            onTap: () {
+              //Close the drawer
+              Navigator.pop(context);
+              //Go to the page
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ThirdPage())
+              );
+            },
+          ),
+          ListTile(
+            title: Text("Fourth"),
+            leading: Icon(Icons.play_circle_outline),
+            onTap: () {
+              //Close the drawer
+              Navigator.pop(context);
+              //Go to the page
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => FourthPage())
+              );
+            },
+          ),
+        ],
       )
+    );
+  }
+
+  Widget _buildAdvancedSearch(BuildContext context) {
+    return ListView(
+      padding: EdgeInsets.symmetric(vertical: 24, horizontal: 24),
+      children: <Widget>[
+        Text("By Coordinate", style: Theme.of(context).textTheme.headline.copyWith(color: Theme.of(context).primaryColor)),
+        SizedBox(height: 12.0),
+        TextField(
+          controller: _groupIdTextController,
+          decoration: InputDecoration(labelText: 'GroupId'),
+          onSubmitted: (value) {FocusScope.of(context).requestFocus(_artifactIdFocusNode);}, //TODO: do the rest
+          autofocus: true,
+        ),
+        SizedBox(height: 12.0),
+        TextField(
+          controller: _artifactIdTextController,
+          decoration: InputDecoration(labelText: 'ArtifactId'),
+          focusNode: _artifactIdFocusNode,
+        ),
+        SizedBox(height: 12.0),
+        TextField(
+          controller: _versionTextController,
+          decoration: InputDecoration(labelText: 'Version'),
+        ),
+        SizedBox(height: 12.0),
+        TextField(
+          controller: _packagingTextController,
+          decoration: InputDecoration(labelText: 'Packaging'),
+        ),
+        SizedBox(height: 12.0),
+        TextField(
+          controller: _classifierTextController,
+          decoration: InputDecoration(labelText: 'Classifier'),
+        ),
+        SizedBox(height: 12.0),
+        Text("By Classname", style: Theme.of(context).textTheme.headline.copyWith(color: Theme.of(context).primaryColor)),
+        SizedBox(height: 12.0),
+        TextField(
+          controller: _classnameTextController,
+          decoration: InputDecoration(labelText: 'Classname')
+        ),
+        //don't need the spacer when using the button bar
+        //SizedBox(height: 12.0),
+
+        ButtonBar(alignment: MainAxisAlignment.center,
+          children: <Widget>[
+              FlatButton(onPressed: (){
+                  _groupIdTextController.clear();
+                  _artifactIdTextController.clear();
+                  _versionTextController.clear();
+                  _packagingTextController.clear();
+                  _classifierTextController.clear();
+                  _classnameTextController.clear();
+                },
+                child: Text("CLEAR")
+              ),
+              RaisedButton(
+                  onPressed: (){
+                    SearchTerms searchTerms = SearchTerms(searchType: "Advanced", 
+                    groupId: _groupIdTextController.text,
+                    artifactId: _artifactIdTextController.text,
+                    version: _versionTextController.text,
+                    packaging: _packagingTextController.text,
+                    classifier: _classifierTextController.text,
+                    classname: _classnameTextController.text,
+                    );
+
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => SearchResultsPage(searchTerms: searchTerms)));
+                  }, 
+                  child: Icon(Icons.search)
+              )
+          ],
+        ),
+      ],
     );
   }
 
