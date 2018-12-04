@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:searchmavenapp/api/centralsearchapi.dart';
+import 'package:searchmavenapp/pages/fourthpage.dart';
+import 'package:searchmavenapp/pages/secondpage.dart';
+import 'package:searchmavenapp/pages/thirdpage.dart';
 
 class SearchResultsPage extends StatelessWidget {
   final SearchTerms searchTerms;
@@ -109,7 +112,7 @@ class MavenCentralResponseList extends StatelessWidget {
       crossAxisCount: 1,
       padding: EdgeInsets.all(16.0),
       // ield identifies the size of the items based on an aspect ratio (width over height).
-      childAspectRatio: 8.0 / 10.0,
+      childAspectRatio: 16.0 / 6.0, //deal with overflow
       children: _buildGridCards2(context, response.response.docs),
     );
   }
@@ -121,36 +124,119 @@ class MavenCentralResponseList extends StatelessWidget {
   }
 
   Widget _createArtifactCard(BuildContext context, MCRDoc pArtifact){
-    //TODO: put back gesture detector and tap listeners
-    //TODO: more styling and data
-    return Card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  'GroupId: ' + pArtifact.iG,
-                  style: Theme.of(context).textTheme.headline,
-                  maxLines: 3,
-                ),
-                SizedBox(height: 8.0),
-                Text(
-                  'ArtifactId: ' + pArtifact.iA,
-                  style: Theme.of(context).textTheme.subhead.copyWith(fontStyle: FontStyle.italic, color: Colors.red),
-                ),
-                SizedBox(height: 8.0),
-                Text('Third Text'),
-                SizedBox(height: 8.0),
-                Text('Fourth Text'),
-              ],
+    //TODO: more styling and deal with childAspectRatio overflow
+    return GestureDetector(
+      onTap:() =>
+        showDialog(context: context,
+          builder: (context) => _dialogBuilderTap(context, pArtifact)),
+      onLongPress:() =>
+        showDialog(context: context,
+          builder: (context) => _dialogBuilderLongPress(context, pArtifact)),
+      child: Card(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'GroupId: ' + pArtifact.iG,
+                    style: Theme.of(context).textTheme.headline,
+                    maxLines: 3,
+                  ),
+                  SizedBox(height: 8.0),
+                  Text(
+                    'ArtifactId: ' + pArtifact.iA,
+                    style: Theme.of(context).textTheme.subhead.copyWith(fontStyle: FontStyle.italic, color: Colors.red),
+                  ),
+                  SizedBox(height: 8.0),
+                  Text(
+                    'Latest Version: ' + pArtifact.iLatestVersion,
+                    style: Theme.of(context).textTheme.body1,
+                  ),
+                  SizedBox(height: 8.0),
+                  Text(
+                    'Latest Release: ' + DateTime.fromMillisecondsSinceEpoch(pArtifact.iTimestamp).toString(),
+                    style: Theme.of(context).textTheme.body1,
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
+  }
+
+    Widget _dialogBuilderTap(BuildContext pContext, MCRDoc pPhoto){
+    return SimpleDialog(
+      contentPadding: EdgeInsets.all(16),
+      children: <Widget>[
+        Text("MCRDoc Tapped: " + pPhoto.iA, style: Theme.of(pContext).textTheme.title), //TODO: show artifact details
+        SizedBox(height: 16),
+        Align(
+          alignment: Alignment.centerRight,
+          child: Wrap(
+            children: <Widget>[
+              FlatButton(
+                onPressed: () {
+                  Navigator.pop(pContext);
+                },
+                child: Text("Close")
+              ),
+              RaisedButton(
+                onPressed: () {
+                  Navigator.pop(pContext);
+                },
+                child: Text("OK")
+              )
+            ]
+          )
+        )
+      ]
+    );
+  }
+
+  Widget _dialogBuilderLongPress(BuildContext pContext, MCRDoc pArtifact){
+    //https://docs.flutter.io/flutter/material/SimpleDialog-class.html
+    return SimpleDialog(
+      title: Text("Search By:"), //TODO: Styling
+      children: <Widget>[
+        SimpleDialogOption(
+          child: Text("Group Id"), //TODO: make bigger and add padding
+          onPressed: () {
+            Navigator.pop(pContext);
+            //TODO: Group Id Search
+            Navigator.push(pContext,
+                MaterialPageRoute(builder: (context) => SecondPage(pCounter: 3, pSearchTerm: "menu"))
+            );
+          },
+        ),
+        SimpleDialogOption(
+          child: Text("Artifact Id"),
+          onPressed: () {
+            //Close the drawer
+            Navigator.pop(pContext);
+            //TODO: artifact id search
+            Navigator.push(pContext,
+                MaterialPageRoute(builder: (context) => ThirdPage())
+            );
+          },
+        ),
+        SimpleDialogOption(
+          child: Text("All " + pArtifact.iVersionCount.toString() + " Versions"),
+          onPressed: () {
+            //Close the drawer
+            Navigator.pop(pContext);
+            //TODO: All Versions search
+            Navigator.push(pContext,
+                MaterialPageRoute(builder: (context) => FourthPage())
+            );
+          },
+        )
+      ]
+    ); 
   }
 }
