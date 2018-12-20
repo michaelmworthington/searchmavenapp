@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:searchmavenapp/api/centralsearchapi.dart';
+import 'package:searchmavenapp/pages/artifactdetailspage.dart';
 import 'package:searchmavenapp/pages/fourthpage.dart';
 import 'package:searchmavenapp/pages/secondpage.dart';
 import 'package:searchmavenapp/pages/thirdpage.dart';
@@ -22,13 +23,17 @@ class SearchResultsPage extends StatelessWidget {
     if(searchTerms.isQuickSearch() == false){
       return Scaffold(
         appBar: AppBar(title: Text("${searchTerms.searchType} Search Results")),
-        body: Text("Only quick search allowed"));
+        body: _buildSearchNotAllowedMessage(context),
+      );
     }
     
+    //from:
+    //    - ./res/layout/search_results.xml
     return Scaffold(
       appBar: AppBar(title: Text("${searchTerms.searchType} Search Results")),
       body: FutureBuilder<MavenCentralResponse>(
         //TODO: call the API outside of build - init state? - https://flutter.io/docs/cookbook/networking/fetch-data#5-moving-the-fetch-call-out-of-the-build-method
+        //TODO: do more than just quick search
         future: CentralSearchAPI().search(pSearchQueryString: quickSearch, pStart: _start, pDemoMode: iDemoMode), 
         builder: (context, AsyncSnapshot<MavenCentralResponse> snapshot) {
           if (snapshot.hasData) {
@@ -38,6 +43,8 @@ class SearchResultsPage extends StatelessWidget {
           }
 
           // By default, show a loading spinner
+          // from:
+          //     - ./res/layout/search_results_progress_item.xml
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -50,6 +57,32 @@ class SearchResultsPage extends StatelessWidget {
           );
         }
       )
+    );
+  }
+
+    Widget _buildSearchNotAllowedMessage(BuildContext context) {
+    return ListView(
+      padding: EdgeInsets.symmetric(vertical: 24, horizontal: 24),
+      children: <Widget>[
+        Text("Only quick search allowed", style: Theme.of(context).textTheme.headline.copyWith(color: Theme.of(context).primaryColor)),
+        SizedBox(height: 12.0),
+        Text("Search Type: ${searchTerms.searchType}"),
+        SizedBox(height: 12.0),
+        Text("quickSearch: ${searchTerms.quickSearch}"),
+        SizedBox(height: 12.0),
+        Text("groupId: ${searchTerms.groupId}"),
+        SizedBox(height: 12.0),
+        Text("artifactId: ${searchTerms.artifactId}"),
+        SizedBox(height: 12.0),
+        Text("version: ${searchTerms.version}"),
+        SizedBox(height: 12.0),
+        Text("packaging: ${searchTerms.packaging}"),
+        SizedBox(height: 12.0),
+        Text("classifier: ${searchTerms.classifier}"),
+        SizedBox(height: 12.0),
+        Text("classname: ${searchTerms.classname}"),
+
+      ],
     );
   }
 }
@@ -124,11 +157,15 @@ class MavenCentralResponseList extends StatelessWidget {
   }
 
   Widget _createArtifactCard(BuildContext context, MCRDoc pArtifact){
+    //from:
+    //    - ./res/layout/search_results_item.xml
     //TODO: more styling and deal with childAspectRatio overflow
+    //    whatever styling works best, but the android version had
+    //    2 rows with groupid/artifactid left aligned and latest version and date right alighed
+    //    groupid would wrap when it reached the version
     return GestureDetector(
       onTap:() =>
-        showDialog(context: context,
-          builder: (context) => _dialogBuilderTap(context, pArtifact)),
+        Navigator.push(context, MaterialPageRoute(builder: (context) => ArtifactDetailsPage(iArtifact: pArtifact))),
       onLongPress:() =>
         showDialog(context: context,
           builder: (context) => _dialogBuilderLongPress(context, pArtifact)),
@@ -170,36 +207,10 @@ class MavenCentralResponseList extends StatelessWidget {
     );
   }
 
-    Widget _dialogBuilderTap(BuildContext pContext, MCRDoc pPhoto){
-    return SimpleDialog(
-      contentPadding: EdgeInsets.all(16),
-      children: <Widget>[
-        Text("MCRDoc Tapped: " + pPhoto.iA, style: Theme.of(pContext).textTheme.title), //TODO: show artifact details
-        SizedBox(height: 16),
-        Align(
-          alignment: Alignment.centerRight,
-          child: Wrap(
-            children: <Widget>[
-              FlatButton(
-                onPressed: () {
-                  Navigator.pop(pContext);
-                },
-                child: Text("Close")
-              ),
-              RaisedButton(
-                onPressed: () {
-                  Navigator.pop(pContext);
-                },
-                child: Text("OK")
-              )
-            ]
-          )
-        )
-      ]
-    );
-  }
-
   Widget _dialogBuilderLongPress(BuildContext pContext, MCRDoc pArtifact){
+    //from:
+    //   - ./res/menu/search_results_context_menu.xml
+    //   - TODO: java class?
     //https://docs.flutter.io/flutter/material/SimpleDialog-class.html
     return SimpleDialog(
       title: Text("Search By:"), //TODO: Styling
@@ -235,6 +246,15 @@ class MavenCentralResponseList extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => FourthPage())
             );
           },
+        ),
+        Align(
+          alignment: Alignment.center,
+          child: FlatButton(
+            onPressed: () {
+              Navigator.pop(pContext);
+            },
+            child: Text("Close"),
+          ),
         )
       ]
     ); 

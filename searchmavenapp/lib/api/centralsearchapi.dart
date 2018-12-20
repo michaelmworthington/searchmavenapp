@@ -44,6 +44,7 @@ class CentralSearchAPI {
   }
 }
 
+//from: ./src/com/searchmavenapp/android/maven/search/restletapi/dao/MavenCentralResponse.java
 class MavenCentralResponse {
   final Map responseHeader;
   final MCRResponse response;
@@ -60,10 +61,12 @@ class MavenCentralResponse {
   }
 }
 
+//from: ./src/com/searchmavenapp/android/maven/search/restletapi/dao/MCRResponse.java
 class MCRResponse {
   final int numFound;
   final int start;
   final List<MCRDoc> docs;
+  //TODO: searchString
   
   MCRResponse({this.numFound, this.start, this.docs});
 
@@ -79,6 +82,7 @@ class MCRResponse {
   }
 }
   
+//from: ./src/com/searchmavenapp/android/maven/search/restletapi/dao/MCRDoc.java
 class MCRDoc {
   final String            iId;
   final String            iG;
@@ -87,7 +91,7 @@ class MCRDoc {
   final String            iLatestVersion;
   final String            iRepositoryId;
   final String            iP;
-  final int          iTimestamp;
+  final int               iTimestamp;
   final int               iVersionCount;
   final List<String>      iText;
   final List<String>      iTags;

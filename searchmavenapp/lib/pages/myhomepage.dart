@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:searchmavenapp/pages/searchresultspage.dart';
 import 'package:searchmavenapp/pages/secondpage.dart';
+import 'package:searchmavenapp/pages/settingspage.dart';
 import 'package:searchmavenapp/pages/thirdpage.dart';
 import 'package:searchmavenapp/pages/fourthpage.dart';
 
@@ -31,7 +32,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
 
   //https://flutter.io/docs/cookbook/forms/retrieve-input
-  final _searchTextController = TextEditingController();
+  final _quickSearchTextController = TextEditingController();
   final _groupIdTextController = TextEditingController();
   final _artifactIdTextController = TextEditingController();
   final _versionTextController = TextEditingController();
@@ -41,6 +42,9 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
 
   //https://stackoverflow.com/questions/52150677/how-to-shift-focus-to-next-textfield-in-flutter
   final _artifactIdFocusNode = FocusNode();
+  final _versionFocusNode = FocusNode();
+  final _packagingFocusNode = FocusNode();
+  final _classifierFocusNode = FocusNode();
 
   
   //https://flutter.io/docs/cookbook/design/tabs
@@ -67,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   @override
   void dispose() {
     _tabController.dispose();
-    _searchTextController.dispose();
+    _quickSearchTextController.dispose();
     _groupIdTextController.dispose();
     _artifactIdTextController.dispose();
     _versionTextController.dispose();
@@ -77,6 +81,17 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
     super.dispose();
   }
 
+  void _clearAllSearchTextFields() {
+    _quickSearchTextController.clear();
+    _groupIdTextController.clear();
+    _artifactIdTextController.clear();
+    _versionTextController.clear();
+    _packagingTextController.clear();
+    _classifierTextController.clear();
+    _classnameTextController.clear();
+  }
+
+  //TODO: remove
   Future<File> _incrementCounter() async {
     setState(() {
       // This call to setState tells the Flutter framework that something has
@@ -92,6 +107,11 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    //from:
+    //    - ./res/layout/main.xml
+    //    - ./src/com/searchmavenapp/android/maven/search/activities/Main.java
+    //    - ./res/layout/main_advanced_search.xml
+    //    - ./src/com/searchmavenapp/android/maven/search/activities/MainAdvancedSearch.java
     //https://flutter.io/docs/cookbook/design/drawer
     return Scaffold(
       drawer: _buildDrawer(context),
@@ -121,6 +141,8 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   }
 
   Drawer _buildDrawer(BuildContext context) {
+    //from: 
+    //    - ./res/menu/menu.xml
     return Drawer(
       child: ListView( //TODO: how does it scroll?? maybe use a column
         padding: EdgeInsets.zero,
@@ -158,6 +180,10 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
               //Close the drawer
               Navigator.pop(context);
               //Go to the page
+              showDialog(
+                context: context,
+                builder: (context) => _dialogBuilderHelp(context)
+              );
             },
           ),
           ListTile(
@@ -167,11 +193,26 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
               //Close the drawer
               Navigator.pop(context);
               //Go to the page
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => SettingsPage()));
             },
           ),
           ListTile(
             title: Text("About"),
             leading: Icon(Icons.info),
+            onTap: () {
+              //Close the drawer
+              Navigator.pop(context);
+              //Go to the page
+              showDialog(
+                context: context,
+                builder: (context) => _dialogBuilderAbout(context)
+              );
+            },
+          ),
+          ListTile(
+            title: Text("Remove things below"),
+            leading: Icon(Icons.clear),
             onTap: () {
               //Close the drawer
               Navigator.pop(context);
@@ -228,66 +269,56 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
         TextField(
           controller: _groupIdTextController,
           decoration: InputDecoration(labelText: 'GroupId'),
-          onSubmitted: (value) {FocusScope.of(context).requestFocus(_artifactIdFocusNode);}, //TODO: do the rest
+          onSubmitted: (value) {FocusScope.of(context).requestFocus(_artifactIdFocusNode);},
           autofocus: true,
         ),
         SizedBox(height: 12.0),
         TextField(
           controller: _artifactIdTextController,
           decoration: InputDecoration(labelText: 'ArtifactId'),
+          onSubmitted: (value) {FocusScope.of(context).requestFocus(_versionFocusNode);},
           focusNode: _artifactIdFocusNode,
         ),
         SizedBox(height: 12.0),
         TextField(
           controller: _versionTextController,
           decoration: InputDecoration(labelText: 'Version'),
+          onSubmitted: (value) {FocusScope.of(context).requestFocus(_packagingFocusNode);},
+          focusNode: _versionFocusNode,
         ),
         SizedBox(height: 12.0),
         TextField(
           controller: _packagingTextController,
           decoration: InputDecoration(labelText: 'Packaging'),
+          onSubmitted: (value) {FocusScope.of(context).requestFocus(_classifierFocusNode);},
+          focusNode: _packagingFocusNode,
         ),
         SizedBox(height: 12.0),
         TextField(
           controller: _classifierTextController,
           decoration: InputDecoration(labelText: 'Classifier'),
+          onSubmitted: (value) {_submitSearchTerms(pSearchType: "Advanced");},
+          focusNode: _classifierFocusNode,
         ),
         SizedBox(height: 12.0),
         Text("By Classname", style: Theme.of(context).textTheme.headline.copyWith(color: Theme.of(context).primaryColor)),
         SizedBox(height: 12.0),
         TextField(
           controller: _classnameTextController,
-          decoration: InputDecoration(labelText: 'Classname')
+          decoration: InputDecoration(labelText: 'Classname'),
+          onSubmitted: (value) {_submitSearchTerms(pSearchType: "Advanced");},
         ),
         //don't need the spacer when using the button bar
         //SizedBox(height: 12.0),
 
         ButtonBar(alignment: MainAxisAlignment.center,
           children: <Widget>[
-              FlatButton(onPressed: (){
-                  _groupIdTextController.clear();
-                  _artifactIdTextController.clear();
-                  _versionTextController.clear();
-                  _packagingTextController.clear();
-                  _classifierTextController.clear();
-                  _classnameTextController.clear();
-                },
+              FlatButton(
+                onPressed: (){_clearAllSearchTextFields();},
                 child: Text("CLEAR")
               ),
               RaisedButton(
-                  onPressed: (){
-                    SearchTerms searchTerms = SearchTerms(searchType: "Advanced", 
-                    groupId: _groupIdTextController.text,
-                    artifactId: _artifactIdTextController.text,
-                    version: _versionTextController.text,
-                    packaging: _packagingTextController.text,
-                    classifier: _classifierTextController.text,
-                    classname: _classnameTextController.text,
-                    );
-
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => SearchResultsPage(searchTerms: searchTerms)));
-                  }, 
+                  onPressed: (){_submitSearchTerms(pSearchType: "Advanced");}, 
                   child: Icon(Icons.search)
               )
           ],
@@ -302,7 +333,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
         children: <Widget>[
           Padding(padding: EdgeInsets.symmetric(horizontal: 24.0),
             child: TextField(
-              controller: _searchTextController,
+              controller: _quickSearchTextController,
               decoration: InputDecoration(
                 //filled: true,
                 labelText: 'Quick Search'
@@ -315,9 +346,8 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
 
           ButtonBar(alignment: MainAxisAlignment.center,
             children: <Widget>[
-                FlatButton(onPressed: (){
-                    _searchTextController.clear();
-                  },
+                FlatButton(
+                  onPressed: (){_clearAllSearchTextFields();},
                   child: Text("CLEAR")
                 ),
                 RaisedButton(
@@ -331,12 +361,112 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
     );
   }
 
+  //from:
+  //    - android submit action - ./src/com/searchmavenapp/android/maven/search/KeyboardSearchEditorActionListener.java
+  //    - ./src/com/searchmavenapp/android/maven/search/constants/TextViewHelper.java
   void _submitSearchTerms({@required String pSearchType}) {
-    SearchTerms searchTerms = SearchTerms(searchType: pSearchType, quickSearch: _searchTextController.text);
+    SearchTerms searchTerms = SearchTerms(searchType: pSearchType);
+    
+    if(searchTerms.isQuickSearch()) {
+      searchTerms = SearchTerms(
+        searchType: pSearchType, 
+        quickSearch: _quickSearchTextController.text
+      );
+    } else {
+      searchTerms = SearchTerms(
+        searchType: pSearchType, 
+        groupId: _groupIdTextController.text,
+        artifactId: _artifactIdTextController.text,
+        version: _versionTextController.text,
+        packaging: _packagingTextController.text,
+        classifier: _classifierTextController.text,
+        classname: _classnameTextController.text,
+      );
+    }
 
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => SearchResultsPage(searchTerms: searchTerms)));
-    _searchTextController.clear();
+    Navigator.push(context, MaterialPageRoute(builder: (context) => SearchResultsPage(searchTerms: searchTerms)));
+    _clearAllSearchTextFields();
+  }
+
+  Widget _dialogBuilderHelp(BuildContext pContext){
+    //from:
+    //   - ./res/menu/help_dialog.xml
+    //https://docs.flutter.io/flutter/material/SimpleDialog-class.html
+    return SimpleDialog(
+      contentPadding: EdgeInsets.all(16),
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            Icon(Icons.help_outline, color: Theme.of(context).primaryColor),
+            SizedBox(width: 12),
+            Text("Help", style: Theme.of(context).textTheme.headline.copyWith(color: Theme.of(context).primaryColor)),
+          ],
+        ),
+        SizedBox(height: 12),
+        ListTile(
+          leading: const Icon(Icons.label),
+          title: Text("Tap search results to view artifact information"),
+        ),
+        ListTile(
+          leading: const Icon(Icons.label),
+          title: Text("Long press to search by group id, artifact id, or show all versions"),
+        ),
+        Align(
+          alignment: Alignment.center,
+          child: Wrap(
+            children: <Widget>[
+              FlatButton(
+                onPressed: () {
+                  Navigator.pop(pContext);
+                },
+                child: Text("Close")
+              ),
+            ]
+          )
+        )
+      ]
+    ); 
+  }
+
+  Widget _dialogBuilderAbout(BuildContext pContext){
+    //from:
+    //   - ./res/menu/about_dialog.xml
+    //https://docs.flutter.io/flutter/material/SimpleDialog-class.html
+    return SimpleDialog(
+      contentPadding: EdgeInsets.all(16),
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            Icon(Icons.info_outline, color: Theme.of(context).primaryColor),
+            SizedBox(width: 12),
+            Text("About", style: Theme.of(context).textTheme.headline.copyWith(color: Theme.of(context).primaryColor)),
+          ],
+        ),
+        SizedBox(height: 12),
+        Text(
+          "This application provides a native interface to search Maven repositories including the Maven Central repository. This is an open source application. To contribute, visit www.searchmavenapp.com",
+          style: Theme.of(context).textTheme.title
+        ),
+        SizedBox(height: 12),
+        Text(
+          "Apache and Apache Maven are trademarks of the Apache Software Foundation. The Central Repository is a service mark of Sonatype, Inc. The Central Repository at search.maven.org is intended to complement Apache Maven and should not be confused with Apache Maven.",
+          style: Theme.of(context).textTheme.body1
+        ),
+        Align(
+          alignment: Alignment.center,
+          child: Wrap(
+            children: <Widget>[
+              FlatButton(
+                onPressed: () {
+                  Navigator.pop(pContext);
+                },
+                child: Text("Close")
+              ),
+            ]
+          )
+        )
+      ]
+    ); 
   }
 }
 
