@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 
+import 'pages/home_page/home_page_scaffold_advanced_search.dart';
+import 'pages/home_page/home_page_scaffold_quick_search.dart';
+
 void main() {
+  //TODO: config option for debugging & control output (NOTE: search all files for print()
+  //TODO: uncomment for prod builds
+  //      https://stackoverflow.com/questions/49475550/how-to-disable-all-logs-debugprint-in-release-build-in-flutter
+  //debugPrint = (String message, {int wrapWidth}) {};
   runApp(const MyApp());
 }
 
+//The Scaffolding and Look-and-Feel Theme for the app
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -11,22 +19,35 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      title: 'Search Maven App',
+      // This is the theme of your application.
+      //
+      // Try running your application with "flutter run". You'll see the
+      // application has a blue toolbar. Then, without quitting the app, try
+      // changing the primarySwatch below to Colors.green and then invoke
+      // "hot reload" (press "r" in the console where you ran "flutter run",
+      // or simply save your changes to "hot reload" in a Flutter IDE).
+      // Notice that the counter didn't reset back to zero; the application
+      // is not restarted.
+      theme: _buildTheme(),
+      home: const MyHomePage(title: 'Search Maven App'),
     );
   }
+}
+
+ThemeData _buildTheme() {
+  return ThemeData(
+    primarySwatch: Colors.blueGrey,
+    //canvasColor: Colors.blueGrey,
+    inputDecorationTheme: InputDecorationTheme(border: OutlineInputBorder()),
+    buttonColor: Colors.blueGrey,
+    buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+    //iconTheme: IconThemeData(
+    //  color: Colors.red
+    //),
+    //bottomAppBarColor: Colors.red,
+    //cardColor: Colors.red
+  );
 }
 
 class MyHomePage extends StatefulWidget {
@@ -47,9 +68,10 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+//This class defines a build() method
+//which defines the layout for the Home Page
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
+  // TODO: REMOVE once I'm comfortable with setState()
   void _incrementCounter() {
     setState(() {
       // This call to setState tells the Flutter framework that something has
@@ -57,10 +79,17 @@ class _MyHomePageState extends State<MyHomePage> {
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
-      _counter++;
+      // ignore: unused_local_variable
+      const int counter = 0;
     });
   }
 
+  //from:
+  //    - ./res/layout/main.xml
+  //    - ./src/com/searchmavenapp/android/maven/search/activities/Main.java
+  //    - ./res/layout/main_advanced_search.xml
+  //    - ./src/com/searchmavenapp/android/maven/search/activities/MainAdvancedSearch.java
+  //https://flutter.io/docs/cookbook/design/drawer
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -69,47 +98,31 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+            // Here we take the value from the MyHomePage object that was created by
+            // the App.build method, and use it to set our appbar title.
+            title: Text(widget.title),
+            bottom: const TabBar(
+              tabs: <Widget>[
+                Tab(text: "Quick Search"),
+                Tab(text: "Advanced Search"),
+              ],
+            )),
+        body: const TabBarView(
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
+            HomePageScaffoldQuickSearch(),
+            HomePageScaffoldAdvancedSearch(),
           ],
         ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _incrementCounter,
+          tooltip: 'Increment',
+          child: const Icon(Icons.add),
+        ), // This trailing comma makes auto-formatting nicer for build methods.
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
