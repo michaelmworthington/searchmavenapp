@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'pages/home_page/home_page_navigation_drawer.dart';
 import 'pages/home_page/home_page_scaffold_advanced_search.dart';
 import 'pages/home_page/home_page_scaffold_quick_search.dart';
 
@@ -39,9 +40,10 @@ ThemeData _buildTheme() {
   return ThemeData(
     primarySwatch: Colors.blueGrey,
     //canvasColor: Colors.blueGrey,
-    inputDecorationTheme: InputDecorationTheme(border: OutlineInputBorder()),
+    inputDecorationTheme:
+        const InputDecorationTheme(border: const OutlineInputBorder()),
     buttonColor: Colors.blueGrey,
-    buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+    buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.primary),
     //iconTheme: IconThemeData(
     //  color: Colors.red
     //),
@@ -70,18 +72,39 @@ class MyHomePage extends StatefulWidget {
 
 //This class defines a build() method
 //which defines the layout for the Home Page
-class _MyHomePageState extends State<MyHomePage> {
-  // TODO: REMOVE once I'm comfortable with setState()
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      // ignore: unused_local_variable
-      const int counter = 0;
-    });
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
+  //https://flutter.io/docs/cookbook/design/tabs
+  //https://stackoverflow.com/questions/50123354/how-to-get-current-tab-index-in-flutter
+  //https://www.youtube.com/watch?v=8x2Ssf5OxQ4
+  static const List<Tab> myTabs = <Tab>[
+    Tab(text: "Quick Search"),
+    Tab(text: "Advanced Search"),
+  ];
+
+  static const List<Widget> myTabPages = <Widget>[
+    HomePageScaffoldQuickSearch(),
+    HomePageScaffoldAdvancedSearch(),
+  ];
+
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    debugPrint("Debugging Home Page");
+
+    _tabController = TabController(
+      length: myTabs.length,
+      initialIndex: 0,
+      vsync: this,
+    );
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   //from:
@@ -89,39 +112,22 @@ class _MyHomePageState extends State<MyHomePage> {
   //    - ./src/com/searchmavenapp/android/maven/search/activities/Main.java
   //    - ./res/layout/main_advanced_search.xml
   //    - ./src/com/searchmavenapp/android/maven/search/activities/MainAdvancedSearch.java
-  //https://flutter.io/docs/cookbook/design/drawer
+
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-            // Here we take the value from the MyHomePage object that was created by
-            // the App.build method, and use it to set our appbar title.
-            title: Text(widget.title),
-            bottom: const TabBar(
-              tabs: <Widget>[
-                Tab(text: "Quick Search"),
-                Tab(text: "Advanced Search"),
-              ],
-            )),
-        body: const TabBarView(
-          children: <Widget>[
-            HomePageScaffoldQuickSearch(),
-            HomePageScaffoldAdvancedSearch(),
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: _incrementCounter,
-          tooltip: 'Increment',
-          child: const Icon(Icons.add),
-        ), // This trailing comma makes auto-formatting nicer for build methods.
+    return Scaffold(
+      drawer: HomePageNavigationDrawer(
+        tabController: _tabController,
+      ),
+      appBar: AppBar(
+          title: Text(widget.title),
+          bottom: TabBar(
+            controller: _tabController,
+            tabs: myTabs,
+          )),
+      body: TabBarView(
+        controller: _tabController,
+        children: myTabPages,
       ),
     );
   }
