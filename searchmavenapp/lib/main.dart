@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'pages/home_page/home_page_navigation_drawer.dart';
 import 'pages/home_page/home_page_scaffold_advanced_search.dart';
 import 'pages/home_page/home_page_scaffold_quick_search.dart';
+import 'pages/settings_page/settings_page.dart';
 
 void main() {
   //TODO: config option for debugging & control output (NOTE: search all files for print()
@@ -31,7 +32,13 @@ class MyApp extends StatelessWidget {
       // Notice that the counter didn't reset back to zero; the application
       // is not restarted.
       theme: _buildTheme(),
-      home: const MyHomePage(title: 'Search Maven App'),
+      // don't define home when using a named route with '/'
+      // home: const MyHomePage(title: 'Search Maven App'),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const MyHomePage(title: 'Search Maven App'),
+        '/settings': (context) => const SettingsPage(),
+      },
     );
   }
 }
@@ -74,9 +81,9 @@ class MyHomePage extends StatefulWidget {
 //which defines the layout for the Home Page
 class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
-  //https://flutter.io/docs/cookbook/design/tabs
-  //https://stackoverflow.com/questions/50123354/how-to-get-current-tab-index-in-flutter
-  //https://www.youtube.com/watch?v=8x2Ssf5OxQ4
+  // https://flutter.io/docs/cookbook/design/tabs
+  // https://stackoverflow.com/questions/50123354/how-to-get-current-tab-index-in-flutter
+  // Johannes Milke - https://www.youtube.com/watch?v=8x2Ssf5OxQ4
   static const List<Tab> myTabs = <Tab>[
     Tab(text: "Quick Search"),
     Tab(text: "Advanced Search"),
@@ -118,6 +125,7 @@ class _MyHomePageState extends State<MyHomePage>
     return Scaffold(
       drawer: HomePageNavigationDrawer(
         tabController: _tabController,
+        myAppTitle: widget.title,
       ),
       appBar: AppBar(
           title: Text(widget.title),

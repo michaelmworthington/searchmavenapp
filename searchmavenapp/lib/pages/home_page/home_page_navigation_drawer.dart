@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 
-// https://www.youtube.com/watch?v=17FLO6uHhHU
+import '../../page_components/about_dialog.dart';
+import '../../page_components/help_dialog.dart';
+
+// Johannes Milke - https://www.youtube.com/watch?v=17FLO6uHhHU
 // https://flutter.io/docs/cookbook/design/drawer
 
 class HomePageNavigationDrawer extends StatelessWidget {
   final TabController tabController;
+  final String myAppTitle;
 
-  const HomePageNavigationDrawer({Key? key, required this.tabController})
+  const HomePageNavigationDrawer(
+      {Key? key, required this.tabController, required this.myAppTitle})
       : super(key: key);
 
   //from:
   //    - ./res/menu/menu.xml
   @override
   Widget build(BuildContext context) => Drawer(
-        //TODO: how does it scroll?? maybe use a column
+        //TODO: scrolls all as one - make it fancy minimizing and fading the header
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -31,7 +36,7 @@ class HomePageNavigationDrawer extends StatelessWidget {
             CircleAvatar(
               radius: 52,
               backgroundImage: NetworkImage(
-                  "https://lh4.googleusercontent.com/OIvMPFrURaPBUEno3A1K1pmoNfPfg52TP2XKVc_fN9aQAuQrjefpCxJVIpK9niYm8SpLaw=w1280"),
+                  "https://raw.githubusercontent.com/michaelmworthington/searchmavenapp/master/Assets/Android/searchmaven_512.png"),
             ),
             SizedBox(height: 12),
             Text("Drawer Header"), //TODO: Info or picture
@@ -49,21 +54,42 @@ class HomePageNavigationDrawer extends StatelessWidget {
                 label: "Quick Search",
                 icon: Icons.search,
                 onTap: () {
-                  tabController.index = 0;
+                  tabController.index = 0; //TODO: Use Navigator Routes??
                 }),
             HomePageNavigationDrawerListTile(
                 label: "Advanced Search",
                 icon: Icons.youtube_searched_for,
                 onTap: () {
-                  tabController.index = 1;
+                  tabController.index = 1; //TODO: Use Navigator Routes??
                 }),
             HomePageNavigationDrawerListTile(
-                label: "Help", icon: Icons.help, onTap: () {}),
+                label: "Help",
+                icon: Icons.help,
+                onTap: () {
+                  //TODO: adaptive showCupertinoDialog(
+                  showDialog(
+                      context: context,
+                      builder: (context) => const HelpDialog());
+                }),
             HomePageNavigationDrawerListTile(
-                label: "Settings", icon: Icons.settings, onTap: () {}),
+                label: "Settings",
+                icon: Icons.settings,
+                onTap: () {
+                  Navigator.pushNamed(context, '/settings');
+                }),
             HomePageNavigationDrawerListTile(
-                label: "About", icon: Icons.info, onTap: () {}),
+                label: "About",
+                icon: Icons.info,
+                onTap: () {
+                  //TODO: adaptive showCupertinoDialog(
+                  showDialog(
+                    context: context,
+                    builder: (context) => MyAboutDialog(myAppTitle: myAppTitle),
+                  );
+                }),
+            // Divider
             const Divider(color: Colors.black54),
+            // Next Section
             HomePageNavigationDrawerListTile(
                 label: "Remove Things Below", icon: Icons.clear, onTap: () {}),
             HomePageNavigationDrawerListTile(
@@ -94,7 +120,9 @@ class HomePageNavigationDrawerListTile extends StatelessWidget {
         title: Text(label),
         leading: Icon(icon),
         onTap: () {
+          // Always close the drawer
           Navigator.pop(context);
+          // Now do whatever action when an item is clicked
           onTap();
         },
       );
