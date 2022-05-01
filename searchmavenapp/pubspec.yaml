@@ -45,6 +45,7 @@ dependencies:
   flutter_linkify: ^5.0.2
   package_info_plus: ^1.4.2
   url_launcher: ^6.1.0
+  font_awesome_flutter: ^10.1.0
 
 dev_dependencies:
   flutter_test:

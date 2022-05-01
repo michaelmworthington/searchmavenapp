@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../page_components/about_dialog.dart';
 import '../../page_components/help_dialog.dart';
+import 'home_page_navigation_drawer_list_tile.dart';
 
 // Johannes Milke - https://www.youtube.com/watch?v=17FLO6uHhHU
 // https://flutter.io/docs/cookbook/design/drawer
@@ -51,79 +52,94 @@ class HomePageNavigationDrawer extends StatelessWidget {
           runSpacing: 4,
           children: [
             HomePageNavigationDrawerListTile(
-                label: "Quick Search",
-                icon: Icons.search,
-                onTap: () {
-                  tabController.index = 0; //TODO: Use Navigator Routes??
-                }),
+              label: "Quick Search",
+              icon: Icons.search,
+              onTap: () {
+                tabController.index = 0; //TODO: Use Navigator Routes??
+              },
+            ),
             HomePageNavigationDrawerListTile(
-                label: "Advanced Search",
-                icon: Icons.youtube_searched_for,
-                onTap: () {
-                  tabController.index = 1; //TODO: Use Navigator Routes??
-                }),
+              label: "Advanced Search",
+              icon: Icons.youtube_searched_for,
+              onTap: () {
+                tabController.index = 1; //TODO: Use Navigator Routes??
+              },
+            ),
             HomePageNavigationDrawerListTile(
-                label: "Help",
-                icon: Icons.help,
-                onTap: () {
-                  //TODO: adaptive showCupertinoDialog(
-                  showDialog(
-                      context: context,
-                      builder: (context) => const HelpDialog());
-                }),
+              label: "Help",
+              icon: Icons.help,
+              onTap: () {
+                //TODO: adaptive showCupertinoDialog(
+                showDialog(
+                    context: context, builder: (context) => const HelpDialog());
+              },
+            ),
             HomePageNavigationDrawerListTile(
-                label: "Settings",
-                icon: Icons.settings,
-                onTap: () {
-                  Navigator.pushNamed(context, '/settings');
-                }),
+              label: "Settings",
+              icon: Icons.settings,
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  '/settings',
+                );
+              },
+            ),
             HomePageNavigationDrawerListTile(
-                label: "About",
-                icon: Icons.info,
-                onTap: () {
-                  //TODO: adaptive showCupertinoDialog(
-                  showDialog(
-                    context: context,
-                    builder: (context) => MyAboutDialog(myAppTitle: myAppTitle),
-                  );
-                }),
+              label: "About",
+              icon: Icons.info,
+              onTap: () {
+                //TODO: adaptive showCupertinoDialog(
+                showDialog(
+                  context: context,
+                  builder: (context) => MyAboutDialog(myAppTitle: myAppTitle),
+                );
+              },
+            ),
             // Divider
-            const Divider(color: Colors.black54),
+            const Divider(
+              color: Colors.black54,
+            ),
             // Next Section
             HomePageNavigationDrawerListTile(
-                label: "Remove Things Below", icon: Icons.clear, onTap: () {}),
+              label: "Remove Things Below",
+              icon: Icons.clear,
+              onTap: () {},
+            ),
             HomePageNavigationDrawerListTile(
-                label: "Second", icon: Icons.book, onTap: () {}),
+              label: "Second",
+              icon: Icons.book,
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  '/sample_second',
+                  arguments: <String, String>{
+                    'searchTerm': 'menu',
+                    'counter': '75',
+                  },
+                );
+              },
+            ),
             HomePageNavigationDrawerListTile(
-                label: "Third", icon: Icons.play_arrow, onTap: () {}),
+              label: "Third",
+              icon: Icons.play_arrow,
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  '/sample_third',
+                );
+              },
+            ),
             HomePageNavigationDrawerListTile(
-                label: "Fourth", icon: Icons.play_circle_outline, onTap: () {}),
+              label: "Fourth",
+              icon: Icons.play_circle_outline,
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  '/sample_fourth',
+                );
+              },
+            ),
           ],
         ),
-      );
-}
-
-class HomePageNavigationDrawerListTile extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final Function onTap;
-
-  const HomePageNavigationDrawerListTile({
-    Key? key,
-    required this.label,
-    required this.icon,
-    required this.onTap,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) => ListTile(
-        title: Text(label),
-        leading: Icon(icon),
-        onTap: () {
-          // Always close the drawer
-          Navigator.pop(context);
-          // Now do whatever action when an item is clicked
-          onTap();
-        },
       );
 }

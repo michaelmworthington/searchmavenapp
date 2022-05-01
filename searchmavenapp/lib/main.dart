@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'pages/home_page/home_page_navigation_drawer.dart';
 import 'pages/home_page/home_page_scaffold_advanced_search.dart';
 import 'pages/home_page/home_page_scaffold_quick_search.dart';
+import 'pages/sample_fourth_page/sample_fourth_page.dart';
+import 'pages/sample_second_page/sample_second_page.dart';
+import 'pages/sample_third_page/sample_third_page.dart';
 import 'pages/settings_page/settings_page.dart';
 
 void main() {
@@ -35,9 +38,39 @@ class MyApp extends StatelessWidget {
       // don't define home when using a named route with '/'
       // home: const MyHomePage(title: 'Search Maven App'),
       initialRoute: '/',
+      // mmw: i'm using these for pages that don't require any arguments, or use
+      //      ModalRoute.of(context)!.settings.arguments to extract the arguments
       routes: {
         '/': (context) => const MyHomePage(title: 'Search Maven App'),
         '/settings': (context) => const SettingsPage(),
+        '/sample_third': (context) => const SampleThirdPage(),
+        '/sample_fourth': (context) => const SampleFourthPage(),
+      },
+      // mmw: these pages require arguments on the Widget constructor
+      //      https://docs.flutter.dev/cookbook/navigation/navigate-with-arguments
+      onGenerateRoute: (settings) {
+        if (settings.name == '/sample_second') {
+          final args = settings.arguments as Map<String, String>;
+
+          return MaterialPageRoute(
+            builder: (context) {
+              return SampleSecondPage(
+                searchTerm: args['searchTerm'] ?? '',
+                counter: int.parse(args['counter'] ?? '100'),
+              );
+            },
+          );
+        }
+
+        // The code only supports
+        // PassArgumentsScreen.routeName right now.
+        // Other values need to be implemented if we
+        // add them. The assertion here will help remind
+        // us of that higher up in the call stack, since
+        // this assertion would otherwise fire somewhere
+        // in the framework.
+        assert(false, 'Need to implement ${settings.name}');
+        return null;
       },
     );
   }
