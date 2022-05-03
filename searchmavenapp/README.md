@@ -14,3 +14,28 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+
+
+# Generating App Icon
+
+```
+flutter pub get
+flutter pub run flutter_launcher_icons:main
+```
+# Generating Native Splash Screen
+
+```
+flutter pub get
+flutter pub run flutter_native_splash:create
+```
+
+Note:
+```
+╔════════════════════════════════════════════════════════════════════════════╗
+║ You can now keep the splash screen up while your app initializes!          ║
+║ No need for a secondary splash screen anymore. Just use the remove()       ║
+║ method to remove the splash screen after your initialization is complete.  ║
+║ Check the docs for more info.                                              ║
+╚════════════════════════════════════════════════════════════════════════════╝
+```

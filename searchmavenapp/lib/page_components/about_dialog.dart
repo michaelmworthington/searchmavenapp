@@ -36,10 +36,15 @@ class MyAboutDialog extends StatelessWidget {
         return AboutDialog(
           applicationName: myAppTitle,
           applicationVersion: data.version,
-          applicationIcon: Image.network(
-              "https://raw.githubusercontent.com/michaelmworthington/searchmavenapp/master/Assets/Android/searchmaven_512.png",
-              width: 48,
-              fit: BoxFit.fitHeight),
+          applicationIcon: Image.asset(
+            'assets/icon/icon.png',
+            width: 48,
+            fit: BoxFit.fitWidth,
+          ),
+          // applicationIcon: Image.network(
+          //     "https://raw.githubusercontent.com/michaelmworthington/searchmavenapp/master/Assets/Android/searchmaven_512.png",
+          //     width: 48,
+          //     fit: BoxFit.fitHeight),
           applicationLegalese:
               'Apache and Apache Maven are trademarks of the Apache Software Foundation.\n\nThe Central Repository is a service mark of Sonatype, Inc. The Central Repository at search.maven.org is intended to complement Apache Maven and should not be confused with Apache Maven.',
           children: const [

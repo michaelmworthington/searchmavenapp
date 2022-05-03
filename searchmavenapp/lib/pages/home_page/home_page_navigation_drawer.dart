@@ -36,8 +36,9 @@ class HomePageNavigationDrawer extends StatelessWidget {
           children: const [
             CircleAvatar(
               radius: 52,
-              backgroundImage: NetworkImage(
-                  "https://raw.githubusercontent.com/michaelmworthington/searchmavenapp/master/Assets/Android/searchmaven_512.png"),
+              backgroundImage: AssetImage('assets/icon/icon.png'),
+              // backgroundImage: NetworkImage(
+              //     "https://raw.githubusercontent.com/michaelmworthington/searchmavenapp/master/Assets/Android/searchmaven_512.png"),
             ),
             SizedBox(height: 12),
             Text("Drawer Header"), //TODO: Info or picture

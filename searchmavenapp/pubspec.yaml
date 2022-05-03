@@ -58,6 +58,34 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^1.0.0
 
+  # flutter_launcher_icons: "^0.9.2"
+  # flutter_launcher_icons: "^0.7.0"
+  flutter_launcher_icons:
+    git:
+      url: https://github.com/Davenchy/flutter_launcher_icons.git
+      ref: fixMinSdkParseFlutter2.8
+  flutter_native_splash: ^2.1.6  
+
+flutter_icons:
+  # flutter pub run flutter_launcher_icons:main
+  #android: "launcher_icon"
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/icon/icon.png"
+
+flutter_native_splash:
+  # flutter pub run flutter_native_splash:create
+  color: "#BEC3C6"
+  color_dark: "#686868"
+  image: "assets/icon/icon.png"
+  #branding: "assets/icon/icon_stg.png"
+  android_12:
+    image: "assets/icon/icon-android_v12_splash.png"
+    icon_background_color: "#BEC3C6"
+    icon_background_color_dark: "#686868"
+
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -70,9 +98,10 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
+  assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
+    - "assets/icon/icon.png"
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
