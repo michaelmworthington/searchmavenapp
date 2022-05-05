@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'pages/home_page/home_page_navigation_drawer.dart';
 import 'pages/home_page/home_page_scaffold_advanced_search.dart';
 import 'pages/home_page/home_page_scaffold_quick_search.dart';
+import 'pages/sample_fifth_page/sample_fifth_page.dart';
 import 'pages/sample_fourth_page/sample_fourth_page.dart';
 import 'pages/sample_second_page/sample_second_page.dart';
 import 'pages/sample_third_page/sample_third_page.dart';
@@ -45,6 +46,7 @@ class MyApp extends StatelessWidget {
         '/settings': (context) => const SettingsPage(),
         '/sample_third': (context) => const SampleThirdPage(),
         '/sample_fourth': (context) => const SampleFourthPage(),
+        '/sample_fifth': (context) => const SampleFifthPage(),
       },
       // mmw: these pages require arguments on the Widget constructor
       //      https://docs.flutter.dev/cookbook/navigation/navigate-with-arguments

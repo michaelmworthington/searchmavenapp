@@ -140,6 +140,16 @@ class HomePageNavigationDrawer extends StatelessWidget {
                 );
               },
             ),
+            HomePageNavigationDrawerListTile(
+              label: "Fifth",
+              icon: Icons.play_for_work,
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  '/sample_fifth',
+                );
+              },
+            ),
           ],
         ),
       );
