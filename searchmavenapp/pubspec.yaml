@@ -48,6 +48,8 @@ dependencies:
   font_awesome_flutter: ^10.1.0
   http: ^0.13.4
   # http: ^0.11.3+17
+  keyboard_dismisser: ^2.0.1
+
 
 
 dev_dependencies:

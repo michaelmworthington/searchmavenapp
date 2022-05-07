@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:searchmavenapp/pages/main/home_page/home_page_floating_action_button.dart';
 
 import 'home_page_navigation_drawer.dart';
 import 'home_page_scaffold_advanced_search.dart';
@@ -26,8 +27,11 @@ class MyHomePage extends StatefulWidget {
 //which defines the layout for the Home Page
 class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
-  //Learn Flutter With Me - https://www.youtube.com/watch?v=1vHf5kQ0E2I
-  final GlobalKey<FormState> _formStateKey = GlobalKey<FormState>();
+  //Learn Flutter With Me - https://www.youtube.com/watch?v=1vHf5kQ0E2I - Form Fields and Form Validation
+  final _formStateKey = GlobalKey<FormState>();
+
+  //https://flutter.io/docs/cookbook/forms/retrieve-input
+  final _quickSearchTextController = TextEditingController();
 
   // https://flutter.io/docs/cookbook/design/tabs
   // https://stackoverflow.com/questions/50123354/how-to-get-current-tab-index-in-flutter
@@ -46,7 +50,10 @@ class _MyHomePageState extends State<MyHomePage>
     debugPrint("Debugging Home Page");
 
     _myTabPages = <Widget>[
-      HomePageScaffoldQuickSearch(formStateKey: _formStateKey),
+      HomePageScaffoldQuickSearch(
+        formStateKey: _formStateKey,
+        quickSearchTextController: _quickSearchTextController,
+      ),
       const HomePageScaffoldAdvancedSearch(),
     ];
 
@@ -76,36 +83,17 @@ class _MyHomePageState extends State<MyHomePage>
         tabController: _tabController,
         myAppTitle: widget.title,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          if (_formStateKey.currentState!.validate()) {
-            _formStateKey.currentState!.save();
-          }
-          debugPrint("Search Submitted");
-
-          Navigator.pushNamed(
-            context,
-            '/search_results',
-            arguments: <String, String>{
-              'searchTerm': 'menu',
-            },
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Image.asset(
-            'assets/icon/icon_search_transparent.png',
-            fit: BoxFit.fill,
-          ),
-        ),
-        // child: const Icon(Icons.search),
+      floatingActionButton: HomePageFloatingActionButton(
+        formStateKey: _formStateKey,
+        quickSearchTextController: _quickSearchTextController,
       ),
       appBar: AppBar(
-          title: Text(widget.title),
-          bottom: TabBar(
-            controller: _tabController,
-            tabs: myTabs,
-          )),
+        title: Text(widget.title),
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: myTabs,
+        ),
+      ),
       body: TabBarView(
         controller: _tabController,
         children: _myTabPages,
