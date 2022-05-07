@@ -7,6 +7,7 @@ import 'pages/sample_fifth_page/sample_fifth_page.dart';
 import 'pages/sample_fourth_page/sample_fourth_page.dart';
 import 'pages/sample_second_page/sample_second_page.dart';
 import 'pages/sample_third_page/sample_third_page.dart';
+import 'pages/search_results_page/search_results_page.dart';
 import 'pages/settings_page/settings_page.dart';
 
 void main() {
@@ -64,6 +65,18 @@ class MyApp extends StatelessWidget {
           );
         }
 
+        if (settings.name == '/search_results') {
+          final args = settings.arguments as Map<String, String>;
+
+          return MaterialPageRoute(
+            builder: (context) {
+              return SearchResultsPage(
+                searchTerm: args['searchTerm'] ?? '',
+              );
+            },
+          );
+        }
+
         // The code only supports
         // PassArgumentsScreen.routeName right now.
         // Other values need to be implemented if we
@@ -116,6 +129,9 @@ class MyHomePage extends StatefulWidget {
 //which defines the layout for the Home Page
 class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
+  //Learn Flutter With Me - https://www.youtube.com/watch?v=1vHf5kQ0E2I
+  final GlobalKey<FormState> _formStateKey = GlobalKey<FormState>();
+
   // https://flutter.io/docs/cookbook/design/tabs
   // https://stackoverflow.com/questions/50123354/how-to-get-current-tab-index-in-flutter
   // Johannes Milke - https://www.youtube.com/watch?v=8x2Ssf5OxQ4
@@ -124,17 +140,18 @@ class _MyHomePageState extends State<MyHomePage>
     Tab(text: "Advanced Search"),
   ];
 
-  static const List<Widget> myTabPages = <Widget>[
-    HomePageScaffoldQuickSearch(),
-    HomePageScaffoldAdvancedSearch(),
-  ];
-
+  late List<Widget> _myTabPages;
   late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
     debugPrint("Debugging Home Page");
+
+    _myTabPages = <Widget>[
+      HomePageScaffoldQuickSearch(formStateKey: _formStateKey),
+      const HomePageScaffoldAdvancedSearch(),
+    ];
 
     _tabController = TabController(
       length: myTabs.length,
@@ -162,6 +179,30 @@ class _MyHomePageState extends State<MyHomePage>
         tabController: _tabController,
         myAppTitle: widget.title,
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          if (_formStateKey.currentState!.validate()) {
+            _formStateKey.currentState!.save();
+          }
+          debugPrint("Search Submitted");
+
+          Navigator.pushNamed(
+            context,
+            '/search_results',
+            arguments: <String, String>{
+              'searchTerm': 'menu',
+            },
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Image.asset(
+            'assets/icon/icon_search_transparent.png',
+            fit: BoxFit.fill,
+          ),
+        ),
+        // child: const Icon(Icons.search),
+      ),
       appBar: AppBar(
           title: Text(widget.title),
           bottom: TabBar(
@@ -170,7 +211,7 @@ class _MyHomePageState extends State<MyHomePage>
           )),
       body: TabBarView(
         controller: _tabController,
-        children: myTabPages,
+        children: _myTabPages,
       ),
     );
   }

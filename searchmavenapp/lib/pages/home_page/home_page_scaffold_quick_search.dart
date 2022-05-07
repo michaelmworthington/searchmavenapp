@@ -1,37 +1,72 @@
 import 'package:flutter/material.dart';
 
 class HomePageScaffoldQuickSearch extends StatelessWidget {
+  final GlobalKey<FormState> formStateKey;
+
   const HomePageScaffoldQuickSearch({
     Key? key,
+    required this.formStateKey,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        body: Container(
-          color: Colors.orange,
-          child: Center(
-            // Center is a layout widget. It takes a single child and positions it
-            // in the middle of the parent.
+        body: Form(
+          key: formStateKey,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Column(
-              // Column is also a layout widget. It takes a list of children and
-              // arranges them vertically. By default, it sizes itself to fit its
-              // children horizontally, and tries to be as tall as its parent.
-              //
-              // Invoke "debug painting" (press "p" in the console, choose the
-              // "Toggle Debug Paint" action from the Flutter Inspector in Android
-              // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-              // to see the wireframe for each widget.
-              //
-              // Column has various properties to control how it sizes itself and
-              // how it positions its children. Here we use mainAxisAlignment to
-              // center the children vertically; the main axis here is the vertical
-              // axis because Columns are vertical (the cross axis would be
-              // horizontal).
               mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  'Quick Search',
-                  style: Theme.of(context).textTheme.headline4,
+              children: [
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Quick Search',
+                    filled: true,
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Search term is required';
+                    }
+                    return null;
+                  },
+                  onFieldSubmitted: (value) {
+                    debugPrint("Searching for: ${value}");
+
+                    Navigator.pushNamed(
+                      context,
+                      '/search_results',
+                      arguments: <String, String>{
+                        'searchTerm': value,
+                      },
+                    );
+                  },
+                ),
+                // const SizedBox(
+                //   height: 96,
+                // ),
+                ButtonBar(
+                  alignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        debugPrint("clear button pressed");
+                      },
+                      child: const Text("CLEAR"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        debugPrint("searching");
+
+                        Navigator.pushNamed(
+                          context,
+                          '/search_results',
+                          arguments: <String, String>{
+                            'searchTerm': "???",
+                          },
+                        );
+                      },
+                      child: const Icon(Icons.search),
+                    )
+                  ],
                 ),
               ],
             ),
