@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../api/jsonplaceholder/jsonplaceholder_photo.dart';
+import '../../../api/jsonplaceholder/jsonplaceholder_photo.dart';
 
 class PhotosList extends StatelessWidget {
   final List<Photo> photos;

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import '../../api/jsonplaceholder/jsonplaceholder.dart';
-import '../../api/jsonplaceholder/jsonplaceholder_photo.dart';
+import '../../../api/jsonplaceholder/jsonplaceholder.dart';
+import '../../../api/jsonplaceholder/jsonplaceholder_photo.dart';
 import 'sample_fourth_page_photos_list.dart';
 
 class SampleFourthPage extends StatelessWidget {
