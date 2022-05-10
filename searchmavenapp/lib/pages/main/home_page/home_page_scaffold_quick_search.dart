@@ -5,11 +5,13 @@ import 'package:searchmavenapp/page_components/text_field_clear_button.dart';
 class HomePageScaffoldQuickSearch extends StatefulWidget {
   final GlobalKey<FormState> formStateKey;
   final TextEditingController quickSearchTextController;
+  final Function submitSearch;
 
   const HomePageScaffoldQuickSearch({
     Key? key,
     required this.formStateKey,
     required this.quickSearchTextController,
+    required this.submitSearch,
   }) : super(key: key);
 
   @override
@@ -18,7 +20,8 @@ class HomePageScaffoldQuickSearch extends StatefulWidget {
 }
 
 class _HomePageScaffoldQuickSearchState
-    extends State<HomePageScaffoldQuickSearch> {
+    extends State<HomePageScaffoldQuickSearch>
+    with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
@@ -26,6 +29,9 @@ class _HomePageScaffoldQuickSearchState
     // so the clear button only shows when there is text in the text field
     widget.quickSearchTextController.addListener(() => setState(() {}));
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////
   //  Build Method - High Level Layout
@@ -69,18 +75,7 @@ class _HomePageScaffoldQuickSearchState
   ElevatedButton _buildElevatedButtonSearch(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        if (widget.formStateKey.currentState!.validate()) {
-          widget.formStateKey.currentState!.save();
-          debugPrint("searching");
-
-          Navigator.pushNamed(
-            context,
-            '/search_results',
-            arguments: <String, String>{
-              'searchTerm': widget.quickSearchTextController.text,
-            },
-          );
-        }
+        widget.submitSearch();
       },
       child: const Icon(Icons.search),
     );
@@ -122,19 +117,7 @@ class _HomePageScaffoldQuickSearchState
         return null;
       },
       onFieldSubmitted: (value) {
-        if (widget.formStateKey.currentState!.validate()) {
-          widget.formStateKey.currentState!.save();
-
-          debugPrint("Searching for: $value");
-
-          Navigator.pushNamed(
-            context,
-            '/search_results',
-            arguments: <String, String>{
-              'searchTerm': widget.quickSearchTextController.text,
-            },
-          );
-        }
+        widget.submitSearch();
       },
     );
   }

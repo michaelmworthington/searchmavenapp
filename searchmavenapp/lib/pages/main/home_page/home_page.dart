@@ -28,10 +28,23 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   //Learn Flutter With Me - https://www.youtube.com/watch?v=1vHf5kQ0E2I - Form Fields and Form Validation
-  final _formStateKey = GlobalKey<FormState>();
+  final _formStateKeyQuickSearch = GlobalKey<FormState>();
+  final _formStateKeyAdvancedSearch = GlobalKey<FormState>();
 
   //https://flutter.io/docs/cookbook/forms/retrieve-input
   final _quickSearchTextController = TextEditingController();
+  final _groupIdTextController = TextEditingController();
+  final _artifactIdTextController = TextEditingController();
+  final _versionTextController = TextEditingController();
+  final _packagingTextController = TextEditingController();
+  final _classifierTextController = TextEditingController();
+  final _classnameTextController = TextEditingController();
+
+  //https://stackoverflow.com/questions/52150677/how-to-shift-focus-to-next-textfield-in-flutter
+  final _artifactIdFocusNode = FocusNode();
+  final _versionFocusNode = FocusNode();
+  final _packagingFocusNode = FocusNode();
+  final _classifierFocusNode = FocusNode();
 
   // https://flutter.io/docs/cookbook/design/tabs
   // https://stackoverflow.com/questions/50123354/how-to-get-current-tab-index-in-flutter
@@ -51,10 +64,20 @@ class _MyHomePageState extends State<MyHomePage>
 
     _myTabPages = <Widget>[
       HomePageScaffoldQuickSearch(
-        formStateKey: _formStateKey,
+        formStateKey: _formStateKeyQuickSearch,
         quickSearchTextController: _quickSearchTextController,
+        submitSearch: _submitQuickSearch,
       ),
-      const HomePageScaffoldAdvancedSearch(),
+      HomePageScaffoldAdvancedSearch(
+        formStateKey: _formStateKeyAdvancedSearch,
+        groupIdSearchTextController: _groupIdTextController,
+        artifactIdSearchTextController: _artifactIdTextController,
+        versionSearchTextController: _versionTextController,
+        packagingSearchTextController: _packagingTextController,
+        classifierSearchTextController: _classifierTextController,
+        classnameSearchTextController: _classnameTextController,
+        submitSearch: _submitAdvancedSearch,
+      ),
     ];
 
     _tabController = TabController(
@@ -67,7 +90,75 @@ class _MyHomePageState extends State<MyHomePage>
   @override
   void dispose() {
     _tabController.dispose();
+    _quickSearchTextController.dispose();
+    _groupIdTextController.dispose();
+    _artifactIdTextController.dispose();
+    _versionTextController.dispose();
+    _packagingTextController.dispose();
+    _classifierTextController.dispose();
+    _classnameTextController.dispose();
     super.dispose();
+  }
+
+  void _clearAllSearchTextFields() {
+    _quickSearchTextController.clear();
+    _groupIdTextController.clear();
+    _artifactIdTextController.clear();
+    _versionTextController.clear();
+    _packagingTextController.clear();
+    _classifierTextController.clear();
+    _classnameTextController.clear();
+  }
+
+  void _submitQuickSearch() {
+    if (_formStateKeyQuickSearch.currentState!.validate()) {
+      _formStateKeyQuickSearch.currentState!.save();
+
+      debugPrint("Submitting Quick search");
+
+      Navigator.pushNamed(
+        context,
+        '/search_results',
+        arguments: <String, String>{
+          'searchType': "Quick",
+          'quickSearch': _quickSearchTextController.text,
+        },
+      );
+
+      _clearAllSearchTextFields();
+    }
+  }
+
+  void _submitAdvancedSearch() {
+    if (_formStateKeyAdvancedSearch.currentState!.validate()) {
+      _formStateKeyAdvancedSearch.currentState!.save();
+
+      debugPrint("Submitting Advanced search");
+
+      Navigator.pushNamed(
+        context,
+        '/search_results',
+        arguments: <String, String>{
+          'searchType': "Advanced",
+          'groupId': _groupIdTextController.text,
+          'artifactId': _artifactIdTextController.text,
+          'version': _versionTextController.text,
+          'packaging': _packagingTextController.text,
+          'classifier': _classifierTextController.text,
+          'classname': _classnameTextController.text,
+        },
+      );
+
+      _clearAllSearchTextFields();
+    }
+  }
+
+  void _submitFABSearch() {
+    if (_tabController.index == 0) {
+      _submitQuickSearch();
+    } else {
+      _submitAdvancedSearch();
+    }
   }
 
   //from:
@@ -75,7 +166,6 @@ class _MyHomePageState extends State<MyHomePage>
   //    - ./src/com/searchmavenapp/android/maven/search/activities/Main.java
   //    - ./res/layout/main_advanced_search.xml
   //    - ./src/com/searchmavenapp/android/maven/search/activities/MainAdvancedSearch.java
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,8 +174,7 @@ class _MyHomePageState extends State<MyHomePage>
         myAppTitle: widget.title,
       ),
       floatingActionButton: HomePageFloatingActionButton(
-        formStateKey: _formStateKey,
-        quickSearchTextController: _quickSearchTextController,
+        submitSearch: _submitFABSearch,
       ),
       appBar: AppBar(
         title: Text(widget.title),

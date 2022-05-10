@@ -71,7 +71,14 @@ class MyApp extends StatelessWidget {
           return MaterialPageRoute(
             builder: (context) {
               return SearchResultsPage(
-                searchTerm: args['searchTerm'] ?? '',
+                searchType: args['searchType'] ?? '',
+                quickSearch: args['quickSearch'] ?? '',
+                groupId: args['groupId'] ?? '',
+                artifactId: args['artifactId'] ?? '',
+                version: args['version'] ?? '',
+                packaging: args['packaging'] ?? '',
+                classifier: args['classifier'] ?? '',
+                classname: args['classname'] ?? '',
               );
             },
           );
