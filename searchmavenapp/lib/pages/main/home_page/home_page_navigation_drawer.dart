@@ -33,15 +33,22 @@ class HomePageNavigationDrawer extends StatelessWidget {
 
   _buildNavigationDrawerHeader(BuildContext context) => DrawerHeader(
         child: Column(
-          children: const [
-            CircleAvatar(
-              radius: 52,
-              backgroundImage: AssetImage('assets/icon/icon.png'),
-              // backgroundImage: NetworkImage(
-              //     "https://raw.githubusercontent.com/michaelmworthington/searchmavenapp/master/Assets/Android/searchmaven_512.png"),
+          children: [
+            const CircleAvatar(
+              radius: 54,
+              backgroundColor: Colors.grey,
+              child: CircleAvatar(
+                radius: 52,
+                backgroundImage: AssetImage('assets/icon/icon.png'),
+                // backgroundImage: NetworkImage(
+                //     "https://raw.githubusercontent.com/michaelmworthington/searchmavenapp/master/Assets/Android/searchmaven_512.png"),
+              ),
             ),
-            SizedBox(height: 12),
-            Text("Drawer Header"), //TODO: Info or picture
+            const SizedBox(height: 12),
+            Text(
+              myAppTitle,
+              style: TextStyle(color: Colors.white),
+            ),
           ],
         ),
         decoration: BoxDecoration(color: Theme.of(context).primaryColor),
@@ -131,7 +138,7 @@ class HomePageNavigationDrawer extends StatelessWidget {
               },
             ),
             HomePageNavigationDrawerListTile(
-              label: "Fourth",
+              label: "Fourth (Nav Demo)",
               icon: Icons.play_circle_outline,
               onTap: () {
                 Navigator.pushNamed(

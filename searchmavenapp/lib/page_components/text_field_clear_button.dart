@@ -25,12 +25,13 @@ class MyTextFieldClearButton extends StatelessWidget {
                 height: size,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.grey[300],
+                  color: Theme.of(context).dialogBackgroundColor,
                 ),
               ),
               Icon(
                 Icons.clear,
                 size: size * 0.6, // 60% width for icon
+                color: Theme.of(context).hintColor,
               )
             ],
           ),

@@ -35,6 +35,8 @@ class MyApp extends StatelessWidget {
       // Notice that the counter didn't reset back to zero; the application
       // is not restarted.
       theme: _buildTheme(),
+      darkTheme: _buildDarkTheme(),
+      themeMode: ThemeMode.system, // TODO: is the default anyway, but provide the option to force set it
       // don't define home when using a named route with '/'
       // home: const MyHomePage(title: 'Search Maven App'),
       initialRoute: '/',
@@ -87,20 +89,104 @@ class MyApp extends StatelessWidget {
       },
     );
   }
-}
 
-ThemeData _buildTheme() {
-  return ThemeData(
-    primarySwatch: Colors.blueGrey,
-    //canvasColor: Colors.blueGrey,
-    inputDecorationTheme:
-        const InputDecorationTheme(border: const OutlineInputBorder()),
-    buttonColor: Colors.blueGrey,
-    buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.primary),
-    //iconTheme: IconThemeData(
-    //  color: Colors.red
-    //),
-    //bottomAppBarColor: Colors.red,
-    //cardColor: Colors.red
-  );
+  ThemeData _buildDarkTheme() {
+    return ThemeData(
+      primarySwatch: _buildCustomPrimaryColor(),
+      brightness: Brightness.dark,
+      primaryColor: _buildCustomPrimaryColorDark(),
+      accentColor: Colors.grey,
+      // colorScheme: ColorScheme.dark(),
+      // canvasColor: Colors.blue,
+      inputDecorationTheme: InputDecorationTheme(border: OutlineInputBorder()),
+      // buttonColor: Colors.blueGrey,
+      // buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+      //iconTheme: IconThemeData(
+      //  color: Colors.red
+      //),
+      //bottomAppBarColor: Colors.red,
+      //cardColor: Colors.red
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: _buildCustomPrimaryColor(),
+      ),
+    );
+  }
+
+  ThemeData _buildTheme() {
+    return ThemeData(
+      // primarySwatch: Colors.blueGrey,
+      // primarySwatch: Color(0xff686868),
+      // primarySwatch: Color.fromARGB(255, 104, 104, 104),
+      primarySwatch: _buildCustomPrimaryColorFromTranslatedIcon(),
+      brightness: Brightness.light,
+      primaryColor: _buildCustomPrimaryColorFromTranslatedIcon(),
+      accentColor: Colors.grey,
+      // canvasColor: Colors.blueGrey,
+      inputDecorationTheme: InputDecorationTheme(border: OutlineInputBorder()),
+      buttonColor: Colors.blueGrey,
+      buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+      //iconTheme: IconThemeData(
+      //  color: Colors.red
+      //),
+      //bottomAppBarColor: Colors.red,
+      //cardColor: Colors.red
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: _buildCustomPrimaryColorFromTranslatedIcon(),
+      ),
+    );
+  }
+
+  // # 686868
+  MaterialColor _buildCustomPrimaryColor() {
+    Map<int, Color> color = const {
+      50: Color.fromRGBO(104, 104, 104, .1),
+      100: Color.fromRGBO(104, 104, 104, .2),
+      200: Color.fromRGBO(104, 104, 104, .3),
+      300: Color.fromRGBO(104, 104, 104, .4),
+      400: Color.fromRGBO(104, 104, 104, .5),
+      500: Color.fromRGBO(104, 104, 104, .6),
+      600: Color.fromRGBO(104, 104, 104, .7),
+      700: Color.fromRGBO(104, 104, 104, .8),
+      800: Color.fromRGBO(104, 104, 104, .9),
+      900: Color.fromRGBO(104, 104, 104, 1),
+    };
+
+    return MaterialColor(0xFF686868, color);
+  }
+
+  // # 5D5D5D
+  MaterialColor _buildCustomPrimaryColorFromTranslatedIcon() {
+    Map<int, Color> color = const {
+      50: Color.fromRGBO(93, 93, 93, .1),
+      100: Color.fromRGBO(93, 93, 93, .2),
+      200: Color.fromRGBO(93, 93, 93, .3),
+      300: Color.fromRGBO(93, 93, 93, .4),
+      400: Color.fromRGBO(93, 93, 93, .5),
+      500: Color.fromRGBO(93, 93, 93, .6),
+      600: Color.fromRGBO(93, 93, 93, .7),
+      700: Color.fromRGBO(93, 93, 93, .8),
+      800: Color.fromRGBO(93, 93, 93, .9),
+      900: Color.fromRGBO(93, 93, 93, 1),
+    };
+
+    return MaterialColor(0xFF5D5D5D, color);
+  }
+
+  // # 303030
+  MaterialColor _buildCustomPrimaryColorDark() {
+    Map<int, Color> color = const {
+      50: Color.fromRGBO(48, 48, 48, .1),
+      100: Color.fromRGBO(48, 48, 48, .2),
+      200: Color.fromRGBO(48, 48, 48, .3),
+      300: Color.fromRGBO(48, 48, 48, .4),
+      400: Color.fromRGBO(48, 48, 48, .5),
+      500: Color.fromRGBO(48, 48, 48, .6),
+      600: Color.fromRGBO(48, 48, 48, .7),
+      700: Color.fromRGBO(48, 48, 48, .8),
+      800: Color.fromRGBO(48, 48, 48, .9),
+      900: Color.fromRGBO(48, 48, 48, 1),
+    };
+
+    return MaterialColor(0xFF303030, color);
+  }
 }
