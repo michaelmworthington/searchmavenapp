@@ -1,7 +1,23 @@
 import 'package:flutter/material.dart';
 
-class SettingsPage extends StatelessWidget {
-  const SettingsPage({Key? key}) : super(key: key);
+class SettingsPage extends StatefulWidget {
+  final Function changeTheme;
+
+  const SettingsPage({Key? key, required this.changeTheme}) : super(key: key);
+
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  static const List<String> items = ['Light', 'Dark', 'System'];
+  late String selectedItem;
+
+  @override
+  void initState() {
+    selectedItem = items[2];
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,22 +37,46 @@ class SettingsPage extends StatelessWidget {
     //    - ./src/com/searchmavenapp/android/maven/search/activities/Preferences.java
     return ListView(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
-      children: const <Widget>[
+      children: <Widget>[
         ListTile(
+          isThreeLine: true,
+          enabled: true,
+          title: const Text("Color Scheme"),
+          subtitle: const Text("The look and feel of the application."),
+          trailing: DropdownButton<String>(
+            items: items
+                .map(
+                  (item) => DropdownMenuItem(
+                    child: Text(item),
+                    value: item,
+                  ),
+                )
+                .toList(),
+            value: selectedItem,
+            onChanged: (item) {
+              debugPrint("Changing Color Scheme to: $item");
+              widget.changeTheme(item);
+              setState(() {
+                selectedItem = item ?? selectedItem;
+              });
+            },
+          ),
+        ),
+        const ListTile(
           isThreeLine: true,
           enabled: true,
           title: Text("Demo Mode"),
           subtitle: Text(
               "Perform a demo. Don't actually connect to Maven Central. Shows Sample Results."),
         ),
-        ListTile(
+        const ListTile(
           isThreeLine: true,
           enabled: true,
           title: Text("Num Results"),
           subtitle: Text(
               "The number of search results to retrieve upon each request from Maven Central. A lower number will result in the search results fetching additional records more often, but results will come back quicker."),
         ),
-        ListTile(
+        const ListTile(
           isThreeLine: true,
           enabled: false,
           title: Text("Nexus URL"),

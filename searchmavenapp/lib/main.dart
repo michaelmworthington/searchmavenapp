@@ -17,8 +17,21 @@ void main() {
 }
 
 //The Scaffolding and Look-and-Feel Theme for the app
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late ThemeMode _themeMode;
+
+  @override
+  void initState() {
+    _themeMode = ThemeMode.system;
+    super.initState();
+  }
 
   // This widget is the root of your application.
   @override
@@ -36,7 +49,7 @@ class MyApp extends StatelessWidget {
       // is not restarted.
       theme: _buildTheme(),
       darkTheme: _buildDarkTheme(),
-      themeMode: ThemeMode.system, // TODO: is the default anyway, but provide the option to force set it
+      themeMode: _themeMode,
       // don't define home when using a named route with '/'
       // home: const MyHomePage(title: 'Search Maven App'),
       initialRoute: '/',
@@ -44,7 +57,7 @@ class MyApp extends StatelessWidget {
       //      ModalRoute.of(context)!.settings.arguments to extract the arguments
       routes: {
         '/': (context) => const MyHomePage(title: 'Search Maven App'),
-        '/settings': (context) => const SettingsPage(),
+        '/settings': (context) => SettingsPage(changeTheme: _changeThemeMode),
         '/sample_third': (context) => const SampleThirdPage(),
         '/sample_fourth': (context) => const SampleFourthPage(),
         '/sample_fifth': (context) => const SampleFifthPage(),
@@ -95,6 +108,21 @@ class MyApp extends StatelessWidget {
         return null;
       },
     );
+  }
+
+  void _changeThemeMode(String pThemeMode) {
+    setState(() {
+      switch (pThemeMode) {
+        case 'Light':
+          _themeMode = ThemeMode.light;
+          break;
+        case 'Dark':
+          _themeMode = ThemeMode.dark;
+          break;
+        default:
+          _themeMode = ThemeMode.system;
+      }
+    });
   }
 
   ThemeData _buildDarkTheme() {
