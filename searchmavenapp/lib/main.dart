@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'pages/main/home_page/home_page.dart';
 import 'pages/test/sample_fifth_page/sample_fifth_page.dart';
@@ -26,11 +27,24 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late ThemeMode _themeMode;
+  late String _themeModeString;
+
+  late SharedPreferences _sharedPreferences;
 
   @override
   void initState() {
     _themeMode = ThemeMode.system;
+    _themeModeString = 'System';
     super.initState();
+
+    init();
+  }
+
+  Future init() async {
+    _sharedPreferences = await SharedPreferences.getInstance();
+
+    String? themeMode = _sharedPreferences.getString('themeMode');
+    _changeThemeMode(themeMode);
   }
 
   // This widget is the root of your application.
@@ -57,7 +71,10 @@ class _MyAppState extends State<MyApp> {
       //      ModalRoute.of(context)!.settings.arguments to extract the arguments
       routes: {
         '/': (context) => const MyHomePage(title: 'Search Maven App'),
-        '/settings': (context) => SettingsPage(changeTheme: _changeThemeMode),
+        '/settings': (context) => SettingsPage(
+              changeTheme: _changeThemeMode,
+              currentTheme: _themeModeString,
+            ),
         '/sample_third': (context) => const SampleThirdPage(),
         '/sample_fourth': (context) => const SampleFourthPage(),
         '/sample_fifth': (context) => const SampleFifthPage(),
@@ -110,19 +127,26 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  void _changeThemeMode(String pThemeMode) {
-    setState(() {
-      switch (pThemeMode) {
-        case 'Light':
-          _themeMode = ThemeMode.light;
-          break;
-        case 'Dark':
-          _themeMode = ThemeMode.dark;
-          break;
-        default:
-          _themeMode = ThemeMode.system;
-      }
-    });
+  void _changeThemeMode(String? pThemeMode) {
+    setState(
+      () {
+        switch (pThemeMode) {
+          case 'Light':
+            _themeMode = ThemeMode.light;
+            _themeModeString = 'Light';
+            break;
+          case 'Dark':
+            _themeMode = ThemeMode.dark;
+            _themeModeString = 'Dark';
+            break;
+          default:
+            _themeMode = ThemeMode.system;
+            _themeModeString = 'System';
+        }
+
+        _sharedPreferences.setString('themeMode', _themeModeString);
+      },
+    );
   }
 
   ThemeData _buildDarkTheme() {

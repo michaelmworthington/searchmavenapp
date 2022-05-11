@@ -1,23 +1,16 @@
 import 'package:flutter/material.dart';
 
-class SettingsPage extends StatefulWidget {
-  final Function changeTheme;
-
-  const SettingsPage({Key? key, required this.changeTheme}) : super(key: key);
-
-  @override
-  State<SettingsPage> createState() => _SettingsPageState();
-}
-
-class _SettingsPageState extends State<SettingsPage> {
+class SettingsPage extends StatelessWidget {
   static const List<String> items = ['Light', 'Dark', 'System'];
-  late String selectedItem;
 
-  @override
-  void initState() {
-    selectedItem = items[2];
-    super.initState();
-  }
+  final Function changeTheme;
+  final String currentTheme;
+
+  const SettingsPage({
+    Key? key,
+    required this.changeTheme,
+    required this.currentTheme,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -52,13 +45,10 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                 )
                 .toList(),
-            value: selectedItem,
+            value: currentTheme,
             onChanged: (item) {
               debugPrint("Changing Color Scheme to: $item");
-              widget.changeTheme(item);
-              setState(() {
-                selectedItem = item ?? selectedItem;
-              });
+              changeTheme(item);
             },
           ),
         ),

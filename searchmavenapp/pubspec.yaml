@@ -49,7 +49,7 @@ dependencies:
   http: ^0.13.4
   # http: ^0.11.3+17
   keyboard_dismisser: ^2.0.1
-
+  shared_preferences: ^2.0.14
 
 
 dev_dependencies:
