@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'pages/main/home_page/home_page.dart';
+import 'pages/main/settings_page/settings_enum.dart';
 import 'pages/test/sample_fifth_page/sample_fifth_page.dart';
 import 'pages/test/sample_fourth_page/sample_fourth_page.dart';
 import 'pages/test/sample_second_page/sample_second_page.dart';
@@ -28,23 +29,33 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   late ThemeMode _themeMode;
   late String _themeModeString;
+  late bool _isDemoMode;
+  late int _numResults;
 
   late SharedPreferences _sharedPreferences;
 
   @override
   void initState() {
-    _themeMode = ThemeMode.system;
+    _themeMode = MySettings.themeMode.defaultValue as ThemeMode;
     _themeModeString = 'System';
+    _isDemoMode = MySettings.demoMode.defaultValue as bool;
+    _numResults = MySettings.numResults.defaultValue as int;
     super.initState();
 
-    init();
+    initSettingsFromSharedPreferences();
   }
 
-  Future init() async {
+  Future initSettingsFromSharedPreferences() async {
     _sharedPreferences = await SharedPreferences.getInstance();
 
-    String? themeMode = _sharedPreferences.getString('themeMode');
+    String? themeMode = _sharedPreferences.getString(MySettings.themeMode.key);
     _changeThemeMode(themeMode);
+
+    bool? demoMode = _sharedPreferences.getBool(MySettings.demoMode.key);
+    _changeDemoMode(demoMode);
+
+    int? numResults = _sharedPreferences.getInt(MySettings.numResults.key);
+    _changeNumResults(numResults);
   }
 
   // This widget is the root of your application.
@@ -73,7 +84,11 @@ class _MyAppState extends State<MyApp> {
         '/': (context) => const MyHomePage(title: 'Search Maven App'),
         '/settings': (context) => SettingsPage(
               changeTheme: _changeThemeMode,
+              changeNumResults: _changeNumResults,
+              changeDemoMode: _changeDemoMode,
               currentTheme: _themeModeString,
+              isDemoMode: _isDemoMode,
+              numResults: _numResults,
             ),
         '/sample_third': (context) => const SampleThirdPage(),
         '/sample_fourth': (context) => const SampleFourthPage(),
@@ -144,7 +159,28 @@ class _MyAppState extends State<MyApp> {
             _themeModeString = 'System';
         }
 
-        _sharedPreferences.setString('themeMode', _themeModeString);
+        _sharedPreferences.setString(
+            MySettings.themeMode.key, _themeModeString);
+      },
+    );
+  }
+
+  void _changeDemoMode(bool? pDemoMode) {
+    setState(
+      () {
+        _isDemoMode = pDemoMode ?? MySettings.demoMode.defaultValue as bool;
+
+        _sharedPreferences.setBool(MySettings.demoMode.key, _isDemoMode);
+      },
+    );
+  }
+
+  void _changeNumResults(int? pNumResults) {
+    setState(
+      () {
+        _numResults = pNumResults ?? MySettings.numResults.defaultValue as int;
+
+        _sharedPreferences.setInt(MySettings.numResults.key, _numResults);
       },
     );
   }
@@ -157,7 +193,8 @@ class _MyAppState extends State<MyApp> {
       accentColor: Colors.grey,
       // colorScheme: ColorScheme.dark(),
       // canvasColor: Colors.blue,
-      inputDecorationTheme: InputDecorationTheme(border: OutlineInputBorder()),
+      inputDecorationTheme:
+          const InputDecorationTheme(border: OutlineInputBorder()),
       // buttonColor: Colors.blueGrey,
       // buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
       //iconTheme: IconThemeData(
@@ -181,9 +218,10 @@ class _MyAppState extends State<MyApp> {
       primaryColor: _buildCustomPrimaryColorFromTranslatedIcon(),
       accentColor: Colors.grey,
       // canvasColor: Colors.blueGrey,
-      inputDecorationTheme: InputDecorationTheme(border: OutlineInputBorder()),
+      inputDecorationTheme:
+          const InputDecorationTheme(border: OutlineInputBorder()),
       buttonColor: Colors.blueGrey,
-      buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+      buttonTheme: const ButtonThemeData(textTheme: ButtonTextTheme.primary),
       //iconTheme: IconThemeData(
       //  color: Colors.red
       //),

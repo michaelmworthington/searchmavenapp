@@ -30,6 +30,8 @@ class HomePageScaffoldAdvancedSearch extends StatefulWidget {
       _HomePageScaffoldAdvancedSearchState();
 }
 
+// AutomaticKeepAliveClientMixin
+//    https://stackoverflow.com/questions/65394643/tabbarview-causes-contents-of-futurebuilder-to-disappear
 class _HomePageScaffoldAdvancedSearchState
     extends State<HomePageScaffoldAdvancedSearch>
     with AutomaticKeepAliveClientMixin {
