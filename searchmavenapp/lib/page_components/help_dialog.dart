@@ -20,9 +20,9 @@ class HelpDialog extends StatelessWidget {
         padding: const EdgeInsets.all(24),
         child: Row(
           children: [
-            Icon(
+            const Icon(
               Icons.help_outline,
-              color: Theme.of(context).canvasColor,
+              color: Colors.white,
               size: 28,
             ),
             const SizedBox(width: 12),
@@ -31,7 +31,7 @@ class HelpDialog extends StatelessWidget {
               style: Theme.of(context)
                   .textTheme
                   .headlineSmall
-                  ?.copyWith(color: Theme.of(context).canvasColor),
+                  ?.copyWith(color: Colors.white),
             ),
           ],
         ),
