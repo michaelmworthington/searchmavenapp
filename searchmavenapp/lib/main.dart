@@ -81,7 +81,10 @@ class _MyAppState extends State<MyApp> {
       // mmw: i'm using these for pages that don't require any arguments, or use
       //      ModalRoute.of(context)!.settings.arguments to extract the arguments
       routes: {
-        '/': (context) => const MyHomePage(title: 'Search Maven App'),
+        '/': (context) => MyHomePage(
+              title: 'Search Maven App',
+              isDemoMode: _isDemoMode,
+            ),
         '/settings': (context) => SettingsPage(
               changeTheme: _changeThemeMode,
               changeNumResults: _changeNumResults,
@@ -116,6 +119,8 @@ class _MyAppState extends State<MyApp> {
           return MaterialPageRoute(
             builder: (context) {
               return SearchResultsPage(
+                isDemoMode: _isDemoMode,
+                numResults: _numResults,
                 searchType: args['searchType'] ?? '',
                 quickSearch: args['quickSearch'] ?? '',
                 groupId: args['groupId'] ?? '',

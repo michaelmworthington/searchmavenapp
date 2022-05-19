@@ -6,7 +6,7 @@ import 'home_page_scaffold_advanced_search.dart';
 import 'home_page_scaffold_quick_search.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({Key? key, required this.title, required this.isDemoMode}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -18,6 +18,7 @@ class MyHomePage extends StatefulWidget {
   // always marked "final".
 
   final String title;
+  final bool isDemoMode;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -172,6 +173,7 @@ class _MyHomePageState extends State<MyHomePage>
       drawer: HomePageNavigationDrawer(
         tabController: _tabController,
         myAppTitle: widget.title,
+        isDemoMode: widget.isDemoMode,
       ),
       floatingActionButton: HomePageFloatingActionButton(
         submitSearch: _submitFABSearch,

@@ -10,9 +10,13 @@ import 'home_page_navigation_drawer_list_tile.dart';
 class HomePageNavigationDrawer extends StatelessWidget {
   final TabController tabController;
   final String myAppTitle;
+  final bool isDemoMode;
 
   const HomePageNavigationDrawer(
-      {Key? key, required this.tabController, required this.myAppTitle})
+      {Key? key,
+      required this.tabController,
+      required this.myAppTitle,
+      required this.isDemoMode})
       : super(key: key);
 
   //from:
@@ -54,110 +58,117 @@ class HomePageNavigationDrawer extends StatelessWidget {
         decoration: BoxDecoration(color: Theme.of(context).primaryColor),
       );
 
-  _buildNavigationDrawerItems(BuildContext context) => Container(
-        padding: const EdgeInsets.all(4),
-        child: Wrap(
-          runSpacing: 4,
-          children: [
-            HomePageNavigationDrawerListTile(
-              label: "Quick Search",
-              icon: Icons.search,
-              onTap: () {
-                tabController.index = 0; //TODO: Use Navigator Routes??
-              },
-            ),
-            HomePageNavigationDrawerListTile(
-              label: "Advanced Search",
-              icon: Icons.youtube_searched_for,
-              onTap: () {
-                tabController.index = 1; //TODO: Use Navigator Routes??
-              },
-            ),
-            HomePageNavigationDrawerListTile(
-              label: "Help",
-              icon: Icons.help,
-              onTap: () {
-                //TODO: adaptive showCupertinoDialog(
-                showDialog(
-                    context: context, builder: (context) => const HelpDialog());
-              },
-            ),
-            HomePageNavigationDrawerListTile(
-              label: "Settings",
-              icon: Icons.settings,
-              onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  '/settings',
-                );
-              },
-            ),
-            HomePageNavigationDrawerListTile(
-              label: "About",
-              icon: Icons.info,
-              onTap: () {
-                //TODO: adaptive showCupertinoDialog(
-                showDialog(
-                  context: context,
-                  builder: (context) => MyAboutDialog(myAppTitle: myAppTitle),
-                );
-              },
-            ),
-            // Divider
-            const Divider(
-              color: Colors.black54,
-            ),
-            // Next Section
-            HomePageNavigationDrawerListTile(
-              label: "Remove Things Below",
-              icon: Icons.clear,
-              onTap: () {},
-            ),
-            HomePageNavigationDrawerListTile(
-              label: "Second",
-              icon: Icons.book,
-              onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  '/sample_second',
-                  arguments: <String, String>{
-                    'searchTerm': 'menu',
-                    'counter': '75',
-                  },
-                );
-              },
-            ),
-            HomePageNavigationDrawerListTile(
-              label: "Third",
-              icon: Icons.play_arrow,
-              onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  '/sample_third',
-                );
-              },
-            ),
-            HomePageNavigationDrawerListTile(
-              label: "Fourth (Nav Demo)",
-              icon: Icons.play_circle_outline,
-              onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  '/sample_fourth',
-                );
-              },
-            ),
-            HomePageNavigationDrawerListTile(
-              label: "Fifth",
-              icon: Icons.play_for_work,
-              onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  '/sample_fifth',
-                );
-              },
-            ),
-          ],
-        ),
-      );
+  _buildNavigationDrawerItems(BuildContext context) {
+    List<Widget> mainItems = [
+      HomePageNavigationDrawerListTile(
+        label: "Quick Search",
+        icon: Icons.search,
+        onTap: () {
+          tabController.index = 0; //TODO: Use Navigator Routes??
+        },
+      ),
+      HomePageNavigationDrawerListTile(
+        label: "Advanced Search",
+        icon: Icons.youtube_searched_for,
+        onTap: () {
+          tabController.index = 1; //TODO: Use Navigator Routes??
+        },
+      ),
+      HomePageNavigationDrawerListTile(
+        label: "Help",
+        icon: Icons.help,
+        onTap: () {
+          //TODO: adaptive showCupertinoDialog(
+          showDialog(
+              context: context, builder: (context) => const HelpDialog());
+        },
+      ),
+      HomePageNavigationDrawerListTile(
+        label: "Settings",
+        icon: Icons.settings,
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            '/settings',
+          );
+        },
+      ),
+      HomePageNavigationDrawerListTile(
+        label: "About",
+        icon: Icons.info,
+        onTap: () {
+          //TODO: adaptive showCupertinoDialog(
+          showDialog(
+            context: context,
+            builder: (context) => MyAboutDialog(myAppTitle: myAppTitle),
+          );
+        },
+      ),
+    ];
+
+    List<Widget> demoItems = [
+      // Divider
+      const Divider(
+        color: Colors.black54,
+      ),
+      // Next Section
+      HomePageNavigationDrawerListTile(
+        label: "Remove Things Below",
+        icon: Icons.clear,
+        onTap: () {},
+      ),
+      HomePageNavigationDrawerListTile(
+        label: "Second",
+        icon: Icons.book,
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            '/sample_second',
+            arguments: <String, String>{
+              'searchTerm': 'menu',
+              'counter': '75',
+            },
+          );
+        },
+      ),
+      HomePageNavigationDrawerListTile(
+        label: "Third",
+        icon: Icons.play_arrow,
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            '/sample_third',
+          );
+        },
+      ),
+      HomePageNavigationDrawerListTile(
+        label: "Fourth (Nav Demo)",
+        icon: Icons.play_circle_outline,
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            '/sample_fourth',
+          );
+        },
+      ),
+      HomePageNavigationDrawerListTile(
+        label: "Fifth",
+        icon: Icons.play_for_work,
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            '/sample_fifth',
+          );
+        },
+      ),
+    ];
+
+    return Container(
+      padding: const EdgeInsets.all(4),
+      child: Wrap(
+        runSpacing: 4,
+        children: isDemoMode ? [...mainItems, ...demoItems] : [...mainItems],
+      ),
+    );
+  }
 }

@@ -108,6 +108,7 @@ flutter:
   #   - images/a_dot_ham.jpeg
     - "assets/icon/icon.png"
     - "assets/icon/icon_search_transparent.png"
+    - "assets/model/mavencentralresponse.json"
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
