@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../../api/mavencentral/mavencentralsearchapi.dart';
 import '../../../api/mavencentral/model/mavencentralresponse.dart';
+import 'search_results_page_list_view.dart';
 
 class SearchResultsPage extends StatefulWidget {
   final bool isDemoMode;
@@ -46,6 +47,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
     //TODO: Search Terms Model Class
     dataFuture = CentralSearchAPI().search(
       pSearchQueryString: widget.quickSearch,
+      pContext: context,
       pNumResults: widget.numResults,
       pDemoMode: widget.isDemoMode,
     );
@@ -64,13 +66,14 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
     //from:
     //    - ./res/layout/search_results.xml
     return Scaffold(
-      appBar: AppBar(title: Text("${widget.searchType} Search Results:")),
+      appBar: AppBar(title: Text("${widget.searchType} Search Results")),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.refresh),
         onPressed: () => setState(
           () {
             dataFuture = CentralSearchAPI().search(
               pSearchQueryString: widget.quickSearch,
+              pContext: context,
               pNumResults: widget.numResults,
               pDemoMode: widget.isDemoMode,
             );
@@ -81,43 +84,42 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
         child: Column(
           children: <Widget>[
             "Quick" == widget.searchType
-                ? _buildSearchTermRow("Quick Search: ", widget.quickSearch)
+                ? _buildSearchTermRow(
+                    "Quick Search (demo = ${widget.isDemoMode}): ",
+                    widget.quickSearch)
                 : _buildAdvancedSearchRow(),
             const SizedBox(
               height: 24,
             ),
-            Center(
-              child: FutureBuilder<MavenCentralResponse>(
-                future:
-                    dataFuture, //DO THIS - static instance of the data, until it's forced to refresh
-                builder: (context, snapshot) {
-                  //handle no data vs. in process separately
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.waiting:
-                      return Wrap(
-                        children: const [
-                          Text('Robust API Value Waiting : '),
-                          CircularProgressIndicator.adaptive(),
-                        ],
-                      );
-                    case ConnectionState.done:
-                    default:
-                      if (snapshot.hasError) {
-                        final error = snapshot.error;
-                        debugPrintStack(stackTrace: snapshot.stackTrace);
+            FutureBuilder<MavenCentralResponse>(
+              future:
+                  dataFuture, //DO THIS - static instance of the data, until it's forced to refresh
+              builder: (context, snapshot) {
+                //handle no data vs. in process separately
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                    return Wrap(
+                      children: const [
+                        Text('Robust API Value Waiting : '),
+                        CircularProgressIndicator.adaptive(),
+                      ],
+                    );
+                  case ConnectionState.done:
+                  default:
+                    if (snapshot.hasError) {
+                      final error = snapshot.error;
+                      debugPrintStack(stackTrace: snapshot.stackTrace);
 
-                        return Text('Robust API Nullable Error: $error');
-                      } else if (snapshot.hasData) {
-                        int data = snapshot.data?.response.numFound ?? 0;
-                        return Text('Robust API Nullable Data: $data');
-                      } else {
-                        return const Text('Robust API Value No Data');
-                      }
-                  }
-                },
-              ),
+                      return Text('Robust API Nullable Error: $error');
+                    } else if (snapshot.hasData) {
+                      return SearchResultsPageListView(data: snapshot.data);
+                    } else {
+                      return const Text('Robust API Value No Data');
+                    }
+                }
+              },
             ),
-            const Spacer(),
+            // const Spacer(),
             ElevatedButton.icon(
               onPressed: () {
                 setState(() {});
@@ -179,7 +181,8 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                 .textTheme
                 .headlineSmall
                 ?.copyWith(color: Theme.of(context).primaryColor)),
-        // Text("Only quick search allowed", style: Theme.of(context).textTheme.headline.copyWith(color: Theme.of(context).primaryColor)),
+        // Text("Only quick search allowed", style: Theme.of(context).textTheme.headline.copyWith(color:
+        // Theme.of(context).primaryColor)),
         const SizedBox(height: 12.0),
         Text("Search Type: ${widget.searchType}"),
         const SizedBox(height: 12.0),

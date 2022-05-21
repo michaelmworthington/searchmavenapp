@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 
+import '../../../page_components/form_header.dart';
 import '../../../page_components/text_field_clear_button.dart';
 
 class HomePageScaffoldAdvancedSearch extends StatefulWidget {
@@ -72,7 +73,7 @@ class _HomePageScaffoldAdvancedSearchState
                     const SizedBox(
                       height: 24.0,
                     ),
-                    _buildAdvancedFormHeader(context, 'By Coordinate:'),
+                    MyFormHeader(context: context, pLabel: 'By Coordinate:'),
                     const SizedBox(
                       height: 12.0,
                     ),
@@ -116,7 +117,7 @@ class _HomePageScaffoldAdvancedSearchState
                     const SizedBox(
                       height: 24.0,
                     ),
-                    _buildAdvancedFormHeader(context, 'By Classname:'),
+                    MyFormHeader(context: context, pLabel: 'By Classname:'),
                     const SizedBox(
                       height: 12.0,
                     ),
@@ -200,28 +201,6 @@ class _HomePageScaffoldAdvancedSearchState
       onFieldSubmitted: (value) {
         widget.submitSearch();
       },
-    );
-  }
-
-  Row _buildAdvancedFormHeader(BuildContext context, String pLabel) {
-    return Row(
-      children: [
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-                border: Border(
-                    bottom: BorderSide(color: Theme.of(context).accentColor))),
-            child: Text(
-              pLabel,
-              textAlign: TextAlign.left,
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineSmall
-                  ?.copyWith(color: Theme.of(context).accentColor),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
