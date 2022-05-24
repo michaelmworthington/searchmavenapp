@@ -36,6 +36,12 @@ class HomePageScaffoldAdvancedSearch extends StatefulWidget {
 class _HomePageScaffoldAdvancedSearchState
     extends State<HomePageScaffoldAdvancedSearch>
     with AutomaticKeepAliveClientMixin {
+  //https://stackoverflow.com/questions/52150677/how-to-shift-focus-to-next-textfield-in-flutter
+  final _artifactIdFocusNode = FocusNode();
+  final _versionFocusNode = FocusNode();
+  final _packagingFocusNode = FocusNode();
+  final _classifierFocusNode = FocusNode();
+
   @override
   void initState() {
     super.initState();
@@ -78,41 +84,50 @@ class _HomePageScaffoldAdvancedSearchState
                       height: 12.0,
                     ),
                     _buildTextFormFieldAdvancedSearch(
-                      context,
-                      "GroupId",
-                      widget.groupIdSearchTextController,
+                      context: context,
+                      pFieldLabel: "GroupId",
+                      pTextController: widget.groupIdSearchTextController,
+                      autofocus: true,
+                      nextFocus: _artifactIdFocusNode,
                     ),
                     const SizedBox(
                       height: 12.0,
                     ),
                     _buildTextFormFieldAdvancedSearch(
-                      context,
-                      "ArtifactId",
-                      widget.artifactIdSearchTextController,
+                      context: context,
+                      pFieldLabel: "ArtifactId",
+                      pTextController: widget.artifactIdSearchTextController,
+                      focusNode: _artifactIdFocusNode,
+                      nextFocus: _versionFocusNode,
                     ),
                     const SizedBox(
                       height: 12.0,
                     ),
                     _buildTextFormFieldAdvancedSearch(
-                      context,
-                      "Version",
-                      widget.versionSearchTextController,
+                      context: context,
+                      pFieldLabel: "Version",
+                      pTextController: widget.versionSearchTextController,
+                      focusNode: _versionFocusNode,
+                      nextFocus: _packagingFocusNode,
                     ),
                     const SizedBox(
                       height: 12.0,
                     ),
                     _buildTextFormFieldAdvancedSearch(
-                      context,
-                      "Packaging",
-                      widget.packagingSearchTextController,
+                      context: context,
+                      pFieldLabel: "Packaging",
+                      pTextController: widget.packagingSearchTextController,
+                      focusNode: _packagingFocusNode,
+                      nextFocus: _classifierFocusNode,
                     ),
                     const SizedBox(
                       height: 12.0,
                     ),
                     _buildTextFormFieldAdvancedSearch(
-                      context,
-                      "Classifier",
-                      widget.classifierSearchTextController,
+                      context: context,
+                      pFieldLabel: "Classifier",
+                      pTextController: widget.classifierSearchTextController,
+                      focusNode: _classifierFocusNode,
                     ),
                     const SizedBox(
                       height: 24.0,
@@ -122,9 +137,9 @@ class _HomePageScaffoldAdvancedSearchState
                       height: 12.0,
                     ),
                     _buildTextFormFieldAdvancedSearch(
-                      context,
-                      "Classname",
-                      widget.classnameSearchTextController,
+                      context: context,
+                      pFieldLabel: "Classname",
+                      pTextController: widget.classnameSearchTextController,
                     ),
                     ButtonBar(
                       alignment: MainAxisAlignment.center,
@@ -169,14 +184,37 @@ class _HomePageScaffoldAdvancedSearchState
     );
   }
 
-  TextFormField _buildTextFormFieldAdvancedSearch(
-    BuildContext context,
-    String pFieldLabel,
-    TextEditingController pTextController,
-  ) {
+  bool _doFieldsHaveText() {
+    return widget.groupIdSearchTextController.text.isNotEmpty ||
+        widget.artifactIdSearchTextController.text.isNotEmpty ||
+        widget.versionSearchTextController.text.isNotEmpty ||
+        widget.packagingSearchTextController.text.isNotEmpty ||
+        widget.classifierSearchTextController.text.isNotEmpty ||
+        widget.classnameSearchTextController.text.isNotEmpty;
+  }
+
+  TextFormField _buildTextFormFieldAdvancedSearch({
+    required BuildContext context,
+    required String pFieldLabel,
+    required TextEditingController pTextController,
+    bool autofocus = false,
+    FocusNode? nextFocus,
+    FocusNode? focusNode,
+  }) {
+    Function(String) fSubmitted = (value) {
+      widget.submitSearch();
+    };
+
+    if (nextFocus != null) {
+      fSubmitted = (value) {
+        FocusScope.of(context).requestFocus(nextFocus);
+      };
+    }
+
     return TextFormField(
       controller: pTextController,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
+      // autovalidateMode: AutovalidateMode.onUserInteraction,
+      // autovalidateMode: AutovalidateMode.always,
       textInputAction: TextInputAction.search,
       decoration: InputDecoration(
         labelText: pFieldLabel,
@@ -192,15 +230,15 @@ class _HomePageScaffoldAdvancedSearchState
                 },
               ),
       ),
-      // validator: (value) {
-      //   if (value == null || value.isEmpty) {
-      //     return 'Search term is required';
-      //   }
-      //   return null;
-      // },
-      onFieldSubmitted: (value) {
-        widget.submitSearch();
+      validator: (value) {
+        if (_doFieldsHaveText() == false) {
+          return 'Search term is required';
+        }
+        return null;
       },
+      onFieldSubmitted: fSubmitted,
+      autofocus: autofocus,
+      focusNode: focusNode,
     );
   }
 }

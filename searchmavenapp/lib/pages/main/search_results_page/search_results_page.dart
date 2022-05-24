@@ -1,35 +1,20 @@
-import 'package:http/http.dart' as http;
-
 import 'package:flutter/material.dart';
 
 import '../../../api/mavencentral/mavencentralsearchapi.dart';
 import '../../../api/mavencentral/model/mavencentralresponse.dart';
+import '../home_page/home_page_search_terms.dart';
 import 'search_results_page_list_view.dart';
 
 class SearchResultsPage extends StatefulWidget {
   final bool isDemoMode;
   final int numResults;
-  final String searchType;
-  final String quickSearch;
-  final String groupId;
-  final String artifactId;
-  final String version;
-  final String packaging;
-  final String classifier;
-  final String classname;
+  final SearchTerms searchTerms;
 
   const SearchResultsPage({
     Key? key,
     required this.isDemoMode,
     required this.numResults,
-    required this.searchType,
-    required this.quickSearch,
-    required this.groupId,
-    required this.artifactId,
-    required this.version,
-    required this.packaging,
-    required this.classifier,
-    required this.classname,
+    required this.searchTerms,
   }) : super(key: key);
 
   @override
@@ -46,7 +31,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
     //TODO: Advanced Search
     //TODO: Search Terms Model Class
     dataFuture = CentralSearchAPI().search(
-      pSearchQueryString: widget.quickSearch,
+      pSearchQueryString: widget.searchTerms.quickSearch,
       pContext: context,
       pNumResults: widget.numResults,
       pDemoMode: widget.isDemoMode,
@@ -56,9 +41,9 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
   @override
   Widget build(BuildContext context) {
     // TODO: Implement Advanced Search - look into parsing/forming the URL in the API Class
-    if (widget.searchType == 'Advanced') {
+    if (widget.searchTerms.isQuickSearch() == false) {
       return Scaffold(
-        appBar: AppBar(title: Text("${widget.searchType} Search Results")),
+        appBar: AppBar(title: Text("${widget.searchTerms.searchType} Search Results")),
         body: _buildSearchNotAllowedMessage(context),
       );
     }
@@ -66,13 +51,13 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
     //from:
     //    - ./res/layout/search_results.xml
     return Scaffold(
-      appBar: AppBar(title: Text("${widget.searchType} Search Results")),
+      appBar: AppBar(title: Text("${widget.searchTerms.searchType} Search Results")),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.refresh),
         onPressed: () => setState(
           () {
             dataFuture = CentralSearchAPI().search(
-              pSearchQueryString: widget.quickSearch,
+              pSearchQueryString: widget.searchTerms.quickSearch,
               pContext: context,
               pNumResults: widget.numResults,
               pDemoMode: widget.isDemoMode,
@@ -83,26 +68,43 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
       body: Center(
         child: Column(
           children: <Widget>[
-            "Quick" == widget.searchType
-                ? _buildSearchTermRow(
-                    "Quick Search (demo = ${widget.isDemoMode}): ",
-                    widget.quickSearch)
-                : _buildAdvancedSearchRow(),
-            const SizedBox(
-              height: 24,
+            const SizedBox(height: 8.0),
+            Row(
+              children: [
+                const SizedBox(width: 16.0),
+                widget.searchTerms.isQuickSearch()
+                    ? _buildSearchTermRow(
+                        "Quick Search (demo = ${widget.isDemoMode}): ",
+                        widget.searchTerms.quickSearch)
+                    : _buildAdvancedSearchRow(),
+              ],
             ),
+            const SizedBox(height: 8.0),
             FutureBuilder<MavenCentralResponse>(
               future:
-                  dataFuture, //DO THIS - static instance of the data, until it's forced to refresh
+                  //call the API outside of build - init state - https://flutter.io/docs/cookbook/networking/fetch-data#5-moving-the-fetch-call-out-of-the-build-method
+                  //DO THIS - static instance of the data, until it's forced to refresh
+                  dataFuture,
               builder: (context, snapshot) {
                 //handle no data vs. in process separately
                 switch (snapshot.connectionState) {
+                  // By default, show a loading spinner
+                  // from:
+                  //     - ./res/layout/search_results_progress_item.xml
                   case ConnectionState.waiting:
-                    return Wrap(
-                      children: const [
-                        Text('Robust API Value Waiting : '),
-                        CircularProgressIndicator.adaptive(),
-                      ],
+                    return Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // const Text('Robust API Value Waiting : '),
+                          const CircularProgressIndicator.adaptive(),
+                          const SizedBox(height: 16),
+                          Text(
+                            "Searching search.maven.org", //TODO: Change if not searching central
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                        ],
+                      ),
                     );
                   case ConnectionState.done:
                   default:
@@ -120,13 +122,13 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
               },
             ),
             // const Spacer(),
-            ElevatedButton.icon(
-              onPressed: () {
-                setState(() {});
-              },
-              icon: const Icon(Icons.refresh),
-              label: const Text('SetState'),
-            ),
+            // ElevatedButton.icon(
+            //   onPressed: () {
+            //     setState(() {});
+            //   },
+            //   icon: const Icon(Icons.refresh),
+            //   label: const Text('SetState'),
+            // ),
             const Divider(color: Colors.red),
             ElevatedButton.icon(
               onPressed: () => Navigator.pop(context),
@@ -159,12 +161,12 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
             // mainAxisAlignment: MainAxisAlignment.start,
             // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildSearchTermRow("GroupId: ", widget.groupId),
-              _buildSearchTermRow("ArtifactId: ", widget.artifactId),
-              _buildSearchTermRow("Version: ", widget.version),
-              _buildSearchTermRow("Packaging: ", widget.packaging),
-              _buildSearchTermRow("Classifier: ", widget.classifier),
-              _buildSearchTermRow("Classname: ", widget.classname),
+              _buildSearchTermRow("GroupId: ", widget.searchTerms.groupId),
+              _buildSearchTermRow("ArtifactId: ", widget.searchTerms.artifactId),
+              _buildSearchTermRow("Version: ", widget.searchTerms.version),
+              _buildSearchTermRow("Packaging: ", widget.searchTerms.packaging),
+              _buildSearchTermRow("Classifier: ", widget.searchTerms.classifier),
+              _buildSearchTermRow("Classname: ", widget.searchTerms.classname),
             ],
           ),
         )
@@ -184,21 +186,21 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
         // Text("Only quick search allowed", style: Theme.of(context).textTheme.headline.copyWith(color:
         // Theme.of(context).primaryColor)),
         const SizedBox(height: 12.0),
-        Text("Search Type: ${widget.searchType}"),
+        Text("Search Type: ${widget.searchTerms.searchType}"),
         const SizedBox(height: 12.0),
-        Text("quickSearch: ${widget.quickSearch}"),
+        Text("quickSearch: ${widget.searchTerms.quickSearch}"),
         const SizedBox(height: 12.0),
-        Text("groupId: ${widget.groupId}"),
+        Text("groupId: ${widget.searchTerms.groupId}"),
         const SizedBox(height: 12.0),
-        Text("artifactId: ${widget.artifactId}"),
+        Text("artifactId: ${widget.searchTerms.artifactId}"),
         const SizedBox(height: 12.0),
-        Text("version: ${widget.version}"),
+        Text("version: ${widget.searchTerms.version}"),
         const SizedBox(height: 12.0),
-        Text("packaging: ${widget.packaging}"),
+        Text("packaging: ${widget.searchTerms.packaging}"),
         const SizedBox(height: 12.0),
-        Text("classifier: ${widget.classifier}"),
+        Text("classifier: ${widget.searchTerms.classifier}"),
         const SizedBox(height: 12.0),
-        Text("classname: ${widget.classname}"),
+        Text("classname: ${widget.searchTerms.classname}"),
       ],
     );
   }

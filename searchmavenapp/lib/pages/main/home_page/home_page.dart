@@ -4,9 +4,11 @@ import 'package:searchmavenapp/pages/main/home_page/home_page_floating_action_bu
 import 'home_page_navigation_drawer.dart';
 import 'home_page_scaffold_advanced_search.dart';
 import 'home_page_scaffold_quick_search.dart';
+import 'home_page_search_terms.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title, required this.isDemoMode}) : super(key: key);
+  const MyHomePage({Key? key, required this.title, required this.isDemoMode})
+      : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -32,6 +34,7 @@ class _MyHomePageState extends State<MyHomePage>
   final _formStateKeyQuickSearch = GlobalKey<FormState>();
   final _formStateKeyAdvancedSearch = GlobalKey<FormState>();
 
+  //TODO: can move to child widgets???
   //https://flutter.io/docs/cookbook/forms/retrieve-input
   final _quickSearchTextController = TextEditingController();
   final _groupIdTextController = TextEditingController();
@@ -40,12 +43,6 @@ class _MyHomePageState extends State<MyHomePage>
   final _packagingTextController = TextEditingController();
   final _classifierTextController = TextEditingController();
   final _classnameTextController = TextEditingController();
-
-  //https://stackoverflow.com/questions/52150677/how-to-shift-focus-to-next-textfield-in-flutter
-  final _artifactIdFocusNode = FocusNode();
-  final _versionFocusNode = FocusNode();
-  final _packagingFocusNode = FocusNode();
-  final _classifierFocusNode = FocusNode();
 
   // https://flutter.io/docs/cookbook/design/tabs
   // https://stackoverflow.com/questions/50123354/how-to-get-current-tab-index-in-flutter
@@ -111,18 +108,25 @@ class _MyHomePageState extends State<MyHomePage>
     _classnameTextController.clear();
   }
 
+  //from:
+  //    - android submit action - ./src/com/searchmavenapp/android/maven/search/KeyboardSearchEditorActionListener.java
+  //    - ./src/com/searchmavenapp/android/maven/search/constants/TextViewHelper.java
   void _submitQuickSearch() {
     if (_formStateKeyQuickSearch.currentState!.validate()) {
       _formStateKeyQuickSearch.currentState!.save();
 
       debugPrint("Submitting Quick search");
 
+      var searchTerms = SearchTerms(
+        searchType: 'Quick',
+        quickSearch: _quickSearchTextController.text,
+      );
+
       Navigator.pushNamed(
         context,
         '/search_results',
-        arguments: <String, String>{
-          'searchType': "Quick",
-          'quickSearch': _quickSearchTextController.text,
+        arguments: <String, SearchTerms>{
+          'searchTerms': searchTerms,
         },
       );
 
@@ -136,17 +140,21 @@ class _MyHomePageState extends State<MyHomePage>
 
       debugPrint("Submitting Advanced search");
 
+      var searchTerms = SearchTerms(
+        searchType: 'Advanced',
+        groupId: _groupIdTextController.text,
+        artifactId: _artifactIdTextController.text,
+        version: _versionTextController.text,
+        packaging: _packagingTextController.text,
+        classifier: _classifierTextController.text,
+        classname: _classnameTextController.text,
+      );
+
       Navigator.pushNamed(
         context,
         '/search_results',
-        arguments: <String, String>{
-          'searchType': "Advanced",
-          'groupId': _groupIdTextController.text,
-          'artifactId': _artifactIdTextController.text,
-          'version': _versionTextController.text,
-          'packaging': _packagingTextController.text,
-          'classifier': _classifierTextController.text,
-          'classname': _classnameTextController.text,
+        arguments: <String, SearchTerms>{
+          'searchTerms': searchTerms,
         },
       );
 

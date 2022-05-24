@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'pages/main/home_page/home_page.dart';
+import 'pages/main/home_page/home_page_search_terms.dart';
 import 'pages/main/settings_page/settings_enum.dart';
-import 'pages/test/sample_fifth_page/sample_fifth_page.dart';
-import 'pages/test/sample_fourth_page/sample_fourth_page.dart';
-import 'pages/test/sample_second_page/sample_second_page.dart';
-import 'pages/test/sample_third_page/sample_third_page.dart';
+import 'pages/samples/sample_fifth_page/sample_fifth_page.dart';
+import 'pages/samples/sample_fourth_page/sample_fourth_page.dart';
+import 'pages/samples/sample_second_page/sample_second_page.dart';
+import 'pages/samples/sample_third_page/sample_third_page.dart';
 import 'pages/main/search_results_page/search_results_page.dart';
 import 'pages/main/settings_page/settings_page.dart';
 
@@ -114,21 +115,14 @@ class _MyAppState extends State<MyApp> {
         }
 
         if (settings.name == '/search_results') {
-          final args = settings.arguments as Map<String, String>;
+          final args = settings.arguments as Map<String, SearchTerms>;
 
           return MaterialPageRoute(
             builder: (context) {
               return SearchResultsPage(
                 isDemoMode: _isDemoMode,
                 numResults: _numResults,
-                searchType: args['searchType'] ?? '',
-                quickSearch: args['quickSearch'] ?? '',
-                groupId: args['groupId'] ?? '',
-                artifactId: args['artifactId'] ?? '',
-                version: args['version'] ?? '',
-                packaging: args['packaging'] ?? '',
-                classifier: args['classifier'] ?? '',
-                classname: args['classname'] ?? '',
+                searchTerms: args['searchTerms'] ?? SearchTerms(searchType: 'Quick'),
               );
             },
           );

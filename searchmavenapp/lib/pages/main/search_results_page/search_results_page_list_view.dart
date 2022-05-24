@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:searchmavenapp/api/mavencentral/model/mavencentralresponse.dart';
 
 import '../../../api/mavencentral/model/mcr_doc.dart';
-import '../../test/sample_fourth_page/sample_fourth_page.dart';
-import '../../test/sample_second_page/sample_second_page.dart';
-import '../../test/sample_third_page/sample_third_page.dart';
+import '../../samples/sample_fourth_page/sample_fourth_page.dart';
+import '../../samples/sample_second_page/sample_second_page.dart';
+import '../../samples/sample_third_page/sample_third_page.dart';
 import '../artifact_details_page/artifact_details_page.dart';
 
 class SearchResultsPageListView extends StatelessWidget {
@@ -25,15 +25,13 @@ class SearchResultsPageListView extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              const SizedBox(width: 16.0),
               Text("Items: $itemCount of $totalNumFound"),
             ],
           ),
           Flexible(
-            child: GridView.count(
-              crossAxisCount: 1,
-              padding: const EdgeInsets.all(16.0),
-              // ield identifies the size of the items based on an aspect ratio (width over height).
-              childAspectRatio: 16.0 / 6.0, //deal with overflow
+            child: ListView(
+              padding: const EdgeInsets.all(4.0),
               children: _buildGridCards2(context, data?.response.docs ?? []),
             ),
           ),
@@ -64,39 +62,42 @@ class SearchResultsPageListView extends StatelessWidget {
           context: context,
           builder: (context) => _dialogBuilderLongPress(context, pArtifact)),
       child: Card(
+        elevation: 10.0,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(24.0))),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 8.0),
+              padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                    'GroupId: ${pArtifact.iG}',
-                    style: Theme.of(context).textTheme.titleSmall,
-                    maxLines: 2,
-                    overflow:
-                        TextOverflow.ellipsis, //TODO: this truncates long lines
+                  _myEllipsisText(
+                    'GroupId',
+                    pArtifact.iG,
+                    Theme.of(context).textTheme.titleSmall,
                   ),
                   const SizedBox(height: 8.0),
-                  Text(
-                    'ArtifactId: ${pArtifact.iA}',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  _myEllipsisText(
+                    'ArtifactId',
+                    pArtifact.iA,
+                    Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontStyle: FontStyle.italic, color: Colors.red),
                   ),
                   const SizedBox(height: 8.0),
-                  Text(
-                    'Latest Version: ${pArtifact.iLatestVersion}',
-                    style: Theme.of(context).textTheme.bodySmall,
+                  _myEllipsisText(
+                    'Latest Version',
+                    pArtifact.iLatestVersion,
+                    Theme.of(context).textTheme.bodySmall,
                   ),
                   const SizedBox(height: 8.0),
-                  Text(
-                    'Latest Release: ' +
-                        DateTime.fromMillisecondsSinceEpoch(
-                                pArtifact.iTimestamp ?? 0)
-                            .toString(),
-                    style: Theme.of(context).textTheme.bodySmall,
+                  _myEllipsisText(
+                    'Latest Release',
+                    DateTime.fromMillisecondsSinceEpoch(
+                            pArtifact.iTimestamp ?? 0)
+                        .toString(),
+                    Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
               ),
@@ -104,6 +105,21 @@ class SearchResultsPageListView extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Text _myEllipsisText(
+    String pLabel,
+    String? pValue,
+    TextStyle? pStyle,
+  ) {
+    return Text(
+      '$pLabel: ${pValue?.replaceAll('', '\u{200B}')}', //TODO: workaround for ellipsis - replace each with tiny-space unicode - https://github.com/flutter/flutter/issues/18761
+      style: pStyle,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis, //TODO: this truncates long lines
+      // overflow: TextOverflow.fade,
+      // softWrap: false,
     );
   }
 
