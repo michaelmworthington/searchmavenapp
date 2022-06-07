@@ -1,7 +1,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.searchmavenapp">
-   <application
-        android:label="TODO SMA"
+   <!-- 
+    TODO:   
+       package="com.searchmavenapp.android.maven.search"
+       -> Increment
+       android:versionCode="1"
+       android:versionName="1.0.1"
+       -
+       -
+       android:label="Search Maven"
+   -->
+    <application
+        android:label="Search Maven"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../api/jsonplaceholder/jsonplaceholder.dart';
-import '../../../api/jsonplaceholder/jsonplaceholder_post.dart';
+import '../../../api/jsonplaceholder/model/jsonplaceholder_post.dart';
 
 class SampleThirdPage extends StatelessWidget {
   const SampleThirdPage({Key? key}) : super(key: key);

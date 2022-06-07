@@ -43,6 +43,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        // TODO: double check SDK Versions
         applicationId "com.example.searchmavenapp"
         minSdkVersion 16
         targetSdkVersion 30

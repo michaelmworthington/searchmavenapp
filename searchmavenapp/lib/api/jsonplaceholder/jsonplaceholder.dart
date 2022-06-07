@@ -3,8 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-import 'jsonplaceholder_photo.dart';
-import 'jsonplaceholder_post.dart';
+import 'model/jsonplaceholder_photo.dart';
+import 'model/jsonplaceholder_post.dart';
 
 //For the Isolates / Compute part to work in fetchPhotos(),
 //this function needs to be a top level function
