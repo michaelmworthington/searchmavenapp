@@ -25,7 +25,7 @@ class PomViewPage extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
       children: <Widget>[
-        MyFormHeader(context: context, pLabel: 'pom.xml:'),
+        const MyFormHeader(pLabel: 'pom.xml:'),
         const SizedBox(height: 12.0),
         //TODO: Styling & content
         Text("<pom> ${iArtifact.iG}"),

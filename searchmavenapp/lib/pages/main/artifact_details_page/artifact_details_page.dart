@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:searchmavenapp/pages/main/artifact_details_page/artifact_details_app_bar_menu_items.dart';
 
 import '../../../api/mavencentral/model/mcr_doc.dart';
+import '../../../page_components/artifact_field_text_ellipsis.dart';
 import '../../../page_components/form_header.dart';
 import '../pom_view_page/pom_view_page.dart';
+import 'artifact_details_app_bar_menu_item_model.dart';
 
 class ArtifactDetailsPage extends StatelessWidget {
   final MCRDoc iArtifact;
@@ -13,7 +16,21 @@ class ArtifactDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text("Artifact Details")),
+        appBar: AppBar(
+          title: const Text("Artifact Details"),
+          actions: [
+            PopupMenuButton<ArtifactDetailsAppBarMenuItemModel>(
+              position: PopupMenuPosition.under,
+              icon: const Icon(Icons.more_vert),
+              onSelected: (item) => item.onSelected(context),
+              itemBuilder: (context) => [
+                ...ArtifactDetailsAppBarMenuItems.items
+                    .map((item) => item.buildPopupMenuItem(iArtifact))
+                    .toList(),
+              ],
+            ),
+          ],
+        ),
         body: _buildArtifactDetails(context));
   }
 
@@ -23,16 +40,29 @@ class ArtifactDetailsPage extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
       children: <Widget>[
-        MyFormHeader(context: context, pLabel: 'Project Information:'),
+        const MyFormHeader(
+          pLabel: 'Project Information:',
+        ),
         const SizedBox(height: 12.0),
-        //TODO: Styling
-        Text("GroupId: ${iArtifact.iG}"),
+        ArtifactFieldTextEllipsis(
+          label: 'Group Id',
+          value: '${iArtifact.iG}',
+        ),
         const SizedBox(height: 12.0),
-        Text("ArtifactId: ${iArtifact.iA}"),
+        ArtifactFieldTextEllipsis(
+          label: 'Artifact Id',
+          value: '${iArtifact.iA}',
+          // maxLines: 2,
+        ),
         const SizedBox(height: 12.0),
-        Text("Version: ${iArtifact.iLatestVersion}"),
+        ArtifactFieldTextEllipsis(
+          label: 'Version',
+          value: '${iArtifact.iLatestVersion}',
+        ),
         const SizedBox(height: 12.0),
-        MyFormHeader(context: context, pLabel: 'Artifact Files:'),
+        const MyFormHeader(
+          pLabel: 'Artifact Files:',
+        ),
         const SizedBox(height: 12.0),
         //TODO: show the files
         const Text("pom"),
@@ -40,12 +70,16 @@ class ArtifactDetailsPage extends StatelessWidget {
         const Text("sha1"),
         const Text("md5"),
         const SizedBox(height: 12.0),
-        MyFormHeader(context: context, pLabel: 'Dependency Information:'),
+        const MyFormHeader(
+          pLabel: 'Dependency Information:',
+        ),
         const SizedBox(height: 12.0),
-        //TODO: show the XML
+        //TODO: show the XML - Drop down modal for other formats
         Text("Maven Dependency XML: ${iArtifact.iRepositoryId}"),
         const SizedBox(height: 12.0),
-        MyFormHeader(context: context, pLabel: 'Project Object Model (POM):'),
+        const MyFormHeader(
+          pLabel: 'Project Object Model (POM):',
+        ),
         //don't need the spacer when using the button bar
         //SizedBox(height: 12.0),
         ButtonBar(

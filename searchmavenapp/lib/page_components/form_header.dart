@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 class MyFormHeader extends StatelessWidget {
   const MyFormHeader({
     Key? key,
-    required this.context,
     required this.pLabel,
   }) : super(key: key);
 
-  final BuildContext context;
   final String pLabel;
 
   @override

@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:searchmavenapp/api/mavencentral/model/mavencentralresponse.dart';
 
 import '../../../api/mavencentral/model/mcr_doc.dart';
+import '../../../page_components/artifact_field_text_ellipsis.dart';
 import '../../samples/sample_fourth_page/sample_fourth_page.dart';
 import '../../samples/sample_second_page/sample_second_page.dart';
 import '../../samples/sample_third_page/sample_third_page.dart';
@@ -74,41 +75,40 @@ class SearchResultsPageListView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  _myEllipsisText(
-                    'GroupId',
-                    pArtifact.iG,
-                    Theme.of(context).textTheme.titleSmall,
+                  ArtifactFieldTextEllipsis(
+                    label: 'Group Id',
+                    value: '${pArtifact.iG}',
+                    maxLines: 2,
                   ),
                   const SizedBox(height: 8.0),
-                  _myEllipsisText(
-                    'ArtifactId',
-                    pArtifact.iA,
-                    Theme.of(context).textTheme.titleSmall,
-                    // Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    //       fontStyle: FontStyle.normal,
-                    //       fontWeight: FontWeight.bold,
-                    //       // color: Colors.red,
-                    //     ),
+                  ArtifactFieldTextEllipsis(
+                    label: 'Artifact Id',
+                    value: '${pArtifact.iA}',
+                    maxLines: 2,
                   ),
                   const SizedBox(height: 8.0),
-                  _myEllipsisText(
-                    'Latest Version',
-                    pArtifact.iLatestVersion,
-                    Theme.of(context).textTheme.bodySmall,
+                  ArtifactFieldTextEllipsis(
+                    label: 'Latest Version',
+                    value: '${pArtifact.iLatestVersion}',
+                    labelStyle: Theme.of(context).textTheme.bodySmall,
+                    valueStyle: Theme.of(context).textTheme.bodySmall,
                   ),
                   const SizedBox(height: 8.0),
-                  _myEllipsisText(
-                    'Latest Release',
-                    DateFormat("yyyy-MMM-dd").format(
-                        DateTime.fromMillisecondsSinceEpoch(
-                            pArtifact.iTimestamp ?? 0)),
-                    Theme.of(context).textTheme.bodySmall,
+                  ArtifactFieldTextEllipsis(
+                    label: 'Latest Release',
+                    value: DateFormat("yyyy-MMM-dd").format(
+                      DateTime.fromMillisecondsSinceEpoch(
+                          pArtifact.iTimestamp ?? 0),
+                    ),
+                    labelStyle: Theme.of(context).textTheme.bodySmall,
+                    valueStyle: Theme.of(context).textTheme.bodySmall,
                   ),
                   const SizedBox(height: 8.0),
-                  _myEllipsisText(
-                    'Total Versions',
-                    pArtifact.iVersionCount.toString(),
-                    Theme.of(context).textTheme.bodySmall,
+                  ArtifactFieldTextEllipsis(
+                    label: 'Total Versions',
+                    value: '${pArtifact.iVersionCount}',
+                    labelStyle: Theme.of(context).textTheme.bodySmall,
+                    valueStyle: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
               ),
@@ -119,74 +119,80 @@ class SearchResultsPageListView extends StatelessWidget {
     );
   }
 
-  Text _myEllipsisText(
-    String pLabel,
-    String? pValue,
-    TextStyle? pStyle,
-  ) {
-    return Text(
-      '$pLabel: ${pValue?.replaceAll('', '\u{200B}')}', //TODO: workaround for ellipsis - replace each with tiny-space unicode - https://github.com/flutter/flutter/issues/18761
-      style: pStyle,
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis, //TODO: this truncates long lines
-      // overflow: TextOverflow.fade,
-      // softWrap: false,
-    );
-  }
-
   Widget _dialogBuilderLongPress(BuildContext pContext, MCRDoc pArtifact) {
     //from:
     //   - ./res/menu/search_results_context_menu.xml
     //   - TODO: java class?
     //https://docs.flutter.io/flutter/material/SimpleDialog-class.html
-    return SimpleDialog(title: const Text("Search By:"), //TODO: Styling
-        children: <Widget>[
-          SimpleDialogOption(
-            child: const Text("Group Id"), //TODO: make bigger and add padding
+    return SimpleDialog(
+      titlePadding: const EdgeInsets.all(0),
+      title: Container(
+        color: Theme.of(pContext).primaryColor,
+        padding: const EdgeInsets.all(24),
+        child: Text(
+          "Search By:",
+          style: Theme.of(pContext)
+              .textTheme
+              .headlineSmall
+              ?.copyWith(color: Colors.white),
+        ),
+      ),
+      children: <Widget>[
+        SimpleDialogOption(
+          child: Text(
+            "Group Id",
+            style: Theme.of(pContext).textTheme.titleLarge,
+          ),
+          onPressed: () {
+            Navigator.pop(pContext);
+            //TODO: Group Id Search
+            Navigator.push(
+                pContext,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        SampleSecondPage(counter: 3, searchTerm: "menu")));
+          },
+        ),
+        SimpleDialogOption(
+          child: Text(
+            "Artifact Id",
+            style: Theme.of(pContext).textTheme.titleLarge,
+          ),
+          onPressed: () {
+            //Close the drawer
+            Navigator.pop(pContext);
+            //TODO: artifact id search
+            Navigator.push(
+                pContext,
+                MaterialPageRoute(
+                    builder: (context) => const SampleThirdPage()));
+          },
+        ),
+        SimpleDialogOption(
+          child: Text(
+            "All " + pArtifact.iVersionCount.toString() + " Versions",
+            style: Theme.of(pContext).textTheme.titleLarge,
+          ),
+          onPressed: () {
+            //Close the drawer
+            Navigator.pop(pContext);
+            //TODO: All Versions search
+            Navigator.push(
+                pContext,
+                MaterialPageRoute(
+                    builder: (context) => const SampleFourthPage()));
+          },
+        ),
+        Align(
+          alignment: Alignment.center,
+          child: TextButton(
             onPressed: () {
               Navigator.pop(pContext);
-              //TODO: Group Id Search
-              Navigator.push(
-                  pContext,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          SampleSecondPage(counter: 3, searchTerm: "menu")));
             },
+            child: const Text("Close"),
           ),
-          SimpleDialogOption(
-            child: const Text("Artifact Id"),
-            onPressed: () {
-              //Close the drawer
-              Navigator.pop(pContext);
-              //TODO: artifact id search
-              Navigator.push(
-                  pContext,
-                  MaterialPageRoute(
-                      builder: (context) => const SampleThirdPage()));
-            },
-          ),
-          SimpleDialogOption(
-            child:
-                Text("All " + pArtifact.iVersionCount.toString() + " Versions"),
-            onPressed: () {
-              //Close the drawer
-              Navigator.pop(pContext);
-              //TODO: All Versions search
-              Navigator.push(
-                  pContext,
-                  MaterialPageRoute(
-                      builder: (context) => const SampleFourthPage()));
-            },
-          ),
-          Align(
-            alignment: Alignment.center,
-            child: TextButton(
-              onPressed: () {
-                Navigator.pop(pContext);
-              },
-              child: const Text("Close"),
-            ),
-          )
-        ]);
+        )
+      ],
+    );
   }
 }
