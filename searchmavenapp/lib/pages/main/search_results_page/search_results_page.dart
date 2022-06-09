@@ -29,7 +29,6 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
     super.initState();
 
     //TODO: Advanced Search
-    //TODO: Search Terms Model Class
     dataFuture = CentralSearchAPI().search(
       pSearchQueryString: widget.searchTerms.quickSearch,
       pContext: context,

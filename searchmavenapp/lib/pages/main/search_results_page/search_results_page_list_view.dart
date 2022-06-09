@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:searchmavenapp/api/mavencentral/model/mavencentralresponse.dart';
 
 import '../../../api/mavencentral/model/mcr_doc.dart';
@@ -49,7 +50,7 @@ class SearchResultsPageListView extends StatelessWidget {
   Widget _createArtifactCard(BuildContext context, MCRDoc pArtifact) {
     //from:
     //    - ./res/layout/search_results_item.xml
-    //TODO: more styling and deal with childAspectRatio overflow
+    //finished for now: more styling and deal with childAspectRatio overflow
     //    whatever styling works best, but the android version had
     //    2 rows with groupid/artifactid left aligned and latest version and date right alighed
     //    groupid would wrap when it reached the version
@@ -82,8 +83,12 @@ class SearchResultsPageListView extends StatelessWidget {
                   _myEllipsisText(
                     'ArtifactId',
                     pArtifact.iA,
-                    Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontStyle: FontStyle.italic, color: Colors.red),
+                    Theme.of(context).textTheme.titleSmall,
+                    // Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    //       fontStyle: FontStyle.normal,
+                    //       fontWeight: FontWeight.bold,
+                    //       // color: Colors.red,
+                    //     ),
                   ),
                   const SizedBox(height: 8.0),
                   _myEllipsisText(
@@ -94,9 +99,15 @@ class SearchResultsPageListView extends StatelessWidget {
                   const SizedBox(height: 8.0),
                   _myEllipsisText(
                     'Latest Release',
-                    DateTime.fromMillisecondsSinceEpoch(
-                            pArtifact.iTimestamp ?? 0)
-                        .toString(),
+                    DateFormat("yyyy-MMM-dd").format(
+                        DateTime.fromMillisecondsSinceEpoch(
+                            pArtifact.iTimestamp ?? 0)),
+                    Theme.of(context).textTheme.bodySmall,
+                  ),
+                  const SizedBox(height: 8.0),
+                  _myEllipsisText(
+                    'Total Versions',
+                    pArtifact.iVersionCount.toString(),
                     Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
