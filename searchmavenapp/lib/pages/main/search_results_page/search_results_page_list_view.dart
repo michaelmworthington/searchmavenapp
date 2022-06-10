@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:searchmavenapp/api/mavencentral/model/mavencentralresponse.dart';
@@ -11,9 +14,15 @@ import '../artifact_details_page/artifact_details_page.dart';
 
 class SearchResultsPageListView extends StatelessWidget {
   final MavenCentralResponse? data;
+  final GlobalKey<RefreshIndicatorState> refreshIndicatorKey;
+  final Future<void> Function() onRefresh;
 
-  const SearchResultsPageListView({Key? key, required this.data})
-      : super(key: key);
+  const SearchResultsPageListView({
+    Key? key,
+    required this.data,
+    required this.refreshIndicatorKey,
+    required this.onRefresh,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,16 +41,46 @@ class SearchResultsPageListView extends StatelessWidget {
             ],
           ),
           Flexible(
-            child: ListView(
-              padding: const EdgeInsets.all(4.0),
-              children: _buildGridCards2(context, data?.response.docs ?? []),
-            ),
+            child: Platform.isAndroid
+                ? _buildAndroidList(context)
+                : _buildIOSList(context),
           ),
         ],
       ),
     );
   }
 
+  Widget _buildAndroidList(BuildContext context) => RefreshIndicator(
+        key: refreshIndicatorKey,
+        onRefresh: onRefresh,
+        backgroundColor:
+            Theme.of(context).floatingActionButtonTheme.backgroundColor,
+        color: Colors.white,
+        child: ListView(
+          padding: const EdgeInsets.all(4.0),
+          children: _buildGridCards2(context, data?.response.docs ?? []),
+        ),
+      );
+
+  Widget _buildIOSList(BuildContext context) => CustomScrollView(
+        physics: const BouncingScrollPhysics(),
+        slivers: [
+          CupertinoSliverRefreshControl(
+            key: refreshIndicatorKey,
+            onRefresh: onRefresh,
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.all(4.0),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate(
+                _buildGridCards2(context, data?.response.docs ?? []),
+              ),
+            ),
+          ),
+        ],
+      );
+
+  //TODO: Use Builders so we don't build the list all at once
   List<Widget> _buildGridCards2(BuildContext context, List<MCRDoc> pArtifacts) {
     return pArtifacts.map((artifact) {
       return _createArtifactCard(context, artifact);

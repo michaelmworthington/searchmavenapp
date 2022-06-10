@@ -23,17 +23,30 @@ class SearchResultsPage extends StatefulWidget {
 
 class _SearchResultsPageState extends State<SearchResultsPage> {
   late Future<MavenCentralResponse> dataFuture;
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
     super.initState();
 
-    //TODO: Advanced Search
-    dataFuture = CentralSearchAPI().search(
-      pSearchQueryString: widget.searchTerms.quickSearch,
-      pContext: context,
-      pNumResults: widget.numResults,
-      pDemoMode: widget.isDemoMode,
+    _performSearch();
+  }
+
+  Future _performSearch() async {
+    //NOTE: this doesn't do anything since the list is destroyed when we rebuild the data
+    _refreshIndicatorKey.currentState?.show();
+
+    setState(
+      () {
+        //TODO: Advanced Search
+        dataFuture = CentralSearchAPI().search(
+          pSearchQueryString: widget.searchTerms.quickSearch,
+          pContext: context,
+          pNumResults: widget.numResults,
+          pDemoMode: widget.isDemoMode,
+        );
+      },
     );
   }
 
@@ -42,7 +55,9 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
     // TODO: Implement Advanced Search - look into parsing/forming the URL in the API Class
     if (widget.searchTerms.isQuickSearch() == false) {
       return Scaffold(
-        appBar: AppBar(title: Text("${widget.searchTerms.searchType} Search Results")),
+        appBar: AppBar(
+          title: Text("${widget.searchTerms.searchType} Search Results"),
+        ),
         body: _buildSearchNotAllowedMessage(context),
       );
     }
@@ -50,19 +65,17 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
     //from:
     //    - ./res/layout/search_results.xml
     return Scaffold(
-      appBar: AppBar(title: Text("${widget.searchTerms.searchType} Search Results")),
+      appBar: AppBar(
+        title: Text("${widget.searchTerms.searchType} Search Results"),
+      ),
       floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.refresh),
-        onPressed: () => setState(
-          () {
-            dataFuture = CentralSearchAPI().search(
-              pSearchQueryString: widget.searchTerms.quickSearch,
-              pContext: context,
-              pNumResults: widget.numResults,
-              pDemoMode: widget.isDemoMode,
-            );
-          },
+        child: const Icon(
+          Icons.refresh,
+          color: Colors.white,
         ),
+        onPressed: () {
+          _performSearch();
+        },
       ),
       body: Center(
         child: Column(
@@ -113,7 +126,11 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
 
                       return Text('Robust API Nullable Error: $error');
                     } else if (snapshot.hasData) {
-                      return SearchResultsPageListView(data: snapshot.data);
+                      return SearchResultsPageListView(
+                        data: snapshot.data,
+                        refreshIndicatorKey: _refreshIndicatorKey,
+                        onRefresh: _performSearch,
+                      );
                     } else {
                       return const Text('Robust API Value No Data');
                     }
@@ -128,13 +145,13 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
             //   icon: const Icon(Icons.refresh),
             //   label: const Text('SetState'),
             // ),
-            const Divider(color: Colors.red),
-            ElevatedButton.icon(
-              onPressed: () => Navigator.pop(context),
-              label: const Text("Go Back"),
-              icon: const Icon(Icons.keyboard_backspace),
-            ),
-            const SizedBox(height: 16)
+            // const Divider(color: Colors.red),
+            // ElevatedButton.icon(
+            //   onPressed: () => Navigator.pop(context),
+            //   label: const Text("Go Back"),
+            //   icon: const Icon(Icons.keyboard_backspace),
+            // ),
+            // const SizedBox(height: 16)
           ],
         ),
       ),
@@ -161,10 +178,12 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
             // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildSearchTermRow("GroupId: ", widget.searchTerms.groupId),
-              _buildSearchTermRow("ArtifactId: ", widget.searchTerms.artifactId),
+              _buildSearchTermRow(
+                  "ArtifactId: ", widget.searchTerms.artifactId),
               _buildSearchTermRow("Version: ", widget.searchTerms.version),
               _buildSearchTermRow("Packaging: ", widget.searchTerms.packaging),
-              _buildSearchTermRow("Classifier: ", widget.searchTerms.classifier),
+              _buildSearchTermRow(
+                  "Classifier: ", widget.searchTerms.classifier),
               _buildSearchTermRow("Classname: ", widget.searchTerms.classname),
             ],
           ),
