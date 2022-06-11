@@ -25,11 +25,15 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
   late Future<MavenCentralResponse> dataFuture;
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
+  bool shouldShowLoadingFullScreen = true;
 
   @override
   void initState() {
     super.initState();
 
+    // show the default loading indicator first, then on pull-to-refresh,
+    // keep the old data visible until the new data comes back
+    shouldShowLoadingFullScreen = true;
     _performSearch();
   }
 
@@ -48,6 +52,8 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
         );
       },
     );
+
+    return dataFuture;
   }
 
   @override
@@ -74,6 +80,8 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
           color: Colors.white,
         ),
         onPressed: () {
+          shouldShowLoadingFullScreen = true;
+
           _performSearch();
         },
       ),
@@ -99,41 +107,42 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                   dataFuture,
               builder: (context, snapshot) {
                 //handle no data vs. in process separately
-                switch (snapshot.connectionState) {
+                if (snapshot.connectionState == ConnectionState.waiting &&
+                    shouldShowLoadingFullScreen) {
                   // By default, show a loading spinner
                   // from:
                   //     - ./res/layout/search_results_progress_item.xml
-                  case ConnectionState.waiting:
-                    return Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // const Text('Robust API Value Waiting : '),
-                          const CircularProgressIndicator.adaptive(),
-                          const SizedBox(height: 16),
-                          Text(
-                            "Searching search.maven.org", //TODO: Change if not searching central
-                            style: Theme.of(context).textTheme.titleSmall,
-                          ),
-                        ],
-                      ),
-                    );
-                  case ConnectionState.done:
-                  default:
-                    if (snapshot.hasError) {
-                      final error = snapshot.error;
-                      debugPrintStack(stackTrace: snapshot.stackTrace);
+                  return Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // const Text('Robust API Value Waiting : '),
+                        const CircularProgressIndicator.adaptive(),
+                        const SizedBox(height: 16),
+                        Text(
+                          "Searching search.maven.org", //TODO: Change if not searching central
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      ],
+                    ),
+                  );
+                }
 
-                      return Text('Robust API Nullable Error: $error');
-                    } else if (snapshot.hasData) {
-                      return SearchResultsPageListView(
-                        data: snapshot.data,
-                        refreshIndicatorKey: _refreshIndicatorKey,
-                        onRefresh: _performSearch,
-                      );
-                    } else {
-                      return const Text('Robust API Value No Data');
-                    }
+                if (snapshot.hasError) {
+                  final error = snapshot.error;
+                  debugPrintStack(stackTrace: snapshot.stackTrace);
+
+                  return Text('Robust API Nullable Error: $error');
+                } else if (snapshot.hasData) {
+                  shouldShowLoadingFullScreen = false;
+
+                  return SearchResultsPageListView(
+                    data: snapshot.data,
+                    refreshIndicatorKey: _refreshIndicatorKey,
+                    onRefresh: _performSearch,
+                  );
+                } else {
+                  return const Text('Robust API Value No Data');
                 }
               },
             ),
