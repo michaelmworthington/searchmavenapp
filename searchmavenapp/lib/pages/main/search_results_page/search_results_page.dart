@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../api/mavencentral/mavencentralsearchapi.dart';
 import '../../../api/mavencentral/model/mavencentralresponse.dart';
+import '../../../api/mavencentral/model/mcr_doc.dart';
 import '../home_page/home_page_search_terms.dart';
 import 'search_results_page_list_view.dart';
 
@@ -25,29 +26,66 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
   late Future<MavenCentralResponse> dataFuture;
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
-  bool shouldShowLoadingFullScreen = true;
+  bool shouldShowFullScreenRefresh = true;
+  bool hasMoreData = true;
+  bool isLoading = false;
+  final controller = ScrollController();
+
+  List<MCRDoc> artifactList = [];
+  List<MCRDoc> newArtifactList = [];
 
   @override
   void initState() {
     super.initState();
 
-    // show the default loading indicator first, then on pull-to-refresh,
-    // keep the old data visible until the new data comes back
-    shouldShowLoadingFullScreen = true;
-    _performSearch();
+    //for infinite list
+    controller.addListener(() {
+      if (controller.position.maxScrollExtent == controller.offset) {
+        if (hasMoreData) {
+          _performSearch();
+        }
+      }
+    });
+
+    shouldShowFullScreenRefresh = true;
+    _onRefresh();
   }
 
-  Future _performSearch() async {
-    //NOTE: this doesn't do anything since the list is destroyed when we rebuild the data
-    _refreshIndicatorKey.currentState?.show();
+  @override
+  void dispose() {
+    controller.dispose();
+
+    super.dispose();
+  }
+
+  Future _onRefresh() {
+    // initialize an empty result list and do the first search
+    setState(() {
+      isLoading = false;
+      hasMoreData = true;
+      artifactList = [];
+    });
+    return _performSearch();
+  }
+
+  Future _performSearch() {
+    if (isLoading) {
+      // don't make another call, just return an immediate future
+      return Future.delayed(const Duration(seconds: 0));
+    }
 
     setState(
       () {
         //TODO: Advanced Search
+
+        isLoading = true;
+        newArtifactList = [];
+
         dataFuture = CentralSearchAPI().search(
           pSearchQueryString: widget.searchTerms.quickSearch,
           pContext: context,
           pNumResults: widget.numResults,
+          pStart: artifactList.length,
           pDemoMode: widget.isDemoMode,
         );
       },
@@ -80,9 +118,8 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
           color: Colors.white,
         ),
         onPressed: () {
-          shouldShowLoadingFullScreen = true;
-
-          _performSearch();
+          shouldShowFullScreenRefresh = true;
+          _onRefresh();
         },
       ),
       body: Center(
@@ -107,8 +144,8 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                   dataFuture,
               builder: (context, snapshot) {
                 //handle no data vs. in process separately
-                if (snapshot.connectionState == ConnectionState.waiting &&
-                    shouldShowLoadingFullScreen) {
+                if (shouldShowFullScreenRefresh &&
+                    snapshot.connectionState == ConnectionState.waiting) {
                   // By default, show a loading spinner
                   // from:
                   //     - ./res/layout/search_results_progress_item.xml
@@ -133,13 +170,30 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                   debugPrintStack(stackTrace: snapshot.stackTrace);
 
                   return Text('Robust API Nullable Error: $error');
-                } else if (snapshot.hasData) {
-                  shouldShowLoadingFullScreen = false;
+                }
+
+                if (snapshot.hasData) {
+                  //protect against multiple callbacks
+                  if (isLoading &&
+                      snapshot.connectionState == ConnectionState.done) {
+                    newArtifactList = snapshot.data?.response.docs ?? [];
+
+                    isLoading = false;
+                    shouldShowFullScreenRefresh = false;
+
+                    if (newArtifactList.length < widget.numResults) {
+                      hasMoreData = false;
+                    }
+                    artifactList.addAll(newArtifactList);
+                  }
 
                   return SearchResultsPageListView(
-                    data: snapshot.data,
+                    artifactList: artifactList,
+                    totalNumFound: snapshot.data?.response.numFound ?? 0,
                     refreshIndicatorKey: _refreshIndicatorKey,
-                    onRefresh: _performSearch,
+                    onRefresh: _onRefresh,
+                    hasMoreData: hasMoreData,
+                    controller: controller,
                   );
                 } else {
                   return const Text('Robust API Value No Data');

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:searchmavenapp/api/mavencentral/model/mavencentralresponse.dart';
 
 import '../../../api/mavencentral/model/mcr_doc.dart';
 import '../../../page_components/artifact_field_text_ellipsis.dart';
@@ -13,42 +12,42 @@ import '../../samples/sample_third_page/sample_third_page.dart';
 import '../artifact_details_page/artifact_details_page.dart';
 
 class SearchResultsPageListView extends StatelessWidget {
-  final MavenCentralResponse? data;
+  final List<MCRDoc> artifactList;
+  final int totalNumFound;
   final GlobalKey<RefreshIndicatorState> refreshIndicatorKey;
   final Future<void> Function() onRefresh;
+  final bool hasMoreData;
+  final ScrollController controller;
 
   const SearchResultsPageListView({
     Key? key,
-    required this.data,
+    required this.artifactList,
+    required this.totalNumFound,
     required this.refreshIndicatorKey,
     required this.onRefresh,
+    required this.hasMoreData,
+    required this.controller,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    int totalNumFound = data?.response.numFound ?? 0;
-    int itemCount = data?.response.docs.length ?? 0;
-    // return Text('Robust API Nullable Data: $numFound');
-
-    return Flexible(
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              const SizedBox(width: 16.0),
-              Text("Items: $itemCount of $totalNumFound"),
-            ],
-          ),
-          Flexible(
-            child: Platform.isAndroid
-                ? _buildAndroidList(context)
-                : _buildIOSList(context),
-          ),
-        ],
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Flexible(
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(width: 16.0),
+                Text("Items: ${artifactList.length} of $totalNumFound"),
+              ],
+            ),
+            Flexible(
+              child: Platform.isAndroid //TODO: What about web/mac/windows?
+                  ? _buildAndroidList(context)
+                  : _buildIOSList(context),
+            ),
+          ],
+        ),
+      );
 
   Widget _buildAndroidList(BuildContext context) => RefreshIndicator(
         key: refreshIndicatorKey,
@@ -56,14 +55,22 @@ class SearchResultsPageListView extends StatelessWidget {
         backgroundColor:
             Theme.of(context).floatingActionButtonTheme.backgroundColor,
         color: Colors.white,
-        child: ListView(
+        child: ListView.builder(
+          controller: controller,
           padding: const EdgeInsets.all(4.0),
-          children: _buildGridCards2(context, data?.response.docs ?? []),
+          itemCount: artifactList.length + 1,
+          itemBuilder: (context, index) {
+            return _buildArtifactCardsWithInfiniteScrolling(
+              index,
+              context,
+            );
+          },
         ),
       );
 
   Widget _buildIOSList(BuildContext context) => CustomScrollView(
         physics: const BouncingScrollPhysics(),
+        controller: controller,
         slivers: [
           CupertinoSliverRefreshControl(
             key: refreshIndicatorKey,
@@ -72,22 +79,47 @@ class SearchResultsPageListView extends StatelessWidget {
           SliverPadding(
             padding: const EdgeInsets.all(4.0),
             sliver: SliverList(
-              delegate: SliverChildListDelegate(
-                _buildGridCards2(context, data?.response.docs ?? []),
+              // delegate: SliverChildListDelegate(
+              //   _buildGridCards2(context, artifactList),
+              // ),
+              delegate: SliverChildBuilderDelegate(
+                childCount: artifactList.length + 1,
+                (context, index) {
+                  return _buildArtifactCardsWithInfiniteScrolling(
+                    index,
+                    context,
+                  );
+                },
               ),
             ),
           ),
         ],
       );
 
-  //TODO: Use Builders so we don't build the list all at once
-  List<Widget> _buildGridCards2(BuildContext context, List<MCRDoc> pArtifacts) {
-    return pArtifacts.map((artifact) {
-      return _createArtifactCard(context, artifact);
-    }).toList();
+  Widget _buildArtifactCardsWithInfiniteScrolling(
+    int index,
+    BuildContext context,
+  ) {
+    if (index < artifactList.length) {
+      final artifact = artifactList[index];
+      return _createArtifactCard(context, artifact, index + 1);
+    } else {
+      return hasMoreData
+          ? const Padding(
+              padding: EdgeInsets.symmetric(vertical: 32),
+              child: Center(
+                child: CircularProgressIndicator.adaptive(),
+              ),
+            )
+          : const SizedBox(height: 16);
+    }
   }
 
-  Widget _createArtifactCard(BuildContext context, MCRDoc pArtifact) {
+  Widget _createArtifactCard(
+    BuildContext context,
+    MCRDoc pArtifact,
+    int index,
+  ) {
     //from:
     //    - ./res/layout/search_results_item.xml
     //finished for now: more styling and deal with childAspectRatio overflow
@@ -111,43 +143,52 @@ class SearchResultsPageListView extends StatelessWidget {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 16.0),
-              child: Column(
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  ArtifactFieldTextEllipsis(
-                    label: 'Group Id',
-                    value: '${pArtifact.iG}',
-                    maxLines: 2,
-                  ),
-                  const SizedBox(height: 8.0),
-                  ArtifactFieldTextEllipsis(
-                    label: 'Artifact Id',
-                    value: '${pArtifact.iA}',
-                    maxLines: 2,
-                  ),
-                  const SizedBox(height: 8.0),
-                  ArtifactFieldTextEllipsis(
-                    label: 'Latest Version',
-                    value: '${pArtifact.iLatestVersion}',
-                    labelStyle: Theme.of(context).textTheme.bodySmall,
-                    valueStyle: Theme.of(context).textTheme.bodySmall,
-                  ),
-                  const SizedBox(height: 8.0),
-                  ArtifactFieldTextEllipsis(
-                    label: 'Latest Release',
-                    value: DateFormat("yyyy-MMM-dd").format(
-                      DateTime.fromMillisecondsSinceEpoch(
-                          pArtifact.iTimestamp ?? 0),
+                children: [
+                  Text('$index.'),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        ArtifactFieldTextEllipsis(
+                          label: 'Group Id',
+                          value: '${pArtifact.iG}',
+                          maxLines: 2,
+                        ),
+                        const SizedBox(height: 8.0),
+                        ArtifactFieldTextEllipsis(
+                          label: 'Artifact Id',
+                          value: '${pArtifact.iA}',
+                          maxLines: 2,
+                        ),
+                        const SizedBox(height: 8.0),
+                        ArtifactFieldTextEllipsis(
+                          label: 'Latest Version',
+                          value: '${pArtifact.iLatestVersion}',
+                          labelStyle: Theme.of(context).textTheme.bodySmall,
+                          valueStyle: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        const SizedBox(height: 8.0),
+                        ArtifactFieldTextEllipsis(
+                          label: 'Latest Release',
+                          value: DateFormat("yyyy-MMM-dd").format(
+                            DateTime.fromMillisecondsSinceEpoch(
+                                pArtifact.iTimestamp ?? 0),
+                          ),
+                          labelStyle: Theme.of(context).textTheme.bodySmall,
+                          valueStyle: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        const SizedBox(height: 8.0),
+                        ArtifactFieldTextEllipsis(
+                          label: 'Total Versions',
+                          value: '${pArtifact.iVersionCount}',
+                          labelStyle: Theme.of(context).textTheme.bodySmall,
+                          valueStyle: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ],
                     ),
-                    labelStyle: Theme.of(context).textTheme.bodySmall,
-                    valueStyle: Theme.of(context).textTheme.bodySmall,
-                  ),
-                  const SizedBox(height: 8.0),
-                  ArtifactFieldTextEllipsis(
-                    label: 'Total Versions',
-                    value: '${pArtifact.iVersionCount}',
-                    labelStyle: Theme.of(context).textTheme.bodySmall,
-                    valueStyle: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
               ),

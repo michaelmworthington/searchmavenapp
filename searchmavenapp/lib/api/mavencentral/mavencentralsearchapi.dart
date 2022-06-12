@@ -52,10 +52,15 @@ class CentralSearchAPI {
 
     if (response.statusCode == 200) {
       // If server returns an OK response, parse the JSON
-      debugPrint(response.body);
-
       //Supplemental parsing json w/ dart: https://medium.com/flutter-community/parsing-complex-json-in-flutter-747c46655f51
-      return MavenCentralResponse.fromJson(json.decode(response.body));
+      MavenCentralResponse mcr =
+          MavenCentralResponse.fromJson(json.decode(response.body));
+
+      debugPrint(
+          'Response Code: ${response.statusCode} - Num Results: ${mcr.response.docs.length} - Total Results: ${mcr.response.numFound}');
+      //debugPrint(response.body);
+
+      return mcr;
     } else {
       // If that response was not OK, throw an error.
       throw Exception(
