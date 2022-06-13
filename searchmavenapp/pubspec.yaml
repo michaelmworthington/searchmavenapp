@@ -51,6 +51,7 @@ dependencies:
   keyboard_dismisser: ^2.0.1
   shared_preferences: ^2.0.14
   intl: ^0.17.0
+  code_text_field: ^1.0.2
 
 
 dev_dependencies:
