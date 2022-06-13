@@ -169,7 +169,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                   final error = snapshot.error;
                   debugPrintStack(stackTrace: snapshot.stackTrace);
 
-                  return Text('Robust API Nullable Error: $error');
+                  return Text('API Error: $error');
                 }
 
                 if (snapshot.hasData) {
@@ -196,7 +196,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                     controller: controller,
                   );
                 } else {
-                  return const Text('Robust API Value No Data');
+                  return const Text('API Value No Data');
                 }
               },
             ),

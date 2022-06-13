@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../../../api/mavencentral/model/mcr_doc.dart';
 import '../../../page_components/artifact_field_text_ellipsis.dart';
@@ -41,9 +42,9 @@ class SearchResultsPageListView extends StatelessWidget {
               ],
             ),
             Flexible(
-              child: Platform.isAndroid //TODO: What about web/mac/windows?
-                  ? _buildAndroidList(context)
-                  : _buildIOSList(context),
+              child: kIsWeb == false || Platform.isMacOS || Platform.isIOS
+                  ? _buildIOSList(context)
+                  : _buildAndroidList(context),
             ),
           ],
         ),
