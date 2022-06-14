@@ -1,14 +1,9 @@
-import 'dart:convert';
-
 import 'package:code_text_field/code_text_field.dart';
 import 'package:flutter/material.dart';
-import 'package:highlight/highlight.dart';
-import 'package:highlight/languages/markdown.dart';
-import 'package:highlight/languages/xml.dart';
-import 'package:flutter_highlight/themes/darcula.dart';
 
 import '../../../api/mavencentral/model/mcr_doc.dart';
 import '../../../page_components/artifact_field_text_ellipsis.dart';
+import '../../../page_components/dependency_choices.dart';
 import '../../../page_components/form_header.dart';
 import '../pom_view_page/pom_view_page.dart';
 import 'artifact_details_app_bar_menu_item_model.dart';
@@ -76,19 +71,20 @@ class _ArtifactDetailsPageState extends State<ArtifactDetailsPage> {
     return ListView(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
       children: <Widget>[
-        const MyFormHeader(pLabel: 'Project Information:'),
+        MyFormHeader(pLabel: 'Project Information:'),
         const SizedBox(height: 12.0),
         ..._buildProjectInformationWidgets(),
         const SizedBox(height: 12.0),
-        const MyFormHeader(pLabel: 'Artifact Files:'),
-        const SizedBox(height: 12.0),
-        ..._buildArtifactFilesWidgets(),
-        const SizedBox(height: 12.0),
-        const MyFormHeader(pLabel: 'Dependency Information:'),
+        // MyFormHeader(pLabel: 'Artifact Files:'),
+        // const SizedBox(height: 12.0),
+        // TODO: Figure out how to get the list from the API - and what to do with it?
+        // ..._buildArtifactFilesWidgets(),
+        // const SizedBox(height: 12.0),
+        MyFormHeader(pLabel: 'Dependency Information:'),
         const SizedBox(height: 12.0),
         ..._buildDependencyInformationWidgets(),
         const SizedBox(height: 12.0),
-        const MyFormHeader(pLabel: 'Project Object Model (POM):'),
+        MyFormHeader(pLabel: 'Project Object Model (POM):'),
         //don't need the spacer when using the button bar
         //SizedBox(height: 12.0),
         ..._buildPomWidgets(),
@@ -142,6 +138,7 @@ class _ArtifactDetailsPageState extends State<ArtifactDetailsPage> {
           children: <Widget>[
             ElevatedButton(
                 onPressed: () {
+                  //TODO: named route
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -179,72 +176,4 @@ class _ArtifactDetailsPageState extends State<ArtifactDetailsPage> {
               '${widget.iArtifact.iLatestVersion}', //TODO: or selected version
         )
       ];
-}
-
-enum DependencyChoices {
-  maven(value: "Apache Maven"),
-  groovy(value: "Gradle Groovy DSL"),
-  kotlin(value: "Gradle Kotlin DSL"),
-  scala(value: "Scala SBT"),
-  ivy(value: "Apache Ivy"),
-  grape(value: "Groovy Grape"),
-  lein(value: "Leiningen"),
-  buildr(value: "Apache Buildr"),
-  central(value: "Maven Central Badge"),
-  purl(value: "PURL"),
-  bazel(value: "Bazel");
-
-  const DependencyChoices({
-    required this.value,
-  });
-
-  final String value;
-
-  CodeController createCodeController(MCRDoc artifact) => CodeController(
-        text: _generateDependencyText(artifact),
-        language: _getLanguage(),
-        theme: darculaTheme,
-      );
-
-  Mode? _getLanguage() {
-    switch (this) {
-      case DependencyChoices.maven:
-        return xml;
-      case DependencyChoices.central:
-        return markdown;
-      case DependencyChoices.purl:
-        return null;
-      default:
-        return null;
-    }
-  }
-
-  String _generateDependencyText(MCRDoc artifact) {
-    String? groupId = artifact.iG;
-    String? artifactId = artifact.iA;
-    String? version = artifact.iV ??
-        artifact.iLatestVersion; //TODO: selected version vs latest
-
-    switch (this) {
-      case DependencyChoices.maven:
-        return '''
-<dependency>
-  <groupId>$groupId</groupId>
-  <artifactId>$artifactId</artifactId>
-  <version>$version</version>
-</dependency>
-''';
-      case DependencyChoices.central:
-        //TODO: version? - https://shields.io/category/version
-        return '''
-[![Maven Central](https://img.shields.io/maven-central/v/$groupId/$artifactId.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22$groupId%22%20AND%20a:%22$artifactId%22)
-''';
-      case DependencyChoices.purl:
-        return '''
-pkg:maven/$groupId/$artifactId@$version
-''';
-      default:
-        return '';
-    }
-  }
 }

@@ -2,6 +2,10 @@
 //passing with plain old Strings didn't work
 class SearchTerms {
   //"Quick" or "Advanced" - TODO: classname, group, artifact, all versions
+  //     GroupId
+  //     ArtifactId
+  //     All Versions
+  // -> To App Bar Title & adjust Context Menu for the given search (i.e. hide that search, and show the others)
   final String searchType;
 
   final String quickSearch;

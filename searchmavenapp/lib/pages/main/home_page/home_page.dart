@@ -4,7 +4,7 @@ import 'package:searchmavenapp/pages/main/home_page/home_page_floating_action_bu
 import 'home_page_navigation_drawer.dart';
 import 'home_page_scaffold_advanced_search.dart';
 import 'home_page_scaffold_quick_search.dart';
-import 'home_page_search_terms.dart';
+import '../../../page_components/search_terms.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title, required this.isDemoMode})
@@ -152,7 +152,7 @@ class _MyHomePageState extends State<MyHomePage>
 
       Navigator.pushNamed(
         context,
-        '/search_results',
+        '/search_results', //TODO: make a constant
         arguments: <String, SearchTerms>{
           'searchTerms': searchTerms,
         },

@@ -33,7 +33,7 @@ class MCRDoc {
       iId: json['id'],
       iG: json['g'],
       iA: json['a'],
-      iV: json['v'],
+      iV: json['v'] ?? json['latestVersion'],
       iLatestVersion: json['latestVersion'],
       iRepositoryId: json['repositoryId'],
       iP: json['p'],

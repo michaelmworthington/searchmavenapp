@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'pages/main/home_page/home_page.dart';
-import 'pages/main/home_page/home_page_search_terms.dart';
+import 'page_components/search_terms.dart';
 import 'pages/main/settings_page/settings_enum.dart';
 import 'pages/samples/sample_fifth_page/sample_fifth_page.dart';
 import 'pages/samples/sample_fourth_page/sample_fourth_page.dart';

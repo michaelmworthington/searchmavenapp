@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../api/mavencentral/mavencentralsearchapi.dart';
 import '../../../api/mavencentral/model/mavencentralresponse.dart';
 import '../../../api/mavencentral/model/mcr_doc.dart';
-import '../home_page/home_page_search_terms.dart';
+import '../../../page_components/search_terms.dart';
 import 'search_results_page_list_view.dart';
 
 class SearchResultsPage extends StatefulWidget {
@@ -68,6 +68,9 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
     return _performSearch();
   }
 
+  // from:
+  //    - ./src/com/searchmavenapp/android/maven/search/activities/SearchResults.java
+  // TODO ->>    - ./src/com/searchmavenapp/android/maven/search/ProgressThread.java
   Future _performSearch() {
     if (isLoading) {
       // don't make another call, just return an immediate future
