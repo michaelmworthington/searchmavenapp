@@ -111,6 +111,7 @@ flutter:
     - "assets/icon/icon.png"
     - "assets/icon/icon_search_transparent.png"
     - "assets/model/mavencentralresponse.json"
+    - "assets/model/log4j-1.2.17.pom"
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

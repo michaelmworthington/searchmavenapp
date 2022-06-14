@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
 class MyFormHeader extends StatelessWidget {
-  const MyFormHeader({
+  MyFormHeader({
     Key? key,
     required this.pLabel,
+    this.textStyle,
   }) : super(key: key);
 
   final String pLabel;
+  TextStyle? textStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +22,7 @@ class MyFormHeader extends StatelessWidget {
             child: Text(
               pLabel,
               textAlign: TextAlign.left,
-              style: Theme.of(context)
+              style: textStyle ?? Theme.of(context)
                   .textTheme
                   .headlineSmall
                   ?.copyWith(color: Theme.of(context).accentColor),

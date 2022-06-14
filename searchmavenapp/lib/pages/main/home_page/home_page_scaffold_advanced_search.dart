@@ -79,7 +79,7 @@ class _HomePageScaffoldAdvancedSearchState
                     const SizedBox(
                       height: 24.0,
                     ),
-                    const MyFormHeader(pLabel: 'By Coordinate:'),
+                    MyFormHeader(pLabel: 'By Coordinate:'),
                     const SizedBox(
                       height: 12.0,
                     ),
@@ -132,7 +132,7 @@ class _HomePageScaffoldAdvancedSearchState
                     const SizedBox(
                       height: 24.0,
                     ),
-                    const MyFormHeader(pLabel: 'By Classname:'),
+                    MyFormHeader(pLabel: 'By Classname:'),
                     const SizedBox(
                       height: 12.0,
                     ),
