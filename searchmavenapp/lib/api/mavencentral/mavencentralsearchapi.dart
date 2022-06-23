@@ -3,17 +3,20 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import '../../page_components/search_terms.dart';
 import 'model/mavencentralresponse.dart';
 
 class CentralSearchAPI {
-  //See MavenCentralRestAPI.java
+  //See MavenCentralRestAPI.java & ProgressThread.java
   Future<MavenCentralResponse> search({
-    required String pSearchQueryString,
+    required SearchTerms pSearchTerms,
     required BuildContext pContext,
     int pNumResults = 20,
     int pStart = 0,
     bool pDemoMode = false,
   }) async {
+    String queryTerm = _formatQueryParam(pSearchTerms);
+
     Uri myUri = Uri(
       scheme: 'https',
       host: 'search.maven.org',
@@ -23,7 +26,7 @@ class CentralSearchAPI {
         'rows': pNumResults.toString(),
         'start': pStart.toString(),
         'wt': 'json',
-        'q': pSearchQueryString
+        'q': queryTerm
       },
     );
 
@@ -66,6 +69,87 @@ class CentralSearchAPI {
       throw Exception(
           'Failed to load MavenCentralResponse: HTTP Response != 200: was ${response.statusCode}');
     }
+  }
+
+  String _formatQueryParam(SearchTerms pSearchTerms) {
+    String returnValue = "";
+
+    if (pSearchTerms.isQuickSearch()) {
+      returnValue = pSearchTerms.quickSearch;
+    } else {
+      if (pSearchTerms.classname != '') {
+        returnValue = _formatClassNameSearchQueryParam(pSearchTerms);
+      } else {
+        returnValue = _formatCoordinateSearchQueryParam(pSearchTerms);
+      }
+    }
+
+    return returnValue;
+  }
+
+  // Search for either a base class name or a fully qualified class name
+  // assume that a search term with dots is fully qualified need to use "fc" instead of "c"
+  String _formatClassNameSearchQueryParam(SearchTerms pSearchTerms) {
+    String returnValue = '';
+
+    if (pSearchTerms.classname.contains('.')) {
+      returnValue += 'f';
+    }
+
+    returnValue += 'c:"${pSearchTerms.classname}"';
+    return returnValue;
+  }
+
+  String _formatCoordinateSearchQueryParam(SearchTerms pSearchTerms) {
+    String returnValue = '';
+    bool isFirstTermComplete = false;
+
+    if (pSearchTerms.groupId != '') {
+      returnValue +=
+          _appendTerm(isFirstTermComplete, 'g:"${pSearchTerms.groupId}"');
+      isFirstTermComplete = true;
+    }
+
+    if (pSearchTerms.artifactId != '') {
+      returnValue +=
+          _appendTerm(isFirstTermComplete, 'a:"${pSearchTerms.artifactId}"');
+      isFirstTermComplete = true;
+    }
+
+    if (pSearchTerms.version != '') {
+      returnValue +=
+          _appendTerm(isFirstTermComplete, 'v:"${pSearchTerms.version}"');
+      isFirstTermComplete = true;
+    }
+
+    if (pSearchTerms.classifier != '') {
+      returnValue +=
+          _appendTerm(isFirstTermComplete, 'l:"${pSearchTerms.classifier}"');
+      isFirstTermComplete = true;
+    }
+
+    if (pSearchTerms.packaging != '') {
+      returnValue +=
+          _appendTerm(isFirstTermComplete, 'p:"${pSearchTerms.packaging}"');
+      isFirstTermComplete = true;
+    }
+
+    return returnValue;
+  }
+
+  String _appendTerm(bool isFirstTermComplete, String pTerm) {
+    String returnValue = '';
+    // String andTerm = "%20AND%20";
+    // Flutter will do the escaping for us
+    String andTerm = " AND ";
+
+    if (isFirstTermComplete) {
+      returnValue += andTerm;
+    }
+
+    returnValue += pTerm;
+
+    return returnValue;
   }
 }
 

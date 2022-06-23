@@ -79,13 +79,11 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
 
     setState(
       () {
-        //TODO: Advanced Search
-
         isLoading = true;
         newArtifactList = [];
 
         dataFuture = CentralSearchAPI().search(
-          pSearchQueryString: widget.searchTerms.quickSearch,
+          pSearchTerms: widget.searchTerms,
           pContext: context,
           pNumResults: widget.numResults,
           pStart: artifactList.length,
@@ -99,15 +97,14 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Implement Advanced Search - look into parsing/forming the URL in the API Class
-    if (widget.searchTerms.isQuickSearch() == false) {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text("${widget.searchTerms.searchType} Search Results"),
-        ),
-        body: _buildSearchNotAllowedMessage(context),
-      );
-    }
+    // if (widget.searchTerms.isQuickSearch() == false) {
+    //   return Scaffold(
+    //     appBar: AppBar(
+    //       title: Text("${widget.searchTerms.searchType} Search Results"),
+    //     ),
+    //     body: _buildSearchNotAllowedMessage(context),
+    //   );
+    // }
 
     //from:
     //    - ./res/layout/search_results.xml
@@ -139,6 +136,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                     : _buildAdvancedSearchRow(),
               ],
             ),
+            Divider(color: Theme.of(context).accentColor),
             const SizedBox(height: 8.0),
             FutureBuilder<MavenCentralResponse>(
               future:
@@ -236,56 +234,52 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
 
   Widget _buildAdvancedSearchRow() {
     return Row(
-      // mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Expanded(
-          child: Column(
-            // mainAxisAlignment: MainAxisAlignment.start,
-            // crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildSearchTermRow("GroupId: ", widget.searchTerms.groupId),
-              _buildSearchTermRow(
-                  "ArtifactId: ", widget.searchTerms.artifactId),
-              _buildSearchTermRow("Version: ", widget.searchTerms.version),
-              _buildSearchTermRow("Packaging: ", widget.searchTerms.packaging),
-              _buildSearchTermRow(
-                  "Classifier: ", widget.searchTerms.classifier),
-              _buildSearchTermRow("Classname: ", widget.searchTerms.classname),
-            ],
-          ),
-        )
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('(demo = ${widget.isDemoMode})'),
+            _buildSearchTermRow("GroupId: ", widget.searchTerms.groupId),
+            _buildSearchTermRow("ArtifactId: ", widget.searchTerms.artifactId),
+            _buildSearchTermRow("Version: ", widget.searchTerms.version),
+            _buildSearchTermRow("Packaging: ", widget.searchTerms.packaging),
+            _buildSearchTermRow("Classifier: ", widget.searchTerms.classifier),
+            _buildSearchTermRow("Classname: ", widget.searchTerms.classname),
+          ],
+        ),
       ],
     );
   }
 
-  Widget _buildSearchNotAllowedMessage(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
-      children: <Widget>[
-        Text("Only quick search allowed",
-            style: Theme.of(context)
-                .textTheme
-                .headlineSmall
-                ?.copyWith(color: Theme.of(context).primaryColor)),
-        // Text("Only quick search allowed", style: Theme.of(context).textTheme.headline.copyWith(color:
-        // Theme.of(context).primaryColor)),
-        const SizedBox(height: 12.0),
-        Text("Search Type: ${widget.searchTerms.searchType}"),
-        const SizedBox(height: 12.0),
-        Text("quickSearch: ${widget.searchTerms.quickSearch}"),
-        const SizedBox(height: 12.0),
-        Text("groupId: ${widget.searchTerms.groupId}"),
-        const SizedBox(height: 12.0),
-        Text("artifactId: ${widget.searchTerms.artifactId}"),
-        const SizedBox(height: 12.0),
-        Text("version: ${widget.searchTerms.version}"),
-        const SizedBox(height: 12.0),
-        Text("packaging: ${widget.searchTerms.packaging}"),
-        const SizedBox(height: 12.0),
-        Text("classifier: ${widget.searchTerms.classifier}"),
-        const SizedBox(height: 12.0),
-        Text("classname: ${widget.searchTerms.classname}"),
-      ],
-    );
-  }
+  // Widget _buildSearchNotAllowedMessage(BuildContext context) {
+  //   return ListView(
+  //     padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
+  //     children: <Widget>[
+  //       Text("Only quick search allowed",
+  //           style: Theme.of(context)
+  //               .textTheme
+  //               .headlineSmall
+  //               ?.copyWith(color: Theme.of(context).primaryColor)),
+  //       // Text("Only quick search allowed", style: Theme.of(context).textTheme.headline.copyWith(color:
+  //       // Theme.of(context).primaryColor)),
+  //       const SizedBox(height: 12.0),
+  //       Text("Search Type: ${widget.searchTerms.searchType}"),
+  //       const SizedBox(height: 12.0),
+  //       Text("quickSearch: ${widget.searchTerms.quickSearch}"),
+  //       const SizedBox(height: 12.0),
+  //       Text("groupId: ${widget.searchTerms.groupId}"),
+  //       const SizedBox(height: 12.0),
+  //       Text("artifactId: ${widget.searchTerms.artifactId}"),
+  //       const SizedBox(height: 12.0),
+  //       Text("version: ${widget.searchTerms.version}"),
+  //       const SizedBox(height: 12.0),
+  //       Text("packaging: ${widget.searchTerms.packaging}"),
+  //       const SizedBox(height: 12.0),
+  //       Text("classifier: ${widget.searchTerms.classifier}"),
+  //       const SizedBox(height: 12.0),
+  //       Text("classname: ${widget.searchTerms.classname}"),
+  //     ],
+  //   );
+  // }
 }
