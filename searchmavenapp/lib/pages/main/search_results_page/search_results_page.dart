@@ -7,6 +7,8 @@ import '../../../page_components/search_terms.dart';
 import 'search_results_page_list_view.dart';
 
 class SearchResultsPage extends StatefulWidget {
+  static const routeName = '/search_results';
+
   final bool isDemoMode;
   final int numResults;
   final SearchTerms searchTerms;

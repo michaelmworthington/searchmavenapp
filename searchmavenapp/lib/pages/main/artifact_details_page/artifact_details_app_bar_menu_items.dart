@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:searchmavenapp/api/mavencentral/model/mcr_doc.dart';
 
-import '../../samples/sample_fourth_page/sample_fourth_page.dart';
-import '../../samples/sample_second_page/sample_second_page.dart';
-import '../../samples/sample_third_page/sample_third_page.dart';
+import '../../../page_components/search_terms.dart';
+import '../search_results_page/search_results_page.dart';
 import 'artifact_details_app_bar_menu_item_model.dart';
 
 class ArtifactDetailsAppBarMenuItems {
@@ -15,39 +15,68 @@ class ArtifactDetailsAppBarMenuItems {
   static final itemGroupId = ArtifactDetailsAppBarMenuItemModel(
     prefix: 'G',
     label: 'Search by Group Id',
-    onSelected: (BuildContext context) {
-      Navigator.pop(context);
-      Navigator.pop(context);
-      //TODO: Group Id Search
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  SampleSecondPage(counter: 3, searchTerm: "menu")));
+    onSelected: (BuildContext context, MCRDoc artifact) {
+      //TODO: Pop the right way - see Sample 4 Alert Dialog
+      // Navigator.pop(context);
+      // Navigator.pop(context);
+
+      var searchTerms = SearchTerms(
+        searchType: 'Advanced',
+        groupId: artifact.iG ?? '',
+      );
+
+      Navigator.pushNamed(
+        context,
+        SearchResultsPage.routeName,
+        arguments: <String, SearchTerms>{
+          'searchTerms': searchTerms,
+        },
+      );
     },
   );
 
   static final itemArtifactId = ArtifactDetailsAppBarMenuItemModel(
     prefix: 'A',
     label: 'Search by Artifact Id',
-    onSelected: (BuildContext context) {
-      Navigator.pop(context);
-      Navigator.pop(context);
-      //TODO: Artifact Id Search
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => const SampleThirdPage()));
+    onSelected: (BuildContext context, MCRDoc artifact) {
+      // Navigator.pop(context);
+      // Navigator.pop(context);
+
+      var searchTerms = SearchTerms(
+        searchType: 'Advanced',
+        artifactId: artifact.iA ?? '',
+      );
+
+      Navigator.pushNamed(
+        context,
+        SearchResultsPage.routeName,
+        arguments: <String, SearchTerms>{
+          'searchTerms': searchTerms,
+        },
+      );
     },
   );
 
   static final itemVersions = ArtifactDetailsAppBarMenuItemModel(
     prefix: 'V',
     label: 'Search All Versions',
-    onSelected: (BuildContext context) {
-      Navigator.pop(context);
-      Navigator.pop(context);
-      //TODO: Version Id Search
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => const SampleFourthPage()));
+    onSelected: (BuildContext context, MCRDoc artifact) {
+      // Navigator.pop(context);
+      // Navigator.pop(context);
+
+      var searchTerms = SearchTerms(
+        searchType: 'Advanced',
+        groupId: artifact.iG ?? '',
+        artifactId: artifact.iA ?? '',
+      );
+
+      Navigator.pushNamed(
+        context,
+        SearchResultsPage.routeName,
+        arguments: <String, SearchTerms>{
+          'searchTerms': searchTerms,
+        },
+      );
     },
   );
 }

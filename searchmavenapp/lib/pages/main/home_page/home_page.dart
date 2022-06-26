@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:searchmavenapp/pages/main/home_page/home_page_floating_action_button.dart';
 
+import '../search_results_page/search_results_page.dart';
 import 'home_page_navigation_drawer.dart';
 import 'home_page_scaffold_advanced_search.dart';
 import 'home_page_scaffold_quick_search.dart';
 import '../../../page_components/search_terms.dart';
 
 class MyHomePage extends StatefulWidget {
+  static const routeName = '/';
+
   const MyHomePage({Key? key, required this.title, required this.isDemoMode})
       : super(key: key);
 
@@ -124,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage>
 
       Navigator.pushNamed(
         context,
-        '/search_results',
+        SearchResultsPage.routeName,
         arguments: <String, SearchTerms>{
           'searchTerms': searchTerms,
         },
@@ -152,7 +155,7 @@ class _MyHomePageState extends State<MyHomePage>
 
       Navigator.pushNamed(
         context,
-        '/search_results', //TODO: make a constant
+        SearchResultsPage.routeName,
         arguments: <String, SearchTerms>{
           'searchTerms': searchTerms,
         },

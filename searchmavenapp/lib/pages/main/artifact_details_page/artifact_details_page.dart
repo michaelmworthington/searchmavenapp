@@ -10,6 +10,8 @@ import 'artifact_details_app_bar_menu_item_model.dart';
 import 'artifact_details_app_bar_menu_items.dart';
 
 class ArtifactDetailsPage extends StatefulWidget {
+  static const routeName = '/artifact_details';
+
   final MCRDoc iArtifact;
 
   const ArtifactDetailsPage({Key? key, required this.iArtifact})
@@ -56,7 +58,7 @@ class _ArtifactDetailsPageState extends State<ArtifactDetailsPage> {
         PopupMenuButton<ArtifactDetailsAppBarMenuItemModel>(
           position: PopupMenuPosition.under,
           icon: const Icon(Icons.more_vert),
-          onSelected: (item) => item.onSelected(context),
+          onSelected: (item) => item.onSelected(context, widget.iArtifact),
           itemBuilder: (context) => [
             ...ArtifactDetailsAppBarMenuItems.items
                 .map((item) => item.buildPopupMenuItem(widget.iArtifact))
@@ -138,12 +140,13 @@ class _ArtifactDetailsPageState extends State<ArtifactDetailsPage> {
           children: <Widget>[
             ElevatedButton(
                 onPressed: () {
-                  //TODO: named route
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              PomViewPage(iArtifact: widget.iArtifact)));
+                  Navigator.pushNamed(
+                    context,
+                    PomViewPage.routeName,
+                    arguments: <String, MCRDoc>{
+                      'artifact': widget.iArtifact,
+                    },
+                  );
                 },
                 child: const Text("Show POM"))
           ],

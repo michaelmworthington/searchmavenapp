@@ -7,10 +7,12 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../../../api/mavencentral/model/mcr_doc.dart';
 import '../../../page_components/artifact_field_text_ellipsis.dart';
+import '../../../page_components/search_terms.dart';
 import '../../samples/sample_fourth_page/sample_fourth_page.dart';
 import '../../samples/sample_second_page/sample_second_page.dart';
 import '../../samples/sample_third_page/sample_third_page.dart';
 import '../artifact_details_page/artifact_details_page.dart';
+import 'search_results_page.dart';
 
 class SearchResultsPageListView extends StatelessWidget {
   final List<MCRDoc> artifactList;
@@ -128,10 +130,13 @@ class SearchResultsPageListView extends StatelessWidget {
     //    2 rows with groupid/artifactid left aligned and latest version and date right alighed
     //    groupid would wrap when it reached the version
     return GestureDetector(
-      onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ArtifactDetailsPage(iArtifact: pArtifact))),
+      onTap: () => Navigator.pushNamed(
+        context,
+        ArtifactDetailsPage.routeName,
+        arguments: <String, MCRDoc>{
+          'artifact': pArtifact,
+        },
+      ),
       onLongPress: () => showDialog(
           context: context,
           builder: (context) => _dialogBuilderLongPress(context, pArtifact)),
@@ -203,7 +208,7 @@ class SearchResultsPageListView extends StatelessWidget {
   Widget _dialogBuilderLongPress(BuildContext pContext, MCRDoc pArtifact) {
     //from:
     //   - ./res/menu/search_results_context_menu.xml
-    //   - TODO: java class?
+    //   - ProgressThread.java -> MavenCentralRestAPI.java
     //https://docs.flutter.io/flutter/material/SimpleDialog-class.html
     return SimpleDialog(
       titlePadding: const EdgeInsets.all(0),
@@ -226,12 +231,19 @@ class SearchResultsPageListView extends StatelessWidget {
           ),
           onPressed: () {
             Navigator.pop(pContext);
-            //TODO: Group Id Search
-            Navigator.push(
-                pContext,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        SampleSecondPage(counter: 3, searchTerm: "menu")));
+
+            var searchTerms = SearchTerms(
+              searchType: 'Advanced',
+              groupId: pArtifact.iG ?? '',
+            );
+
+            Navigator.pushNamed(
+              pContext,
+              SearchResultsPage.routeName,
+              arguments: <String, SearchTerms>{
+                'searchTerms': searchTerms,
+              },
+            );
           },
         ),
         SimpleDialogOption(
@@ -240,13 +252,20 @@ class SearchResultsPageListView extends StatelessWidget {
             style: Theme.of(pContext).textTheme.titleLarge,
           ),
           onPressed: () {
-            //Close the drawer
             Navigator.pop(pContext);
-            //TODO: artifact id search
-            Navigator.push(
-                pContext,
-                MaterialPageRoute(
-                    builder: (context) => const SampleThirdPage()));
+
+            var searchTerms = SearchTerms(
+              searchType: 'Advanced',
+              artifactId: pArtifact.iA ?? '',
+            );
+
+            Navigator.pushNamed(
+              pContext,
+              SearchResultsPage.routeName,
+              arguments: <String, SearchTerms>{
+                'searchTerms': searchTerms,
+              },
+            );
           },
         ),
         SimpleDialogOption(
@@ -255,13 +274,20 @@ class SearchResultsPageListView extends StatelessWidget {
             style: Theme.of(pContext).textTheme.titleLarge,
           ),
           onPressed: () {
-            //Close the drawer
             Navigator.pop(pContext);
-            //TODO: All Versions search
-            Navigator.push(
-                pContext,
-                MaterialPageRoute(
-                    builder: (context) => const SampleFourthPage()));
+            var searchTerms = SearchTerms(
+              searchType: 'Advanced',
+              groupId: pArtifact.iG ?? '',
+              artifactId: pArtifact.iA ?? '',
+            );
+
+            Navigator.pushNamed(
+              pContext,
+              SearchResultsPage.routeName,
+              arguments: <String, SearchTerms>{
+                'searchTerms': searchTerms,
+              },
+            );
           },
         ),
         Align(

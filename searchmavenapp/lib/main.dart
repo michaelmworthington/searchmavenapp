@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'api/mavencentral/model/mcr_doc.dart';
+import 'pages/main/artifact_details_page/artifact_details_page.dart';
 import 'pages/main/home_page/home_page.dart';
 import 'page_components/search_terms.dart';
+import 'pages/main/pom_view_page/pom_view_page.dart';
 import 'pages/main/settings_page/settings_enum.dart';
 import 'pages/samples/sample_fifth_page/sample_fifth_page.dart';
 import 'pages/samples/sample_fourth_page/sample_fourth_page.dart';
@@ -78,15 +81,15 @@ class _MyAppState extends State<MyApp> {
       themeMode: _themeMode,
       // don't define home when using a named route with '/'
       // home: const MyHomePage(title: 'Search Maven App'),
-      initialRoute: '/',
+      initialRoute: MyHomePage.routeName,
       // mmw: i'm using these for pages that don't require any arguments, or use
       //      ModalRoute.of(context)!.settings.arguments to extract the arguments
       routes: {
-        '/': (context) => MyHomePage(
+        MyHomePage.routeName: (context) => MyHomePage(
               title: 'Search Maven App',
               isDemoMode: _isDemoMode,
             ),
-        '/settings': (context) => SettingsPage(
+        SettingsPage.routeName: (context) => SettingsPage(
               changeTheme: _changeThemeMode,
               changeNumResults: _changeNumResults,
               changeDemoMode: _changeDemoMode,
@@ -114,7 +117,7 @@ class _MyAppState extends State<MyApp> {
           );
         }
 
-        if (settings.name == '/search_results') {
+        if (settings.name == SearchResultsPage.routeName) {
           final args = settings.arguments as Map<String, SearchTerms>;
 
           return MaterialPageRoute(
@@ -122,7 +125,34 @@ class _MyAppState extends State<MyApp> {
               return SearchResultsPage(
                 isDemoMode: _isDemoMode,
                 numResults: _numResults,
-                searchTerms: args['searchTerms'] ?? SearchTerms(searchType: 'Quick'),
+                searchTerms:
+                    args['searchTerms'] ?? SearchTerms(searchType: 'Quick'),
+              );
+            },
+          );
+        }
+
+        if (settings.name == ArtifactDetailsPage.routeName) {
+          final args = settings.arguments as Map<String, MCRDoc>;
+
+          return MaterialPageRoute(
+            builder: (context) {
+              return ArtifactDetailsPage(
+                iArtifact: args['artifact'] ??
+                    MCRDoc(), //TODO: how to handle if it is null - error toast message???
+              );
+            },
+          );
+        }
+
+        if (settings.name == PomViewPage.routeName) {
+          final args = settings.arguments as Map<String, MCRDoc>;
+
+          return MaterialPageRoute(
+            builder: (context) {
+              return PomViewPage(
+                iArtifact: args['artifact'] ??
+                    MCRDoc(), //TODO: how to handle if it is null - error toast message???
               );
             },
           );

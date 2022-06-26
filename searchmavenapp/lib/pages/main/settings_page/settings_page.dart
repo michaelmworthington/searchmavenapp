@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'settings_page_listtile_dropdown.dart';
 
 class SettingsPage extends StatelessWidget {
+  static const routeName = '/settings';
+
   static const List<String> colorSchemeChoices = ['Light', 'Dark', 'System'];
   static const List<int> numResultsChoices = [10, 25, 50, 100];
 

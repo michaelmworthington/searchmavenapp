@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../page_components/about_dialog.dart';
 import '../../../page_components/help_dialog.dart';
+import '../settings_page/settings_page.dart';
 import 'home_page_navigation_drawer_list_tile.dart';
 
 // Johannes Milke - https://www.youtube.com/watch?v=17FLO6uHhHU
@@ -89,7 +90,7 @@ class HomePageNavigationDrawer extends StatelessWidget {
         onTap: () {
           Navigator.pushNamed(
             context,
-            '/settings',
+            SettingsPage.routeName,
           );
         },
       ),

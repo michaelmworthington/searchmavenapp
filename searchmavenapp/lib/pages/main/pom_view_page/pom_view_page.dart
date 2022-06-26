@@ -7,6 +7,8 @@ import '../../../api/mavencentral/model/mcr_doc.dart';
 import '../../../page_components/form_header.dart';
 
 class PomViewPage extends StatefulWidget {
+  static const routeName = '/pom_view';
+  
   final MCRDoc iArtifact;
 
   const PomViewPage({Key? key, required this.iArtifact}) : super(key: key);
