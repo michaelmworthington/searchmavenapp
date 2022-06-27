@@ -17,17 +17,23 @@ class CentralSearchAPI {
   }) async {
     String queryTerm = _formatQueryParam(pSearchTerms);
 
+    var queryParameters = {
+      'rows': pNumResults.toString(),
+      'start': pStart.toString(),
+      'wt': 'json',
+      'q': queryTerm
+    };
+
+    if (pSearchTerms.isVersionSearch()) {
+      queryParameters['core'] = 'gav';
+    }
+
     Uri myUri = Uri(
       scheme: 'https',
       host: 'search.maven.org',
       // host: 'c1bcc446-5b66-4991-985d-ae7b82a26913.mock.pstmn.io',
       path: '/solrsearch/select/',
-      queryParameters: {
-        'rows': pNumResults.toString(),
-        'start': pStart.toString(),
-        'wt': 'json',
-        'q': queryTerm
-      },
+      queryParameters: queryParameters,
     );
 
     if (pDemoMode) {

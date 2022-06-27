@@ -1,6 +1,10 @@
 //https://flutter.io/docs/cookbook/navigation/passing-data
 //passing with plain old Strings didn't work
 class SearchTerms {
+  static const String searchTypeQuick = 'Quick';
+  static const String searchTypeAdvanced = 'Advanced';
+  static const String searchTypeVersion = 'Version';
+
   //"Quick" or "Advanced" - TODO: classname, group, artifact, all versions
   //     GroupId
   //     ArtifactId
@@ -30,7 +34,11 @@ class SearchTerms {
   });
 
   bool isQuickSearch() {
-    return "Quick" == searchType;
+    return searchTypeQuick == searchType;
+  }
+
+  bool isVersionSearch() {
+    return searchTypeVersion == searchType;
   }
 
   @override

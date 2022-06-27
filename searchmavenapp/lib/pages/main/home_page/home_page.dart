@@ -121,7 +121,7 @@ class _MyHomePageState extends State<MyHomePage>
       debugPrint("Submitting Quick search");
 
       var searchTerms = SearchTerms(
-        searchType: 'Quick',
+        searchType: SearchTerms.searchTypeQuick,
         quickSearch: _quickSearchTextController.text,
       );
 
@@ -144,7 +144,7 @@ class _MyHomePageState extends State<MyHomePage>
       debugPrint("Submitting Advanced search");
 
       var searchTerms = SearchTerms(
-        searchType: 'Advanced',
+        searchType: SearchTerms.searchTypeAdvanced,
         groupId: _groupIdTextController.text,
         artifactId: _artifactIdTextController.text,
         version: _versionTextController.text,

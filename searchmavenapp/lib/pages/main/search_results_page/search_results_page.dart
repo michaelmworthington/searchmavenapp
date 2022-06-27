@@ -191,6 +191,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                   }
 
                   return SearchResultsPageListView(
+                    searchTerms: widget.searchTerms,
                     artifactList: artifactList,
                     totalNumFound: snapshot.data?.response.numFound ?? 0,
                     refreshIndicatorKey: _refreshIndicatorKey,

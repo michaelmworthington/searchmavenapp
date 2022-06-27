@@ -126,7 +126,7 @@ class _MyAppState extends State<MyApp> {
                 isDemoMode: _isDemoMode,
                 numResults: _numResults,
                 searchTerms:
-                    args['searchTerms'] ?? SearchTerms(searchType: 'Quick'),
+                    args['searchTerms'] ?? SearchTerms(searchType: SearchTerms.searchTypeQuick),
               );
             },
           );

@@ -14,7 +14,7 @@ class ArtifactDetailsAppBarMenuItemModel {
 
   PopupMenuItem<ArtifactDetailsAppBarMenuItemModel> buildPopupMenuItem(
       MCRDoc artifact) {
-    String myLabel = prefix == 'V'
+    String myLabel = prefix == 'V' && artifact.iVersionCount != null
         ? 'Search by All ${artifact.iVersionCount} Versions'
         : label;
 

@@ -176,7 +176,7 @@ class _ArtifactDetailsPageState extends State<ArtifactDetailsPage> {
         ArtifactFieldTextEllipsis(
           label: 'Version',
           value:
-              '${widget.iArtifact.iLatestVersion}', //TODO: or selected version
+              '${widget.iArtifact.iV}', //: this will be the selected version or the latest version, depending on how the search was performed
         )
       ];
 }

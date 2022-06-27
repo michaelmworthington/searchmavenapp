@@ -8,13 +8,11 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import '../../../api/mavencentral/model/mcr_doc.dart';
 import '../../../page_components/artifact_field_text_ellipsis.dart';
 import '../../../page_components/search_terms.dart';
-import '../../samples/sample_fourth_page/sample_fourth_page.dart';
-import '../../samples/sample_second_page/sample_second_page.dart';
-import '../../samples/sample_third_page/sample_third_page.dart';
 import '../artifact_details_page/artifact_details_page.dart';
 import 'search_results_page.dart';
 
 class SearchResultsPageListView extends StatelessWidget {
+  final SearchTerms searchTerms;
   final List<MCRDoc> artifactList;
   final int totalNumFound;
   final GlobalKey<RefreshIndicatorState> refreshIndicatorKey;
@@ -24,6 +22,7 @@ class SearchResultsPageListView extends StatelessWidget {
 
   const SearchResultsPageListView({
     Key? key,
+    required this.searchTerms,
     required this.artifactList,
     required this.totalNumFound,
     required this.refreshIndicatorKey,
@@ -157,43 +156,9 @@ class SearchResultsPageListView extends StatelessWidget {
                   Flexible(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        ArtifactFieldTextEllipsis(
-                          label: 'Group Id',
-                          value: '${pArtifact.iG}',
-                          maxLines: 2,
-                        ),
-                        const SizedBox(height: 8.0),
-                        ArtifactFieldTextEllipsis(
-                          label: 'Artifact Id',
-                          value: '${pArtifact.iA}',
-                          maxLines: 2,
-                        ),
-                        const SizedBox(height: 8.0),
-                        ArtifactFieldTextEllipsis(
-                          label: 'Latest Version',
-                          value: '${pArtifact.iLatestVersion}',
-                          labelStyle: Theme.of(context).textTheme.bodySmall,
-                          valueStyle: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        const SizedBox(height: 8.0),
-                        ArtifactFieldTextEllipsis(
-                          label: 'Latest Release',
-                          value: DateFormat("yyyy-MMM-dd").format(
-                            DateTime.fromMillisecondsSinceEpoch(
-                                pArtifact.iTimestamp ?? 0),
-                          ),
-                          labelStyle: Theme.of(context).textTheme.bodySmall,
-                          valueStyle: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        const SizedBox(height: 8.0),
-                        ArtifactFieldTextEllipsis(
-                          label: 'Total Versions',
-                          value: '${pArtifact.iVersionCount}',
-                          labelStyle: Theme.of(context).textTheme.bodySmall,
-                          valueStyle: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ],
+                      children: searchTerms.isVersionSearch()
+                          ? _buildVersionCardFields(pArtifact, context)
+                          : _buildArtifactCardFields(pArtifact, context),
                     ),
                   ),
                 ],
@@ -223,51 +188,72 @@ class SearchResultsPageListView extends StatelessWidget {
               ?.copyWith(color: Colors.white),
         ),
       ),
-      children: <Widget>[
-        SimpleDialogOption(
-          child: Text(
-            "Group Id",
-            style: Theme.of(pContext).textTheme.titleLarge,
-          ),
-          onPressed: () {
-            Navigator.pop(pContext);
-
-            var searchTerms = SearchTerms(
-              searchType: 'Advanced',
-              groupId: pArtifact.iG ?? '',
-            );
-
-            Navigator.pushNamed(
-              pContext,
-              SearchResultsPage.routeName,
-              arguments: <String, SearchTerms>{
-                'searchTerms': searchTerms,
+      children: _buildLongPressOptions(pContext, pArtifact)
+        ..add(
+          Align(
+            alignment: Alignment.center,
+            child: TextButton(
+              onPressed: () {
+                Navigator.pop(pContext);
               },
-            );
-          },
-        ),
-        SimpleDialogOption(
-          child: Text(
-            "Artifact Id",
-            style: Theme.of(pContext).textTheme.titleLarge,
+              child: const Text("Close"),
+            ),
           ),
-          onPressed: () {
-            Navigator.pop(pContext);
-
-            var searchTerms = SearchTerms(
-              searchType: 'Advanced',
-              artifactId: pArtifact.iA ?? '',
-            );
-
-            Navigator.pushNamed(
-              pContext,
-              SearchResultsPage.routeName,
-              arguments: <String, SearchTerms>{
-                'searchTerms': searchTerms,
-              },
-            );
-          },
         ),
+    );
+  }
+
+  List<Widget> _buildLongPressOptions(BuildContext pContext, MCRDoc pArtifact) {
+    var returnValue = <Widget>[
+      SimpleDialogOption(
+        child: Text(
+          "Group Id",
+          style: Theme.of(pContext).textTheme.titleLarge,
+        ),
+        onPressed: () {
+          Navigator.pop(pContext);
+
+          var searchTerms = SearchTerms(
+            searchType: SearchTerms.searchTypeAdvanced,
+            groupId: pArtifact.iG ?? '',
+          );
+
+          Navigator.pushNamed(
+            pContext,
+            SearchResultsPage.routeName,
+            arguments: <String, SearchTerms>{
+              'searchTerms': searchTerms,
+            },
+          );
+        },
+      ),
+      SimpleDialogOption(
+        child: Text(
+          "Artifact Id",
+          style: Theme.of(pContext).textTheme.titleLarge,
+        ),
+        onPressed: () {
+          Navigator.pop(pContext);
+
+          var searchTerms = SearchTerms(
+            searchType: SearchTerms.searchTypeAdvanced,
+            artifactId: pArtifact.iA ?? '',
+          );
+
+          Navigator.pushNamed(
+            pContext,
+            SearchResultsPage.routeName,
+            arguments: <String, SearchTerms>{
+              'searchTerms': searchTerms,
+            },
+          );
+        },
+      ),
+    ];
+
+    //If we're already in a version search, don't display the option to do it again
+    if (searchTerms.isVersionSearch() == false) {
+      returnValue.add(
         SimpleDialogOption(
           child: Text(
             "All " + pArtifact.iVersionCount.toString() + " Versions",
@@ -276,7 +262,7 @@ class SearchResultsPageListView extends StatelessWidget {
           onPressed: () {
             Navigator.pop(pContext);
             var searchTerms = SearchTerms(
-              searchType: 'Advanced',
+              searchType: SearchTerms.searchTypeVersion,
               groupId: pArtifact.iG ?? '',
               artifactId: pArtifact.iA ?? '',
             );
@@ -290,16 +276,80 @@ class SearchResultsPageListView extends StatelessWidget {
             );
           },
         ),
-        Align(
-          alignment: Alignment.center,
-          child: TextButton(
-            onPressed: () {
-              Navigator.pop(pContext);
-            },
-            child: const Text("Close"),
-          ),
-        )
-      ],
-    );
+      );
+    }
+
+    return returnValue;
   }
+
+  List<Widget> _buildArtifactCardFields(
+          MCRDoc pArtifact, BuildContext context) =>
+      <Widget>[
+        ArtifactFieldTextEllipsis(
+          label: 'Group Id',
+          value: '${pArtifact.iG}',
+          maxLines: 2,
+        ),
+        const SizedBox(height: 8.0),
+        ArtifactFieldTextEllipsis(
+          label: 'Artifact Id',
+          value: '${pArtifact.iA}',
+          maxLines: 2,
+        ),
+        const SizedBox(height: 8.0),
+        ArtifactFieldTextEllipsis(
+          label: 'Latest Version',
+          value: '${pArtifact.iLatestVersion}',
+          labelStyle: Theme.of(context).textTheme.bodySmall,
+          valueStyle: Theme.of(context).textTheme.bodySmall,
+        ),
+        const SizedBox(height: 8.0),
+        ArtifactFieldTextEllipsis(
+          label: 'Latest Release',
+          value: DateFormat("yyyy-MMM-dd").format(
+            DateTime.fromMillisecondsSinceEpoch(pArtifact.iTimestamp ?? 0),
+          ),
+          labelStyle: Theme.of(context).textTheme.bodySmall,
+          valueStyle: Theme.of(context).textTheme.bodySmall,
+        ),
+        const SizedBox(height: 8.0),
+        ArtifactFieldTextEllipsis(
+          label: 'Total Versions',
+          value: '${pArtifact.iVersionCount}',
+          labelStyle: Theme.of(context).textTheme.bodySmall,
+          valueStyle: Theme.of(context).textTheme.bodySmall,
+        ),
+      ];
+
+  List<Widget> _buildVersionCardFields(
+          MCRDoc pArtifact, BuildContext context) =>
+      <Widget>[
+        ArtifactFieldTextEllipsis(
+          label: 'Group Id',
+          value: '${pArtifact.iG}',
+          maxLines: 2,
+          labelStyle: Theme.of(context).textTheme.bodySmall,
+          valueStyle: Theme.of(context).textTheme.bodySmall,
+        ),
+        const SizedBox(height: 8.0),
+        ArtifactFieldTextEllipsis(
+          label: 'Artifact Id',
+          value: '${pArtifact.iA}',
+          maxLines: 2,
+          labelStyle: Theme.of(context).textTheme.bodySmall,
+          valueStyle: Theme.of(context).textTheme.bodySmall,
+        ),
+        const SizedBox(height: 8.0),
+        ArtifactFieldTextEllipsis(
+          label: 'Version',
+          value: '${pArtifact.iV}',
+        ),
+        const SizedBox(height: 8.0),
+        ArtifactFieldTextEllipsis(
+          label: 'Release',
+          value: DateFormat("yyyy-MMM-dd").format(
+            DateTime.fromMillisecondsSinceEpoch(pArtifact.iTimestamp ?? 0),
+          ),
+        ),
+      ];
 }

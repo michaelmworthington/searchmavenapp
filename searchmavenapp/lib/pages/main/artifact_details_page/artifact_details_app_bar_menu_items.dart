@@ -21,7 +21,7 @@ class ArtifactDetailsAppBarMenuItems {
       // Navigator.pop(context);
 
       var searchTerms = SearchTerms(
-        searchType: 'Advanced',
+        searchType: SearchTerms.searchTypeAdvanced,
         groupId: artifact.iG ?? '',
       );
 
@@ -43,7 +43,7 @@ class ArtifactDetailsAppBarMenuItems {
       // Navigator.pop(context);
 
       var searchTerms = SearchTerms(
-        searchType: 'Advanced',
+        searchType: SearchTerms.searchTypeAdvanced,
         artifactId: artifact.iA ?? '',
       );
 
@@ -65,7 +65,7 @@ class ArtifactDetailsAppBarMenuItems {
       // Navigator.pop(context);
 
       var searchTerms = SearchTerms(
-        searchType: 'Advanced',
+        searchType: SearchTerms.searchTypeVersion,
         groupId: artifact.iG ?? '',
         artifactId: artifact.iA ?? '',
       );

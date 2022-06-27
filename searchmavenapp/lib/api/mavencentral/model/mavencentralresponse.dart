@@ -16,6 +16,6 @@ class MavenCentralResponse {
       MavenCentralResponse(
         responseHeader: json['responseHeader'],
         response: MCRResponse.fromJson(json['response']),
-        spellcheck: json['spellcheck'],
+        spellcheck: json['spellcheck'] ?? {},
       );
 }
