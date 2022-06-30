@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 
 import '../../page_components/search_terms.dart';
 import 'model/mavencentralresponse.dart';
+import 'model/mcr_doc.dart';
 
 class CentralSearchAPI {
   //See MavenCentralRestAPI.java & ProgressThread.java
@@ -15,7 +16,7 @@ class CentralSearchAPI {
     int pStart = 0,
     bool pDemoMode = false,
   }) async {
-    String queryTerm = _formatQueryParam(pSearchTerms);
+    String queryTerm = _formatSearchQueryParam(pSearchTerms);
 
     var queryParameters = {
       'rows': pNumResults.toString(),
@@ -49,11 +50,68 @@ class CentralSearchAPI {
 
       return MavenCentralResponse.fromJson(body);
     } else {
-      return await _performHttpGet(myUri);
+      return await _performSearchHttpGet(myUri);
     }
   }
 
-  Future<MavenCentralResponse> _performHttpGet(Uri url) async {
+  Future<String> downloadFile({
+    required MCRDoc pArtifact,
+    required BuildContext pContext,
+    bool pDemoMode = false,
+  }) async {
+    String replacedGroupId = pArtifact.iG?.replaceAll('.', '/') ?? '';
+    String artifactId = pArtifact.iA ?? '';
+    String version = pArtifact.iV ?? '';
+
+    String pomRepositoryPath =
+        '$replacedGroupId/$artifactId/$version/$artifactId-$version.pom';
+
+    var queryParameters = {'filepath': pomRepositoryPath};
+
+    Uri myUri = Uri(
+      scheme: 'https',
+      host: 'search.maven.org',
+      // host: 'c1bcc446-5b66-4991-985d-ae7b82a26913.mock.pstmn.io',
+      path: '/remotecontent/',
+      query: 'filepath=$pomRepositoryPath',
+    );
+
+    if (pDemoMode) {
+      debugPrint("DEMO MODE POM RESPONSE");
+
+      await Future.delayed(const Duration(seconds: 3));
+
+      final data = await DefaultAssetBundle.of(pContext)
+          .loadString('assets/model/log4j-1.2.17.pom');
+
+      return data;
+    } else {
+      return await _performPomHttpGet(myUri);
+    }
+  }
+
+  Future<String> _performPomHttpGet(Uri url) async {
+    debugPrint("Retrieving Pom from Central: $url");
+
+    //https://flutter.io/docs/cookbook/networking/fetch-data
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      String pom = response.body;
+
+      debugPrint(
+          'Response Code: ${response.statusCode} - Pom Length: ${pom.length}');
+      //debugPrint(response.body);
+
+      return pom;
+    } else {
+      // If that response was not OK, throw an error.
+      throw Exception(
+          'Failed to load POM: HTTP Response != 200: was ${response.statusCode}');
+    }
+  }
+
+  Future<MavenCentralResponse> _performSearchHttpGet(Uri url) async {
     debugPrint("Searching Central: $url");
 
     //https://flutter.io/docs/cookbook/networking/fetch-data
@@ -77,7 +135,7 @@ class CentralSearchAPI {
     }
   }
 
-  String _formatQueryParam(SearchTerms pSearchTerms) {
+  String _formatSearchQueryParam(SearchTerms pSearchTerms) {
     String returnValue = "";
 
     if (pSearchTerms.isQuickSearch()) {

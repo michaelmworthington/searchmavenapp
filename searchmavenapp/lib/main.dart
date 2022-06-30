@@ -125,8 +125,8 @@ class _MyAppState extends State<MyApp> {
               return SearchResultsPage(
                 isDemoMode: _isDemoMode,
                 numResults: _numResults,
-                searchTerms:
-                    args['searchTerms'] ?? SearchTerms(searchType: SearchTerms.searchTypeQuick),
+                searchTerms: args['searchTerms'] ??
+                    SearchTerms(searchType: SearchTerms.searchTypeQuick),
               );
             },
           );
@@ -151,6 +151,7 @@ class _MyAppState extends State<MyApp> {
           return MaterialPageRoute(
             builder: (context) {
               return PomViewPage(
+                isDemoMode: _isDemoMode,
                 iArtifact: args['artifact'] ??
                     MCRDoc(), //TODO: how to handle if it is null - error toast message???
               );

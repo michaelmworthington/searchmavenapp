@@ -2,49 +2,42 @@ import 'package:code_text_field/code_text_field.dart';
 import 'package:highlight/languages/xml.dart';
 import 'package:flutter_highlight/themes/darcula.dart';
 import 'package:flutter/material.dart';
+import 'package:searchmavenapp/api/mavencentral/mavencentralsearchapi.dart';
 
 import '../../../api/mavencentral/model/mcr_doc.dart';
 import '../../../page_components/form_header.dart';
 
 class PomViewPage extends StatefulWidget {
   static const routeName = '/pom_view';
-  
+
+  final bool isDemoMode;
   final MCRDoc iArtifact;
 
-  const PomViewPage({Key? key, required this.iArtifact}) : super(key: key);
+  const PomViewPage({
+    Key? key,
+    required this.iArtifact,
+    required this.isDemoMode,
+  }) : super(key: key);
 
   @override
   State<PomViewPage> createState() => _PomViewPageState();
 }
 
 class _PomViewPageState extends State<PomViewPage> {
+  late Future<String> pomFuture;
+  String pomText = '';
+
   CodeController? codeController;
 
   @override
   void initState() {
     super.initState();
 
-    DefaultAssetBundle.of(context)
-        .loadString('assets/model/log4j-1.2.17.pom')
-        .then(
-      (result) {
-        setState(
-          () {
-            codeController = CodeController(
-              text: result,
-              language: xml,
-              theme: darculaTheme,
-            );
-          },
-        );
-      },
+    pomFuture = CentralSearchAPI().downloadFile(
+      pArtifact: widget.iArtifact,
+      pContext: context,
+      pDemoMode: widget.isDemoMode,
     );
-  }
-
-  //TODO: get code from s.m.o/remotecontent?filepath=$filename
-  Future<String> getData() {
-    return DefaultAssetBundle.of(context)
-        .loadString('assets/model/log4j-1.2.17.pom');
   }
 
   @override
@@ -67,30 +60,76 @@ class _PomViewPageState extends State<PomViewPage> {
     //            - from progress thread, the content is downloaded from MavenCentralRestAPI.java
     //              going to s.m.o/remotecontent?filepath=$filename
     //            - see MavenCentralRestAPI.downloadFile()
-    return ListView(
-      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
-      children: <Widget>[
-        MyFormHeader(
-          pLabel:
-              '${widget.iArtifact.iG}:${widget.iArtifact.iA}:${widget.iArtifact.iV}',
-          textStyle: Theme.of(context).textTheme.bodyMedium,
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          children: <Widget>[
+            MyFormHeader(
+              pLabel:
+                  '${widget.iArtifact.iG}:${widget.iArtifact.iA}:${widget.iArtifact.iV}',
+              textStyle: Theme.of(context).textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 12.0),
+            FutureBuilder<String>(
+              future: pomFuture,
+              builder: (context, snapshot) {
+                //handle no data vs. in process separately
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  // By default, show a loading spinner
+                  return Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const CircularProgressIndicator.adaptive(),
+                        const SizedBox(height: 16),
+                        Text(
+                          "Downloading POM from search.maven.org", //TODO: Change if not searching central
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                if (snapshot.hasError) {
+                  final error = snapshot.error;
+                  debugPrintStack(stackTrace: snapshot.stackTrace);
+
+                  return Text('API Error: $error');
+                }
+
+                if (snapshot.hasData) {
+                  //protect against multiple callbacks
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    pomText = snapshot.data ?? 'unable to download pom';
+                  }
+
+                  // return Text(pomText);
+                  return Expanded(
+                    child: CodeField(
+                      expands: true,
+                      controller: CodeController(
+                        text: pomText,
+                        language: xml,
+                        theme: darculaTheme,
+                      ),
+                      textStyle: const TextStyle(fontFamily: 'SourceCode'),
+                      //Hide the line numbers
+                      lineNumberStyle: const LineNumberStyle(
+                          width: 0,
+                          margin: 10,
+                          textStyle: TextStyle(color: Colors.transparent)),
+                    ),
+                  );
+                } else {
+                  return const Text('API Value No Data');
+                }
+              },
+            )
+          ],
         ),
-        const SizedBox(height: 12.0),
-        CodeField(
-          controller: codeController ??
-              CodeController(
-                text: "",
-                language: xml,
-                theme: darculaTheme,
-              ),
-          textStyle: const TextStyle(fontFamily: 'SourceCode'),
-          //Hide the line numbers
-          lineNumberStyle: const LineNumberStyle(
-              width: 0,
-              margin: 10,
-              textStyle: TextStyle(color: Colors.transparent)),
-        ),
-      ],
+      ),
     );
   }
 }
