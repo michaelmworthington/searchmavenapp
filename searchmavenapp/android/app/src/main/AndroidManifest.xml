@@ -10,6 +10,8 @@
        -
        android:label="Search Maven"
    -->
+   <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:label="Search Maven"
         android:name="${applicationName}"
