@@ -110,6 +110,7 @@ flutter:
   #   - images/a_dot_ham.jpeg
     - "assets/icon/icon.png"
     - "assets/icon/icon_search_transparent.png"
+    - "assets/icon/lockup_built-w-flutter.png"
     - "assets/model/mavencentralresponse.json"
     - "assets/model/log4j-1.2.17.pom"
 

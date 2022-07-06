@@ -30,9 +30,6 @@ class MyAboutDialog extends StatelessWidget {
 
         final data = snapshot.data!;
 
-        final ThemeData theme = Theme.of(context);
-        final TextStyle textStyle = theme.textTheme.bodyText2!;
-
         return AboutDialog(
           applicationName: myAppTitle,
           applicationVersion: data.version,
@@ -47,9 +44,24 @@ class MyAboutDialog extends StatelessWidget {
           //     fit: BoxFit.fitHeight),
           applicationLegalese:
               'Apache and Apache Maven are trademarks of the Apache Software Foundation.\n\nThe Central Repository is a service mark of Sonatype, Inc. The Central Repository at search.maven.org is intended to complement Apache Maven and should not be confused with Apache Maven.',
-          children: const [
-            SizedBox(height: 24),
-            AboutDialogContent(),
+          children: [
+            const SizedBox(height: 24),
+            const AboutDialogContent(),
+            const SizedBox(height: 24),
+            // Center(
+            //   child: Text(
+            //     "Powered by Flutter",
+            //     style: Theme.of(context).textTheme.bodyText2,
+            //   ),
+            // ),
+            Center(
+              child: Image.asset(
+                'assets/icon/lockup_built-w-flutter.png',
+                // width: 144,
+                height: 36,
+                fit: BoxFit.fitHeight,
+              ),
+            ),
           ],
         );
       },
